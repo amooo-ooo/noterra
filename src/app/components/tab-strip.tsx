@@ -18,6 +18,18 @@ export function TabStrip({
 	setCurrentTab: React.Dispatch<Tab['id']>,
 	idGen: () => Tab['id'],
 }) {
+	const close = (tab: Tab) => {
+		if(tab.id === currentTab) {
+			let idx = tabs.findIndex(x => x.id === tab.id) - 1;
+			if(idx < 0) idx += 2;
+			setCurrentTab(tabs[idx].id);
+		}
+		modifyTabs({
+			type: 'remove',
+			predicate: x => x.id === tab.id
+		});
+	}
+
 	return <div style={{
 		display: 'flex',
 	}}>
@@ -57,25 +69,24 @@ export function TabStrip({
 						flexShrink: 1,
 						minWidth: 0,
 					}}>{tab.state.name}</span>
-					<button
-						type='button'
+					<span
+						// biome-ignore lint/a11y/useSemanticElements: nesting
+						role='button'
+						tabIndex={0}
 						style={{
 							flexGrow: 0,
 							flexShrink: 0,
 						}}
+						onKeyDown={e => {if(e.key === ' ') e.preventDefault(); }}
+						onKeyUp={e => { if(e.key === 'Enter' || e.key === ' '){
+							e.stopPropagation();
+							close(tab);
+						}}}
 						onClick={e => {
 							e.stopPropagation();
-							if(tab.id === currentTab) {
-								let idx = tabs.findIndex(x => x.id === tab.id) - 1;
-								if(idx < 0) idx += 2;
-								setCurrentTab(tabs[idx].id);
-							}
-							modifyTabs({
-								type: 'remove',
-								predicate: x => x.id === tab.id
-							});
+							close(tab);
 						}}
-					>x</button>
+					>x</span>
 				</div>
 			</button>)}
 		</ReactSortable>
