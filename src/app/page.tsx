@@ -9,9 +9,13 @@ export default function Home() {
     <div className={styles.page}>
       <main className={styles.main}>
         <EditorSelectionHandler>
-          <ToolbarConfigProvider>
-            <TabManager/>
-          </ToolbarConfigProvider>
+          <div className={styles.sidebar} />
+          <div className={styles.editor}>
+            <ToolbarConfigProvider>
+              <TabManager />
+            </ToolbarConfigProvider>
+          </div>
+          <div className={styles.sidebar} />
         </EditorSelectionHandler>
       </main>
       <footer className={styles.footer}>
