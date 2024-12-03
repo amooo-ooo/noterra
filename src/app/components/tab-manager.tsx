@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Editor, type EditorData } from "./editor";
 import { TabStrip } from "./tab-strip";

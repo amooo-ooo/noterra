@@ -24,7 +24,7 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 		this.type.create = (attrs, content, ...args) => {
 			console.log(attrs, content, ...args);
 			return original(
-				{ ...attrs, content: (content as Node).text },
+				{ ...attrs, content: (content as Node | null)?.text },
 				null,
 				...args,
 			);

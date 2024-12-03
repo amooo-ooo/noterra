@@ -42,14 +42,14 @@ export function TabStrip({
 					borderWidth: '0',
 					outline: 'none',
 				}}
-				className={`${styles.tab} ${tab.id === currentTab ? styles.activeTab : ''}`}
+				className={`${styles.tab} ${tab.id === currentTab ? styles.active_tab : ''}`}
 			>
 				<div
 					style={{
 						display: 'flex',
 						padding: 5,
 					}}
-					className={styles.tabBorder}
+					className={styles.tab_border}
 				>
 					<span style={{
 						userSelect: 'none',

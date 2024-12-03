@@ -1,4 +1,4 @@
-.tab>.tab-border {
+.tab>.tab_border {
 	--border-color: #303030;
 	margin: 1px 1px 1px 0px;
 	box-shadow: var(--border-color) 0px 1px, var(--border-color) -1px 1px;
@@ -21,11 +21,11 @@
 	background-color: var(--active-color);
 }
 
-.tab:first-child>.tab-border {
+.tab:first-child>.tab_border {
 	box-shadow: var(--border-color) 0 1px;
 }
 
-.tab:last-child>.tab-border {
+.tab:last-child>.tab_border {
 	margin-right: 1px;
 }
 
@@ -34,55 +34,55 @@
 	border-top-right-radius: var(--radius);
 }
 
-.tab.active-tab>.tab-border {
+.tab.active_tab>.tab_border {
 	box-shadow: var(--border-color) 1px -1px, var(--border-color) -1px -1px;
 	border-top-left-radius: var(--radius);
 	border-top-right-radius: var(--radius);
 	clip-path: inset(-9999px -9999px var(--radius) -9999px);
 }
 
-.tab.active-tab+.tab {
+.tab.active_tab+.tab {
 	border-bottom-left-radius: var(--radius);
 }
 
-.tab.active-tab+.tab>.tab-border {
+.tab.active_tab+.tab>.tab_border {
 	border-bottom-left-radius: var(--radius);
 	clip-path: inset(var(--radius) -2px -1px -1px);
 	transition: --bg var(--transition-props);
 	box-shadow: var(--border-color) 0px 1px, var(--border-color) -1px 1px, var(--bg, transparent) -9999px 9999px 0 9999px;
 }
 
-.tab.active-tab:is(:hover, :focus-visible)+.tab>.tab-border {
+.tab.active_tab:is(:hover, :focus-visible)+.tab>.tab_border {
 	--bg: var(--hover-color);
 }
 
-.tab.active-tab:active+.tab>.tab-border {
+.tab.active_tab:active+.tab>.tab_border {
 	--bg: var(--active-color);
 }
 
-.tab:has(+ .tab.active-tab) {
+.tab:has(+ .tab.active_tab) {
 	border-bottom-right-radius: var(--radius);
 }
 
-.tab:has(+ .tab.active-tab)>.tab-border {
+.tab:has(+ .tab.active_tab)>.tab_border {
 	box-shadow: var(--border-color) 0 1px, var(--border-color) 1px 1px, var(--bg, transparent) 9999px 9999px 0 9999px;
 	border-bottom-right-radius: var(--radius);
 	clip-path: inset(var(--radius) -2px -1px -1px);
 	transition: --bg var(--transition-props);
 }
 
-.tab:has(+ .tab.active-tab:is(:hover, :focus-visible))>.tab-border {
+.tab:has(+ .tab.active_tab:is(:hover, :focus-visible))>.tab_border {
 	--bg: var(--hover-color);
 }
 
-.tab:has(+ .tab.active-tab:active)>.tab-border {
+.tab:has(+ .tab.active_tab:active)>.tab_border {
 	--bg: var(--active-color);
 }
 
-.tab:has(+ .tab + .tab.active-tab)>.tab-border {
+.tab:has(+ .tab + .tab.active_tab)>.tab_border {
 	box-shadow: var(--border-color) 1px 1px, var(--border-color) -1px 1px;
 }
 
-.tab:first-child:has(+ .tab + .tab.active-tab)>.tab-border {
+.tab:first-child:has(+ .tab + .tab.active_tab)>.tab_border {
 	box-shadow: var(--border-color) 1px 1px, var(--border-color) 0px 1px;
 }
