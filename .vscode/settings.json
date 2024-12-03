@@ -1,3 +1,4 @@
 {
-	"npm.packageManager": "bun"
+	"npm.packageManager": "bun",
+	"cssModules.camelCase": false
 }
