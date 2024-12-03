@@ -2,6 +2,7 @@ import CodeBlock from "@tiptap/extension-code-block";
 import { mergeAttributes, ReactNodeViewRenderer } from "@tiptap/react";
 import { MonacoEditor } from "./monaco-editor";
 import type { EditorProps } from "@monaco-editor/react";
+import type { Node } from "@tiptap/pm/model";
 
 declare module "@tiptap/extension-code-block" {
 	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -16,6 +17,18 @@ declare module "@tiptap/extension-code-block" {
 export const MonacoCodeBlockExtention = CodeBlock.extend({
 	addNodeView() {
 		return ReactNodeViewRenderer(MonacoEditor, {});
+	},
+
+	onBeforeCreate() {
+		const original = this.type.create.bind(this.type);
+		this.type.create = (attrs, content, ...args) => {
+			console.log(attrs, content, ...args);
+			return original(
+				{ ...attrs, content: (content as Node).text },
+				null,
+				...args,
+			);
+		};
 	},
 
 	renderHTML({ node, HTMLAttributes }) {
@@ -63,20 +76,6 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 	// 		}),
 	// 	];
 	// },
-
-	addProseMirrorPlugins() {
-		return (
-			this.parent?.call({
-				...this,
-				type: {
-					...this.type,
-					create: ((attrs, content) => {
-						return this.type.create({ ...attrs, content });
-					}) satisfies typeof this.type.create,
-				},
-			}) ?? []
-		);
-	},
 
 	content: undefined,
 });

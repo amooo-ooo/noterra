@@ -1,35 +1,36 @@
 {
-  "name": "rte",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@monaco-editor/react": "^4.6.0",
-    "@tiptap/extension-subscript": "^2.10.3",
-    "@tiptap/extension-superscript": "^2.10.3",
-    "@tiptap/extension-underline": "^2.10.3",
-    "@tiptap/pm": "^2.10.3",
-    "@tiptap/react": "^2.10.3",
-    "@tiptap/starter-kit": "^2.10.3",
-    "@types/sortablejs": "^1.15.8",
-    "monaco-editor": "^0.52.0",
-    "next": "^15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
-    "react-sortablejs": "^6.1.4",
-    "sortablejs": "^1.15.3"
-  },
-  "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.3"
-  }
+	"name": "noterra",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev --turbopack",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"@monaco-editor/react": "^4.6.0",
+		"@tiptap/extension-code-block": "^2.10.3",
+		"@tiptap/extension-subscript": "^2.10.3",
+		"@tiptap/extension-superscript": "^2.10.3",
+		"@tiptap/extension-underline": "^2.10.3",
+		"@tiptap/pm": "^2.10.3",
+		"@tiptap/react": "^2.10.3",
+		"@tiptap/starter-kit": "^2.10.3",
+		"monaco-editor": "^0.52.0",
+		"next": "^15.0.3",
+		"react": "19.0.0-rc-66855b96-20241106",
+		"react-dom": "19.0.0-rc-66855b96-20241106",
+		"react-sortablejs": "^6.1.4",
+		"sortablejs": "^1.15.3"
+	},
+	"devDependencies": {
+		"typescript": "^5",
+		"@types/node": "^20",
+		"@types/react": "^18",
+		"@types/react-dom": "^18",
+		"@types/sortablejs": "^1.15.8",
+		"eslint": "^8",
+		"eslint-config-next": "15.0.3"
+	}
 }
