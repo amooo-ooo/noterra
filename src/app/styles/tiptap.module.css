@@ -1,12 +1,15 @@
 .tiptap {
+
     ul,
     ol {
+        /* do we need so much padding *and* margin? */
         padding: 0 1rem;
         margin: 1.25rem 1rem 1.25rem 0.4rem;
 
         li p {
-            margin-top: 0.25em;
-            margin-bottom: 0.25em;
+            /* TODO: is switch to em here intentional? */
+            /* also should we not prefer em in most cases over rem */
+            margin-block: 0.25em;
         }
     }
 
@@ -45,7 +48,7 @@
         font-size: 1rem;
     }
 
-    code {
+    &>code, :not(pre)>code {
         background-color: var(--purple-light);
         border-radius: 0.4rem;
         color: var(--black);
@@ -60,13 +63,6 @@
         font-family: 'JetBrainsMono', monospace;
         margin: 1.5rem 0;
         padding: 0.75rem 1rem;
-
-        code {
-            background: none;
-            color: inherit;
-            font-size: 0.8rem;
-            padding: 0;
-        }
     }
 
     blockquote {
