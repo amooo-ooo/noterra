@@ -70,17 +70,12 @@ export function MonacoEditor({
 					from: transaction.selection.anchor,
 					to: isReverseKey(tiptapState.lastKeyPress ?? '') ? pos.from - 2 : pos.to + 1,
 				});
-				// console.log("yay", editor)
 			}
-			// console.log(
-			// 	{...transaction.selection},
-			// 	{...editor.state.selection},
-			// )
 		};
 		editor.on("selectionUpdate", callback);
 		return () => { editor.off("selectionUpdate", callback) };
 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [editor, node, getPos]); // HERE
+	}, [editor, node, getPos]);
 
 	return <NodeViewWrapper ref={containerRef} style={{position: 'relative'}}>
 		<span {...HIDDEN_PROPS}
@@ -99,16 +94,11 @@ export function MonacoEditor({
 					editor.setSelection(model.getFullModelRange().collapseToStart());
 				}]);
 			}}>```</span>
-		{/* <div {...HIDDEN_PROPS} style={{
-			...HIDDEN_PROPS.style,
-			whiteSpace: 'pre',
-		}} aria-hidden="true">{value}</div> */}
 		<div contentEditable={false} style={{
 			userSelect: 'none',
 		}}>
 			<Editor
 				height={height + 19}
-				// defaultValue="console.log('hello :3');"
 				{...extension.options}
 				value={node.attrs.content}
 				language={node.attrs.language ?? undefined}
@@ -116,7 +106,6 @@ export function MonacoEditor({
 					automaticLayout: true,
 					scrollBeyondLastLine: false,
 					...extension.options.options,
-					// ...props.options,
 				}}
 				onChange={(value, ev) => {
 					setHeight(editorRef.current?.getContentHeight() ?? 0);
@@ -147,19 +136,6 @@ export function MonacoEditor({
 										? pos.from - 2 // WHY
 										: pos.to + 1
 								);
-								// // REPLACE THIS WITH THE OUTERMOST ELEMENT WITHIN
-								// // THE TEXTAREA
-								// const container = containerRef.current;
-								// if (!container?.parentNode) throw "TODO: handle";
-								// const range = document.createRange();
-
-								// range.selectNode(container);
-								// range.collapse(e.code === "ArrowUp" || e.code === "ArrowLeft");
-
-								// // biome-ignore lint/style/noNonNullAssertion: we should always have a browsing context
-								// const sel = window.getSelection()!;
-								// sel.removeAllRanges();
-								// sel.addRange(range);
 							}, 0);
 					});
 					mcEditor.onDidChangeCursorPosition(() => {
