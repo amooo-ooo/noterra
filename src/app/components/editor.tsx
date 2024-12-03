@@ -59,7 +59,6 @@ export function Editor({
 					minimap: {
 						enabled: false,
 					},
-					glyphMargin: false,
 					theme: 'vs-dark',
 				}
 			}),

@@ -3,33 +3,7 @@
 import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import { unreachable } from "./util";
-import type { ChainedCommands, Editor } from "@tiptap/react";
-import { EditorContext } from "./editor";
-
-export function TiptapButton({ label, action, detect, icon, ...props }: {
-	label: string;
-	action?: (ctx: ChainedCommands) => ChainedCommands;
-	detect?: (editor: Editor) => boolean;
-	icon?: React.ReactNode;
-} & Omit<React.HTMLProps<HTMLButtonElement>, 'action'>) {
-	const editor = React.useContext(EditorContext).editor;
-
-	return (
-		<button
-			title={label}
-			{...props}
-			type="button"
-			onClick={action ? e => {
-				if(editor) action(editor.chain().focus()).run();
-				props.onClick?.(e);
-			} : props.onClick}
-			disabled={!editor || props.disabled || !action}
-			className={`toolbar-button ${editor && detect?.(editor) ? "is-active" : ""} ${props.className ?? ''}`}
-		>
-			{icon ?? label}
-		</button>
-	);
-}
+import { TiptapButton } from "./tiptap-fields";
 
 const TOOLS = {
 	bold: <TiptapButton label="bold" action={ctx => ctx.toggleBold()} detect={ed => ed.isActive('bold')} />,
@@ -106,16 +80,14 @@ const ToolbarConfigContext = React.createContext<{
 	updateArrangement: React.Dispatch<
 		React.ReducerAction<typeof toolbarDispatch>
 	>;
-	// biome-ignore lint/style/noNonNullAssertion: <explanation>
+	// biome-ignore lint/style/noNonNullAssertion: intentionally error if accessed
 }>(null!);
 
 export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
-	/* eslint-disable react/jsx-key */
-
 	const initGroups = [
 		['bold', 'italic'],
 		['fontSize'],
-	] satisfies (keyof typeof TOOLS)[][]; // Example data
+	] satisfies (keyof typeof TOOLS)[][];
 	const [arrangement, updateArrangement] = React.useReducer(toolbarDispatch, {
 		nextGroupId: initGroups.length,
 		groups: {

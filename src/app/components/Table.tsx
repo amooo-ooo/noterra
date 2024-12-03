@@ -1,12 +1,10 @@
 "use client";
 
 import React from "react";
-import { ReactSortable, Sortable } from "react-sortablejs";
+import { ReactSortable, type Sortable } from "react-sortablejs";
 
-export function Table(props: {
-	width?: number,
-	height?: number,
-}){
+// TODO:
+export function Table(){
 	const table = React.useRef([[
 		"hello",
 		"hi"
