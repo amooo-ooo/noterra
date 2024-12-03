@@ -22,7 +22,6 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 	onBeforeCreate() {
 		const original = this.type.create.bind(this.type);
 		this.type.create = (attrs, content, ...args) => {
-			console.log(content);
 			return original(
 				{ content: (content as Node | null)?.text, ...attrs },
 				null,
