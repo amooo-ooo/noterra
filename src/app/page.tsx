@@ -8,10 +8,14 @@ export default function Home() {
 		<div className={styles.page}>
 			<main className={styles.main}>
 				<div className={styles.sidebar} />
-				<div className={styles.editor}>
+				<div className={styles["editor-container"]}>
 					<EditorSelectionHandler>
 						<ToolbarConfigProvider>
-							<TabManager />
+							<TabManager
+								tabstripClass={styles.tabstrip}
+								toolbarClass={styles.toolbar}
+								editorClass={styles.editor}
+							/>
 						</ToolbarConfigProvider>
 					</EditorSelectionHandler>
 				</div>

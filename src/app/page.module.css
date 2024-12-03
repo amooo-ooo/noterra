@@ -1,12 +1,55 @@
+html, body {
+	overflow: hidden;
+}
+
+:root * {
+	min-width: 0;
+	min-height: 0;
+}
+
 .page {
-  min-height: 100svh;
+	display: flex;
+	flex-flow: column;
+	height: 100lvh;
 }
 
 .main {
-  display: flex;
-  min-height: inherit;
+	display: grid;
+	grid-template-columns: [start sidebar-left] min-content [sidebar-left-end main] 1fr [main-end sidebar-right] min-content [sidebar-right-end end];
+	grid-template-rows: [top nav] min-content [nav-end toolbar] min-content [toolbar-end main] 1fr [main-end bottom];
+	flex: 1 1;
+}
+
+.editor-container {
+	display: contents;
+}
+
+.tabstrip {
+	grid-area: nav / start / nav-end / end;
+	z-index: 1;
+	backdrop-filter: blur(10px);
+	padding: 10px;
+	padding-bottom: 0;
+}
+
+.toolbar {
+	grid-area: toolbar / main / toolbar-end / main-end;
+	z-index: 1;
+	backdrop-filter: blur(10px);
 }
 
 .editor {
-  flex: 1;
+	/* TODO: we have capability of allowing scroll content underneath navs if wanted (e.g for translucent/blurred nav overlays) */
+	grid-area: editor / main / bottom / main-end;
+	display: grid;
+	grid-template-rows: subgrid;
+	overflow: auto;
+
+	&>* {
+		/* contenteditable area */
+		padding: 50px;
+		grid-row: editor;
+		outline: none;
+		min-height: fit-content;
+	}
 }

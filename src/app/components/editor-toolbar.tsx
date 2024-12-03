@@ -253,7 +253,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 	);
 }
 
-export function EditorToolbar() {
+export function EditorToolbar({ className }: { className?: string }) {
 	const { arrangement, updateArrangement } =
 		React.useContext(ToolbarConfigContext);
 	return (
@@ -265,6 +265,7 @@ export function EditorToolbar() {
 				put: ["editor-toolbar", "editor-toolbar-groups"],
 				pull: ["editor-toolbar-groups"],
 			}}
+			className={className}
 		>
 			{arrangement.order.map(({ id }) => {
 				const group = arrangement.groups[id];

@@ -10,20 +10,20 @@ import Text from "@tiptap/extension-text";
 import Document from "@tiptap/extension-document";
 import ListItem from "@tiptap/extension-list-item";
 import Paragraph from "@tiptap/extension-paragraph";
-import Bold  from "@tiptap/extension-bold";
+import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
 import Strike from "@tiptap/extension-strike";
 import Underline from "@tiptap/extension-underline";
 import Code from "@tiptap/extension-code";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
-import Subscript from '@tiptap/extension-subscript';
-import Superscript from '@tiptap/extension-superscript';
-import History from '@tiptap/extension-history';
-import Blockquote from '@tiptap/extension-blockquote';
-import HorizontalRule from '@tiptap/extension-horizontal-rule';
-import Link from '@tiptap/extension-link';
-import Typography from '@tiptap/extension-typography';
+import Subscript from "@tiptap/extension-subscript";
+import Superscript from "@tiptap/extension-superscript";
+import History from "@tiptap/extension-history";
+import Blockquote from "@tiptap/extension-blockquote";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import Link from "@tiptap/extension-link";
+import Typography from "@tiptap/extension-typography";
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
 import style from "../styles/tiptap.module.css";
@@ -39,8 +39,15 @@ export const EditorContext = React.createContext(null as unknown as EditorData);
 
 export function Editor({
 	data,
-	skipRender,
-}: { data: EditorData; skipRender: boolean }) {
+	skipRender = false,
+	toolbarClass,
+	editorClass = "",
+}: {
+	data: EditorData;
+	skipRender?: boolean;
+	toolbarClass?: string;
+	editorClass?: string;
+}) {
 	const editor = useEditor({
 		extensions: [
 			Document,
@@ -53,14 +60,18 @@ export function Editor({
 			Underline,
 			Subscript,
 			Superscript,
-			Code,
+			Code.configure({
+				HTMLAttributes: {
+					spellcheck: false,
+				},
+			}),
 			BulletList,
 			OrderedList,
 			History,
 			HorizontalRule,
 			Link,
 			Typography,
-			Blockquote,			
+			Blockquote,
 			MonacoCodeBlockExtention.configure({
 				options: {
 					scrollbar: {
@@ -69,21 +80,25 @@ export function Editor({
 					minimap: {
 						enabled: false,
 					},
-					theme: 'vs-dark',
-				}
+					theme: "vs-dark",
+				},
 			}),
 		],
-		content: 'hello',
+		content: "hello",
 		immediatelyRender: false,
 	});
 	data.editor = editor ?? undefined;
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
-			<EditorToolbar />
-			<EditorContent editor={editor} className={style.tiptap} onKeyDownCapture={e => {
-				data.lastKeyPress = e.key;
-			}} />
+			<EditorToolbar className={toolbarClass} />
+			<EditorContent
+				editor={editor}
+				className={`${style.tiptap} ${editorClass}`}
+				onKeyDownCapture={(e) => {
+					data.lastKeyPress = e.key;
+				}}
+			/>
 		</EditorContext.Provider>
 	);
 }
