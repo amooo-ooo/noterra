@@ -54,13 +54,17 @@
         color: var(--black);
         font-size: 0.85rem;
         padding: 0.25em 0.3em;
+        /* surely we want these fonts here too? */
+        font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
     }
 
     pre {
+        /* dead? using monaco. */
         background: var(--black);
         border-radius: 0.5rem;
         color: var(--white);
-        font-family: 'JetBrainsMono', monospace;
+        /* dont ask for uncommon fonts unless we provide them */
+        font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
         margin: 1.5rem 0;
         padding: 0.75rem 1rem;
     }
