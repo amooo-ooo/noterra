@@ -2,10 +2,11 @@ import type { ChainedCommands, Editor } from "@tiptap/react";
 import { EditorContext } from "./editor";
 import React from "react";
 
-export function TiptapButton({ label, action, detect, icon, ...props }: {
+export function TiptapButton({ label, action, detect, tiptapDisabled, icon, ...props }: {
 	label: string;
 	action?: (ctx: ChainedCommands) => ChainedCommands;
 	detect?: (editor: Editor) => boolean;
+	tiptapDisabled?: (editor: Editor) => boolean;
 	icon?: React.ReactNode;
 } & Omit<React.HTMLProps<HTMLButtonElement>, 'action'>) {
 	const editor = React.useContext(EditorContext).editor;
@@ -19,7 +20,7 @@ export function TiptapButton({ label, action, detect, icon, ...props }: {
 				if(editor) action(editor.chain().focus()).run();
 				props.onClick?.(e);
 			} : props.onClick}
-			disabled={!editor || props.disabled || !action}
+			disabled={!editor || props.disabled || tiptapDisabled?.(editor) || !action}  // tiptapDisabled is cooked
 			className={`toolbar-button ${editor && detect?.(editor) ? "is-active" : ""} ${props.className ?? ''}`}
 		>
 			{icon ?? label}
