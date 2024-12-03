@@ -1,7 +1,17 @@
+.tabstrip {
+	display: flex;
+}
+
+.tabstrip>.container {
+	display: contents;
+}
+
 .tab>.tab-border {
 	--border-color: #303030;
 	margin: 1px 1px 1px 0px;
 	box-shadow: var(--border-color) 0px 1px, var(--border-color) -1px 1px;
+	display: flex;
+	padding: 5;
 }
 
 .tab {
@@ -11,6 +21,25 @@
 	--transition-props: 200ms ease;
 	background: transparent;
 	transition: background-color var(--transition-props);
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: 0;
+	min-width: 0;
+	max-width: 10ch;
+	border-width: 0;
+	outline: none;
+}
+
+.tab>span {
+	user-select: none;
+	flex-grow: 1;
+	flex-shrink: 1;
+	min-width: 0;
+}
+
+.tab>button {
+	flex-grow: 0;
+	flex-shrink: 0;
 }
 
 .tab:is(:hover, :focus-visible) {

@@ -3,7 +3,7 @@
 import type React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
-import styles from './tab-strip.module.css';
+import styles from '../styles/tab-strip.module.css';
 
 export function TabStrip({
 	tabs,
@@ -30,45 +30,21 @@ export function TabStrip({
 		});
 	}
 
-	return <div style={{
-		display: 'flex',
-	}}>
+	return <div className={styles.tabstrip}>
 		<ReactSortable
 			list={tabs}
 			setList={list => modifyTabs({ type: 'reorder', value: list })}
 			animation={250}
-			style={{
-				display: 'contents',
-			}}
+			className={styles.container}
 		>
 			{...tabs.map(tab => <button
 				type='button'
 				key={tab.id}
 				onClick={() => setCurrentTab(tab.id)}
-				style={{
-					flexGrow: 1,
-					flexShrink: 1,
-					flexBasis: 0,
-					minWidth: 0,
-					maxWidth: '10ch',
-					borderWidth: '0',
-					outline: 'none',
-				}}
 				className={`${styles.tab} ${tab.id === currentTab ? styles['active-tab'] : ''}`}
 			>
-				<div
-					style={{
-						display: 'flex',
-						padding: 5,
-					}}
-					className={styles['tab-border']}
-				>
-					<span style={{
-						userSelect: 'none',
-						flexGrow: 1,
-						flexShrink: 1,
-						minWidth: 0,
-					}}>{tab.state.name}</span>
+				<div className={styles['tab-border']}>
+					<span>{tab.state.name}</span>
 					<span
 						// biome-ignore lint/a11y/useSemanticElements: nesting
 						role='button'
