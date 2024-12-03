@@ -5,27 +5,28 @@ import {
 } from "@tiptap/react";
 import React from "react";
 import { EditorToolbar } from "./editor-toolbar";
+
 import Text from "@tiptap/extension-text";
 import Document from "@tiptap/extension-document";
 import ListItem from "@tiptap/extension-list-item";
 import Paragraph from "@tiptap/extension-paragraph";
-
-import { Bold as BoldExtension } from "@tiptap/extension-bold";
-import { Italic as ItalicExtension } from "@tiptap/extension-italic";
-import { Strike as StrikeExtension } from "@tiptap/extension-strike";
-import { Underline as UnderlineExtension } from "@tiptap/extension-underline";
-import { Code as CodeExtension } from "@tiptap/extension-code";
-import { BulletList as BulletListExtension } from "@tiptap/extension-bullet-list";
-import { OrderedList as OrderedListExtension } from "@tiptap/extension-ordered-list";
-import { Subscript as SubscriptExtension } from '@tiptap/extension-subscript';
-import { Superscript as SuperscriptExtension } from '@tiptap/extension-superscript';
-import { History as HistoryExtension } from '@tiptap/extension-history';
-import { Blockquote as BlockquoteExtension} from '@tiptap/extension-blockquote'
-import { HorizontalRule as HorizontalRuleExtension } from '@tiptap/extension-horizontal-rule'
-import { Link as LinkExtension } from '@tiptap/extension-link'
-import { Typography as TypographyExtension } from '@tiptap/extension-typography'
+import Bold  from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import Strike from "@tiptap/extension-strike";
+import Underline from "@tiptap/extension-underline";
+import Code from "@tiptap/extension-code";
+import BulletList from "@tiptap/extension-bullet-list";
+import OrderedList from "@tiptap/extension-ordered-list";
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
+import History from '@tiptap/extension-history';
+import Blockquote from '@tiptap/extension-blockquote';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
+import Link from '@tiptap/extension-link';
+import Typography from '@tiptap/extension-typography';
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
+import style from "../styles/tiptap.module.css";
 
 export interface EditorData {
 	id: string;
@@ -46,20 +47,20 @@ export function Editor({
 			Text,
 			ListItem,
 			Paragraph,
-			BoldExtension,
-			ItalicExtension,
-			StrikeExtension,
-			UnderlineExtension,
-			SubscriptExtension,
-			SuperscriptExtension,
-			CodeExtension,
-			BulletListExtension,
-			OrderedListExtension,
-			HistoryExtension,
-			HorizontalRuleExtension,
-			LinkExtension,
-			TypographyExtension,
-			BlockquoteExtension,
+			Bold,
+			Italic,
+			Strike,
+			Underline,
+			Subscript,
+			Superscript,
+			Code,
+			BulletList,
+			OrderedList,
+			History,
+			HorizontalRule,
+			Link,
+			Typography,
+			Blockquote,			
 			MonacoCodeBlockExtention.configure({
 				options: {
 					scrollbar: {
@@ -80,7 +81,7 @@ export function Editor({
 	return (
 		<EditorContext.Provider value={data}>
 			<EditorToolbar />
-			<EditorContent editor={editor} onKeyDownCapture={e => {
+			<EditorContent editor={editor} className={style.tiptap} onKeyDownCapture={e => {
 				data.lastKeyPress = e.key;
 			}} />
 		</EditorContext.Provider>

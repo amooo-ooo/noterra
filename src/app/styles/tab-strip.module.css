@@ -7,20 +7,18 @@
 }
 
 .tab>.tab-border {
-	--border-color: #303030;
 	margin: 1px 1px 1px 0px;
-	box-shadow: var(--border-color) 0px 1px, var(--border-color) -1px 1px;
+	box-shadow: var(--border-color-0) 0px 1px, var(--border-color-0) -1px 1px;
 	display: flex;
 	padding: 5;
 }
 
 .tab {
 	--radius: 5px;
-	--hover-color: #101010;
-	--active-color: #202020;
 	--transition-props: 200ms ease;
 	background: transparent;
 	transition: background-color var(--transition-props);
+	font-family: var(--font-inter-sans), Arial, Helvetica, sans-serif;
 	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: 0;
@@ -43,15 +41,11 @@
 }
 
 .tab:is(:hover, :focus-visible) {
-	background-color: var(--hover-color);
-}
-
-.tab:active {
-	background-color: var(--active-color);
+	background-color: var(--bg-1);
 }
 
 .tab:first-child>.tab-border {
-	box-shadow: var(--border-color) 0 1px;
+	box-shadow: var(--border-color-0) 0 1px;
 }
 
 .tab:last-child>.tab-border {
@@ -64,7 +58,7 @@
 }
 
 .tab.active-tab>.tab-border {
-	box-shadow: var(--border-color) 1px -1px, var(--border-color) -1px -1px;
+	box-shadow: var(--border-color-0) 1px -1px, var(--border-color-0) -1px -1px;
 	border-top-left-radius: var(--radius);
 	border-top-right-radius: var(--radius);
 	clip-path: inset(-9999px -9999px var(--radius) -9999px);
@@ -78,15 +72,11 @@
 	border-bottom-left-radius: var(--radius);
 	clip-path: inset(var(--radius) -2px -1px -1px);
 	transition: --bg var(--transition-props);
-	box-shadow: var(--border-color) 0px 1px, var(--border-color) -1px 1px, var(--bg, transparent) -9999px 9999px 0 9999px;
+	box-shadow: var(--border-color-0) 0px 1px, var(--border-color-0) -1px 1px, var(--bg, transparent) -9999px 9999px 0 9999px;
 }
 
 .tab.active-tab:is(:hover, :focus-visible)+.tab>.tab-border {
-	--bg: var(--hover-color);
-}
-
-.tab.active-tab:active+.tab>.tab-border {
-	--bg: var(--active-color);
+	--bg: var(--bg-1);
 }
 
 .tab:has(+ .tab.active-tab) {
@@ -94,24 +84,20 @@
 }
 
 .tab:has(+ .tab.active-tab)>.tab-border {
-	box-shadow: var(--border-color) 0 1px, var(--border-color) 1px 1px, var(--bg, transparent) 9999px 9999px 0 9999px;
+	box-shadow: var(--border-color-0) 0 1px, var(--border-color-0) 1px 1px, var(--bg, transparent) 9999px 9999px 0 9999px;
 	border-bottom-right-radius: var(--radius);
 	clip-path: inset(var(--radius) -2px -1px -1px);
 	transition: --bg var(--transition-props);
 }
 
 .tab:has(+ .tab.active-tab:is(:hover, :focus-visible))>.tab-border {
-	--bg: var(--hover-color);
-}
-
-.tab:has(+ .tab.active-tab:active)>.tab-border {
-	--bg: var(--active-color);
+	--bg: var(--bg-1);
 }
 
 .tab:has(+ .tab + .tab.active-tab)>.tab-border {
-	box-shadow: var(--border-color) 1px 1px, var(--border-color) -1px 1px;
+	box-shadow: var(--border-color-0) 1px 1px, var(--border-color-0) -1px 1px;
 }
 
 .tab:first-child:has(+ .tab + .tab.active-tab)>.tab-border {
-	box-shadow: var(--border-color) 1px 1px, var(--border-color) 0px 1px;
+	box-shadow: var(--border-color-0) 1px 1px, var(--border-color-0) 0px 1px;
 }
