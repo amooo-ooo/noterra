@@ -26,7 +26,7 @@ import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
-import style from "../styles/tiptap.module.css";
+import styles from "@/app/styles/tiptap.module.css";
 
 export interface EditorData {
 	id: string;
@@ -94,7 +94,7 @@ export function Editor({
 			<EditorToolbar className={toolbarClass} />
 			<EditorContent
 				editor={editor}
-				className={`${style.tiptap} ${editorClass}`}
+				className={`${styles.tiptap} ${editorClass}`}
 				onKeyDownCapture={(e) => {
 					data.lastKeyPress = e.key;
 				}}
