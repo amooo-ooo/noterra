@@ -3,7 +3,7 @@ import {
 	EditorContent,
 	useEditor,
 } from "@tiptap/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { EditorToolbar } from "./editor-toolbar";
 
 import Text from "@tiptap/extension-text";
@@ -88,6 +88,49 @@ export function Editor({
 		immediatelyRender: false,
 	});
 	data.editor = editor ?? undefined;
+	useEffect(() => {
+		if (skipRender) return;
+		const SELECTOR = [
+			"input:not([type])",
+			'input[type="text"]',
+			"textarea",
+			"[contenteditable]",
+		].join(", ");
+		const SPECIAL_WHITELIST = {
+			ArrowLeft: true,
+			ArrowRight: true,
+			ArrowUp: true,
+			ArrowDown: true,
+			Backspace: true,
+			Delete: true,
+			Enter: true,
+			EraseEof: true,
+			Paste: true,
+			Undo: true,
+			Redo: true,
+			Dead: true,
+		};
+		const callback = (e: KeyboardEvent) => {
+			console.log(e);
+			if (
+				e.key.length !== 1 /* No special keys */ &&
+				!(e.key in SPECIAL_WHITELIST)
+			)
+				return;
+			let extra = "";
+			if (e.key === "Enter" || e.key === " ")
+				extra = ", button, input, [tabindex]";
+			if (!document.activeElement?.closest(SELECTOR + extra)) {
+				// not in editor, focus
+				editor?.$doc.element.focus();
+				// not fast enough (uses requestAnimationFrame due to react bug, hope we dont run into same bug :E)
+				editor?.commands.focus();
+			}
+		};
+		document.addEventListener("keydown", callback, { capture: true });
+		return () =>
+			document.removeEventListener("keydown", callback, { capture: true });
+	}, [editor, skipRender]);
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
