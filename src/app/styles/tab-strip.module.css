@@ -1,7 +1,5 @@
 .tabstrip {
 	display: flex;
-	min-height: 2.4rem;
-	background-color: var(--bg-0);
 }
 
 .tabstrip>.container {
@@ -11,52 +9,23 @@
 .tab>.tab-border {
 	margin: 1px 1px 1px 0px;
 	box-shadow: var(--border-color-0) 0px 1px, var(--border-color-0) -1px 1px;
-	width: 100%;
-
-	.tab-name {
-		margin: auto;
-		margin-left: 0;
-		font-size: .8rem;
-	}
-
-	.close-tab {
-		display: flex;
-		flex-grow: 0;
-		flex-shrink: 0;
-
-		span {
-			font-size: 1.4em;
-			font-weight: 300;
-		}
-	}
-
-	>.tab-inner {
-		display: flex;
-		padding: 5;
-	}
-}
-
-.tab .tab-name {
-	color: var(--fg-3);
-}
-
-.active-tab .tab-name {
-	color: var(--fg-1) !important;
+	display: flex;
+	padding: 5;
 }
 
 .tab {
 	--radius: 5px;
+	--transition-props: 200ms ease;
 	background: transparent;
+	transition: background-color var(--transition-props);
 	font-family: var(--font-inter-sans), Arial, Helvetica, sans-serif;
 	flex-grow: 1;
 	flex-shrink: 1;
 	flex-basis: 0;
-	display: flex;
 	min-width: 0;
-	max-width: 12ch;
+	max-width: 10ch;
 	border-width: 0;
 	outline: none;
-	margin-top: 4;
 }
 
 .tab>span {
@@ -71,17 +40,8 @@
 	flex-shrink: 0;
 }
 
-.tab:not(.active-tab) .tab-inner:is(:hover, :focus-visible) {
-	background-color: var(--border-color-0);
-}  
-
-.tab-inner {
-	margin: 2;
-	border-radius: calc(var(--radius)- 1px );
-}
-
-.tab.active-tab {
-	background-color: var(--bg-0);
+.tab:is(:hover, :focus-visible) {
+	background-color: var(--bg-1);
 }
 
 .tab:first-child>.tab-border {
@@ -111,7 +71,12 @@
 .tab.active-tab+.tab>.tab-border {
 	border-bottom-left-radius: var(--radius);
 	clip-path: inset(var(--radius) -2px -1px -1px);
-	box-shadow: var(--border-color-0) 0px 1px, var(--border-color-0) -1px 1px, var(--bg-0, transparent) -9999px 9999px 0 9999px;
+	transition: --bg var(--transition-props);
+	box-shadow: var(--border-color-0) 0px 1px, var(--border-color-0) -1px 1px, var(--bg, transparent) -9999px 9999px 0 9999px;
+}
+
+.tab.active-tab:is(:hover, :focus-visible)+.tab>.tab-border {
+	--bg: var(--bg-1);
 }
 
 .tab:has(+ .tab.active-tab) {
@@ -119,9 +84,14 @@
 }
 
 .tab:has(+ .tab.active-tab)>.tab-border {
-	box-shadow: var(--border-color-0) 0 1px, var(--border-color-0) 1px 1px, var(--bg-0, transparent) 9999px 9999px 0 9999px;
+	box-shadow: var(--border-color-0) 0 1px, var(--border-color-0) 1px 1px, var(--bg, transparent) 9999px 9999px 0 9999px;
 	border-bottom-right-radius: var(--radius);
-	/* clip-path: inset(var(--radius) -2px -1px -1px); */
+	clip-path: inset(var(--radius) -2px -1px -1px);
+	transition: --bg var(--transition-props);
+}
+
+.tab:has(+ .tab.active-tab:is(:hover, :focus-visible))>.tab-border {
+	--bg: var(--bg-1);
 }
 
 .tab:has(+ .tab + .tab.active-tab)>.tab-border {

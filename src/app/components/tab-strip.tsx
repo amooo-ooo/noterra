@@ -3,8 +3,7 @@
 import type React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
-import styles from '@/app/styles/tab-strip.module.css';
-import { Add, Close } from "./icons";
+import styles from "@/app/styles/tab-strip.module.css";
 
 export function TabStrip({
 	tabs,
@@ -49,7 +48,6 @@ export function TabStrip({
 						className={`${styles.tab} ${tab.id === currentTab ? styles["active-tab"] : ""}`}
 					>
 						<div className={styles["tab-border"]}>
-						<div className={styles['tab-inner']}>
 							<span>{tab.state.name}</span>
 							<span
 								// biome-ignore lint/a11y/useSemanticElements: nesting
@@ -73,9 +71,8 @@ export function TabStrip({
 									close(tab);
 								}}
 							>
-								<Close/>
+								x
 							</span>
-							</div>
 						</div>
 					</button>
 				))}
@@ -97,7 +94,7 @@ export function TabStrip({
 					});
 				}}
 			>
-			<Add/>
+				+
 			</button>
 		</div>
 	);
