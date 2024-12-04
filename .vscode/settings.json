@@ -1,4 +1,7 @@
 {
 	"npm.packageManager": "bun",
-	"cssModules.camelCase": false
+	"cssModules.camelCase": false,
+	"cssModules.pathAlias": {
+		"@": "${workspaceFolder}/src"
+	}
 }

@@ -1,0 +1,30 @@
+.detector-hidden {
+	opacity: 0;
+	width: 0;
+	height: 0;
+	position: absolute;
+	overflow: hidden;
+}
+
+.select-overlay {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background-color: color-mix(in srgb, Highlight 40%, transparent 60%);
+}
+
+.container {
+	position: relative;
+	padding: 10px;
+	padding-bottom: 0;
+	border-radius: 10px;
+	/* TODO: better */
+	background-color: #1e1e1e;
+	margin: 0.5em;
+	overflow: hidden;
+
+	&>* {
+		/* TODO: ideally do this in a way that doesnt block overlays (e.g. intellisense popups) */
+		margin: 0 0 -9px -20px;
+	}
+}

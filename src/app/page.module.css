@@ -40,7 +40,7 @@ html, body {
 
 .editor {
 	/* TODO: we have capability of allowing scroll content underneath navs if wanted (e.g for translucent/blurred nav overlays) */
-	grid-area: editor / main / bottom / main-end;
+	grid-area: toolbar / main / bottom / main-end;
 	display: grid;
 	grid-template-rows: subgrid;
 	overflow: auto;
