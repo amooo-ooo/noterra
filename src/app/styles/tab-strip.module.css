@@ -2,102 +2,118 @@
 	display: flex;
 }
 
-.tabstrip>.container {
-	display: contents;
-}
-
-.tab>.tab-border {
-	margin: 1px 1px 1px 0px;
-	box-shadow: var(--border-color-0) 0px 1px, var(--border-color-0) -1px 1px;
-	display: flex;
-	padding: 5;
-}
-
 .tab {
-	--radius: 5px;
-	--transition-props: 200ms ease;
+	--radius: 10px;
+	--padding-block: 5px;
+	--padding-inline: 8px;
+	--close-padding: 3px;
+	--border-width: 2px;
+	--border-color: #303030;
+	--hover-color: #80808020;
+	--active-color: #80808030;
+	--selected-color: #80808010;
+	--margin: 5px;
+	--transition: 250ms ease;
+
 	background: transparent;
-	transition: background-color var(--transition-props);
+	/* TODO: fonts should be inherited not set explicitly */
 	font-family: var(--font-inter-sans), Arial, Helvetica, sans-serif;
-	flex-grow: 1;
-	flex-shrink: 1;
+	flex: 1 1;
 	flex-basis: 0;
-	min-width: 0;
-	max-width: 10ch;
-	border-width: 0;
+	max-width: 15ch;
 	outline: none;
-}
+	border: none;
+	position: relative;
 
-.tab>span {
-	user-select: none;
-	flex-grow: 1;
-	flex-shrink: 1;
-	min-width: 0;
-}
+	&:not(.active-tab, :has(.close-icon:hover))::before {
+		content: "";
+		position: absolute;
+		inset: var(--margin);
+		border-radius: calc(var(--radius) - var(--margin));
+		transition: background-color var(--transition);
+	}
 
-.tab>button {
-	flex-grow: 0;
-	flex-shrink: 0;
-}
+	&:not(.active-tab, :has(.close-icon:hover)):is(:hover, :focus-visible)::before {
+		background-color: var(--hover-color);
+	}
 
-.tab:is(:hover, :focus-visible) {
-	background-color: var(--bg-1);
-}
+	&:not(.active-tab, :has(.close-icon:hover)):active::before {
+		background-color: var(--active-color);
+	}
 
-.tab:first-child>.tab-border {
-	box-shadow: var(--border-color-0) 0 1px;
-}
+	&.active-tab {
+		border-top-left-radius: var(--radius);
+		border-top-right-radius: var(--radius);
+		z-index: -1;
+		background-color: var(--selected-color);
 
-.tab:last-child>.tab-border {
-	margin-right: 1px;
-}
+		&+.tab .tab-border {
+			box-shadow:
+				var(--border-width) calc(var(--radius) * 2 + var(--border-width) * 2) 0 0 var(--selected-color);
+		}
 
-.tab {
-	border-top-left-radius: var(--radius);
-	border-top-right-radius: var(--radius);
-}
+		.tab:has(+&) .tab-border {
+			box-shadow:
+				calc(var(--border-width) * -1) calc(var(--radius) * 2 + var(--border-width) * 2) 0 0 var(--selected-color);
+		}
+	}
 
-.tab.active-tab>.tab-border {
-	box-shadow: var(--border-color-0) 1px -1px, var(--border-color-0) -1px -1px;
-	border-top-left-radius: var(--radius);
-	border-top-right-radius: var(--radius);
-	clip-path: inset(-9999px -9999px var(--radius) -9999px);
-}
+	&:not(:last-of-type) {
+		margin-right: calc(var(--border-width) * -1);
+	}
 
-.tab.active-tab+.tab {
-	border-bottom-left-radius: var(--radius);
-}
+	&>.tab-border {
+		padding: var(--padding-block) var(--padding-inline);
+		border: var(--border-width) solid var(--border-color);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		clip-path: inset(0 round calc(var(--radius) + var(--border-width)) calc(var(--radius) + var(--border-width)) 0 0);
 
-.tab.active-tab+.tab>.tab-border {
-	border-bottom-left-radius: var(--radius);
-	clip-path: inset(var(--radius) -2px -1px -1px);
-	transition: --bg var(--transition-props);
-	box-shadow: var(--border-color-0) 0px 1px, var(--border-color-0) -1px 1px, var(--bg, transparent) -9999px 9999px 0 9999px;
-}
+		.name {
+			display: inline-block;
+			min-width: 0;
+			flex-basis: 0;
+			flex-shrink: 1;
+		}
 
-.tab.active-tab:is(:hover, :focus-visible)+.tab>.tab-border {
-	--bg: var(--bg-1);
-}
+		.close-icon {
+			flex: 0 0;
+			flex-basis: content;
+			font-size: 1.5em;
+			padding: var(--close-padding);
+			border-radius: calc(var(--radius) - var(--margin));
+			/* force inline to act like block */
+			display: flex;
 
-.tab:has(+ .tab.active-tab) {
-	border-bottom-right-radius: var(--radius);
-}
+			&:is(:hover, :focus-visible) {
+				background-color: var(--hover-color);
+			}
 
-.tab:has(+ .tab.active-tab)>.tab-border {
-	box-shadow: var(--border-color-0) 0 1px, var(--border-color-0) 1px 1px, var(--bg, transparent) 9999px 9999px 0 9999px;
-	border-bottom-right-radius: var(--radius);
-	clip-path: inset(var(--radius) -2px -1px -1px);
-	transition: --bg var(--transition-props);
-}
+			&>* {
+				font-size: 1em;
+			}
+		}
 
-.tab:has(+ .tab.active-tab:is(:hover, :focus-visible))>.tab-border {
-	--bg: var(--bg-1);
-}
+		:not(.active-tab)>& {
+			border-top: none;
+			padding-top: calc(var(--padding-block) + var(--border-width));
+		}
 
-.tab:has(+ .tab + .tab.active-tab)>.tab-border {
-	box-shadow: var(--border-color-0) 1px 1px, var(--border-color-0) -1px 1px;
-}
+		.active-tab>& {
+			border-bottom: none;
+			padding-bottom: calc(var(--padding-block) + var(--border-width));
+			border-top-left-radius: var(--radius);
+			border-top-right-radius: var(--radius);
+			clip-path: inset(0 round 0 0 calc(var(--radius) + var(--border-width)) calc(var(--radius) + var(--border-width)));
+		}
 
-.tab:first-child:has(+ .tab + .tab.active-tab)>.tab-border {
-	box-shadow: var(--border-color-0) 1px 1px, var(--border-color-0) 0px 1px;
+		.active-tab+.tab>& {
+			border-bottom-left-radius: var(--radius);
+		}
+
+		.tab:has(+.active-tab)>& {
+			border-bottom-right-radius: var(--radius);
+		}
+	}
 }

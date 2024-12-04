@@ -4,6 +4,7 @@ import type React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.css";
+import { Add, Close } from "./icons";
 
 export function TabStrip({
 	tabs,
@@ -38,7 +39,7 @@ export function TabStrip({
 				list={tabs}
 				setList={(list) => modifyTabs({ type: "reorder", value: list })}
 				animation={250}
-				className={styles.container}
+				style={{ display: "contents" }}
 			>
 				{...tabs.map((tab) => (
 					<button
@@ -48,15 +49,12 @@ export function TabStrip({
 						className={`${styles.tab} ${tab.id === currentTab ? styles["active-tab"] : ""}`}
 					>
 						<div className={styles["tab-border"]}>
-							<span>{tab.state.name}</span>
+							<span className={styles.name}>{tab.state.name}</span>
 							<span
 								// biome-ignore lint/a11y/useSemanticElements: nesting
 								role="button"
 								tabIndex={0}
-								style={{
-									flexGrow: 0,
-									flexShrink: 0,
-								}}
+								className={styles["close-icon"]}
 								onKeyDown={(e) => {
 									if (e.key === " ") e.preventDefault();
 								}}
@@ -71,7 +69,7 @@ export function TabStrip({
 									close(tab);
 								}}
 							>
-								x
+								<Close />
 							</span>
 						</div>
 					</button>
@@ -94,7 +92,7 @@ export function TabStrip({
 					});
 				}}
 			>
-				+
+				<Add />
 			</button>
 		</div>
 	);
