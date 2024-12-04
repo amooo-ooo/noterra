@@ -5,7 +5,7 @@
 .tab {
 	--radius: 10px;
 	--padding-block: 5px;
-	--padding-inline: 8px;
+	--padding-inline: 8px 3px;
 	--close-padding: 3px;
 	--border-width: 2px;
 	--border-color: #303030;
@@ -63,7 +63,8 @@
 	}
 
 	&>.tab-border {
-		padding: var(--padding-block) var(--padding-inline);
+		padding-inline: var(--padding-inline);
+		padding-block: var(--padding-block);
 		border: var(--border-width) solid var(--border-color);
 		display: flex;
 		justify-content: space-between;
