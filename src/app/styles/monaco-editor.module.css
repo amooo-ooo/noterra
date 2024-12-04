@@ -15,16 +15,15 @@
 
 .container {
 	position: relative;
-	padding: 10px;
-	padding-bottom: 0;
+	padding-top: 10px;
 	border-radius: 10px;
 	/* TODO: better */
-	background-color: #1e1e1e;
+	background-color: #303030;
 	margin: 0.5em;
 	overflow: hidden;
 
 	&>* {
 		/* TODO: ideally do this in a way that doesnt block overlays (e.g. intellisense popups) */
-		margin: 0 0 -9px -20px;
+		margin: 0 0 -9px -10px;
 	}
 }

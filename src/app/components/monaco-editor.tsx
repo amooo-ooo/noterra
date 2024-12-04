@@ -117,6 +117,20 @@ export function MonacoEditor({
 					userSelect: "none",
 				}}
 			>
+				<style
+					// biome-ignore lint/security/noDangerouslySetInnerHtml: intentional
+					dangerouslySetInnerHTML={{
+						__html: `
+					.monaco-editor, .monaco-editor-background {
+						background: transparent;
+					}
+
+					.monaco-editor .margin {
+						background: transparent;
+					}
+				`,
+					}}
+				/>
 				<Editor
 					height={height + 19}
 					{...extension.options}
