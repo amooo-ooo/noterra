@@ -86,6 +86,12 @@ export function MonacoEditor({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [editor, node, getPos]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		setHeight(editorRef.current?.getContentHeight() ?? 0);
+		// editorRef.current?.setValue(node.attrs.content);
+	}, [node.attrs.content]);
+
 	return (
 		<NodeViewWrapper ref={containerRef} className={styles.container}>
 			<span
