@@ -90,6 +90,7 @@ export function TabStrip({
 							},
 						},
 					});
+					setCurrentTab(id);
 				}}
 			>
 				<Add />
