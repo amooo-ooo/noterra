@@ -111,7 +111,6 @@ export function Editor({
 			Dead: true,
 		};
 		const callback = (e: KeyboardEvent) => {
-			console.log(e);
 			if (
 				e.key.length !== 1 /* No special keys */ &&
 				!(e.key in SPECIAL_WHITELIST)
