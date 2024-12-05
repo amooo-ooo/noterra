@@ -16,8 +16,8 @@ export function TabStrip({
 }: {
 	tabs: Tab[];
 	modifyTabs: TabListDispatcher;
-	currentTab: Tab["id"];
-	setCurrentTab: React.Dispatch<Tab["id"]>;
+	currentTab: Tab["id"] | undefined;
+	setCurrentTab: React.Dispatch<Tab["id"] | undefined>;
 	idGen: () => Tab["id"];
 	className?: string;
 }) {
@@ -25,7 +25,7 @@ export function TabStrip({
 		if (tab.id === currentTab) {
 			let idx = tabs.findIndex((x) => x.id === tab.id) - 1;
 			if (idx < 0) idx += 2;
-			setCurrentTab(tabs[idx].id);
+			setCurrentTab(tabs[idx]?.id);
 		}
 		modifyTabs({
 			type: "remove",

@@ -55,7 +55,7 @@ export function TabManager({
 	editorClass,
 }: { tabstripClass?: string; toolbarClass?: string; editorClass?: string }) {
 	const [tabs, modifyTabs] = React.useReducer(tabReducer<Tab>, []);
-	const [currentTab, setCurrentTab] = React.useState(0);
+	const [currentTab, setCurrentTab] = React.useState<Tab["id"]>();
 	const [nextId, setNextId] = React.useState(0);
 	return (
 		<>
