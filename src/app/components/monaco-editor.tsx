@@ -57,7 +57,8 @@ export function MonacoEditor({
 	// deleteNode,
 }: NodeViewProps) {
 	const [height, setHeight] = React.useState(0);
-	const editorRef = React.useRef<editor.IStandaloneCodeEditor>();
+	const [mcEditor, setMcEditor] =
+		React.useState<editor.IStandaloneCodeEditor>();
 	const containerRef = React.useRef<HTMLDivElement | null>(null);
 
 	const tiptapState = React.useContext(EditorContext);
@@ -88,9 +89,23 @@ export function MonacoEditor({
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		setHeight(editorRef.current?.getContentHeight() ?? 0);
+		setHeight(mcEditor?.getContentHeight() ?? 0);
 		// editorRef.current?.setValue(node.attrs.content);
-	}, [node.attrs.content]);
+	}, [node.attrs.content, mcEditor]);
+
+	useEffect(() => {
+		return mcEditor?.onKeyDown((e) => {
+			console.log(node.attrs.content);
+			if (
+				(e.code === "Backspace" || e.code === "Delete") &&
+				node.attrs.content === ""
+			) {
+				let chain = editor.chain().deleteCurrentNode().enter();
+				if (e.code === "Backspace") chain = chain.selectNodeBackward();
+				chain.focus().run();
+			}
+		}).dispose;
+	}, [node, mcEditor, editor]);
 
 	return (
 		<NodeViewWrapper ref={containerRef} className={styles.container}>
@@ -105,12 +120,13 @@ export function MonacoEditor({
 								selection.extend(el);
 								return;
 							}
-							const editor = editorRef.current;
-							if (!editor) return;
-							const model = editor.getModel();
+							if (!mcEditor) return;
+							const model = mcEditor.getModel();
 							if (!model) return;
-							editor.focus();
-							editor.setSelection(model.getFullModelRange().collapseToStart());
+							mcEditor.focus();
+							mcEditor.setSelection(
+								model.getFullModelRange().collapseToStart(),
+							);
 						},
 					]);
 				}}
@@ -148,14 +164,14 @@ export function MonacoEditor({
 						...extension.options.options,
 					}}
 					onChange={(value, ev) => {
-						setHeight(editorRef.current?.getContentHeight() ?? 0);
+						setHeight(mcEditor?.getContentHeight() ?? 0);
 						updateAttributes({ content: value });
 						extension.options.onChange?.(value, ev);
 					}}
 					onMount={(mcEditor, monaco) => {
-						editorRef.current = mcEditor;
+						setMcEditor(mcEditor);
 						mcEditor.focus();
-						setHeight(editorRef.current?.getContentHeight() ?? 0);
+						setHeight(mcEditor?.getContentHeight() ?? 0);
 
 						const pos = editor.$pos(getPos() + 1 /* WHY */);
 						if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
@@ -182,6 +198,7 @@ export function MonacoEditor({
 								}, 0);
 						});
 						mcEditor.onDidChangeCursorPosition(() => {
+							// TODO: scroll handling
 							clearTimeout(timer);
 						});
 						extension.options.onMount?.(editor, monaco);
@@ -199,12 +216,11 @@ export function MonacoEditor({
 								selection.extend(el);
 								return;
 							}
-							const editor = editorRef.current;
-							if (!editor) return;
-							const model = editor.getModel();
+							if (!mcEditor) return;
+							const model = mcEditor.getModel();
 							if (!model) return;
-							editor.focus();
-							editor.setSelection(model.getFullModelRange().collapseToEnd());
+							mcEditor.focus();
+							mcEditor.setSelection(model.getFullModelRange().collapseToEnd());
 						},
 					]);
 				}}
