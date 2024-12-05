@@ -3,19 +3,17 @@
 	align-items: stretch;
 }
 
-.tab, .expanse {
-	--radius: 10px;
+.tab,
+.expanse {
+	--radius: 6px;
 	--padding-block: 5px;
 	--padding-left: 8px;
 	--padding-right: 3px;
 	--close-padding: 3px;
-	--border-width: 2px;
-	--border-color: #303030;
-	--hover-color: #80808020;
+	--border-width: 1px;
+	--hover-color: var(--bg-1);
 	--active-color: #80808030;
-	--selected-color: #80808010;
 	--margin: 5px;
-	--transition: 250ms ease;
 
 	background: transparent;
 	/* TODO: fonts should be inherited not set explicitly */
@@ -27,19 +25,22 @@
 	border: none;
 	position: relative;
 
-	&:not(.expanse, .active-tab, :has(.close-icon:hover))::before {
+	span {
+		color: var(--fg-4);
+	}
+
+	&:not(.expanse, .active-tab)::before {
 		content: "";
 		position: absolute;
 		inset: var(--margin);
-		border-radius: calc(var(--radius) - var(--margin));
-		transition: background-color var(--transition);
+		border-radius: calc(var(--radius) - var(--margin) * .3);
 	}
 
-	&:not(.active-tab, :has(.close-icon:hover)):is(:hover, :focus-visible)::before {
+	&:not(.active-tab):is(:hover, :focus-visible)::before {
 		background-color: var(--hover-color);
 	}
 
-	&:not(.active-tab, :has(.close-icon:hover)):active::before {
+	&:not(.active-tab):active::before {
 		background-color: var(--active-color);
 	}
 
@@ -47,25 +48,25 @@
 		border-top-left-radius: var(--radius);
 		border-top-right-radius: var(--radius);
 		z-index: -1;
-		background-color: var(--selected-color);
+		background-color: var(--bg-0);
 
 		&:first-child::after {
 			content: "";
 			position: absolute;
 			inset: calc(var(--radius) + var(--border-width)) 0 0 0;
 			pointer-events: none;
-			border-left: var(--border-width) solid var(--border-color);
+			border-left: var(--border-width) solid var(--border-color-0);
 		}
 
 		&+.tab .tab-border,
 		:has(&:last-child)+.expanse .tab-border {
 			box-shadow:
-				var(--border-width) calc(var(--radius) * 2 + var(--border-width) * 2) 0 0 var(--selected-color);
+				var(--border-width) calc(var(--radius) * 2 + var(--border-width) * 2) 0 0 var(--bg-0);
 		}
 
 		.tab:has(+&) .tab-border {
 			box-shadow:
-				calc(var(--border-width) * -1) calc(var(--radius) * 2 + var(--border-width) * 2) 0 0 var(--selected-color);
+				calc(var(--border-width) * -1) calc(var(--radius) * 2 + var(--border-width) * 2) 0 0 var(--bg-0);
 		}
 	}
 
@@ -76,7 +77,7 @@
 	&>.tab-border {
 		padding-inline: var(--padding-left) var(--padding-right);
 		padding-block: var(--padding-block);
-		border: var(--border-width) solid var(--border-color);
+		border: var(--border-width) solid var(--border-color-0);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -104,18 +105,22 @@
 			border: none;
 		}
 
-		.close-icon, .add-tab {
+		.close-icon,
+		.add-tab {
 			flex: 0 0;
 			flex-basis: content;
 			padding: var(--close-padding);
-			border-radius: calc(var(--radius) - var(--margin));
+			border-radius: calc(var(--radius) - var(--margin) * .3);
 			/* force inline to act like block */
 			display: flex;
 
-			&:is(:hover, :focus-visible) {
+			&:is(:hover, :focus-visible) span {
+				border-radius: calc(var(--radius) - var(--margin) * .5);
+				font-weight: 500;
 				background-color: var(--hover-color);
 			}
 		}
+
 
 		:not(.active-tab)>& {
 			border-top: none;
