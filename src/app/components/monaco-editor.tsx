@@ -210,6 +210,11 @@ export function MonacoEditor({
 							const model = mcEditor.getModel();
 							if (!model) return;
 							mcEditor.focus();
+								if (isReverseKey(tiptapState.lastKeyPress ?? ""))
+									mcEditor.setSelection(
+										model.getFullModelRange().collapseToEnd(),
+									);
+								else
 							mcEditor.setSelection(
 								model.getFullModelRange().collapseToStart(),
 							);
@@ -292,7 +297,14 @@ export function MonacoEditor({
 							const model = mcEditor.getModel();
 							if (!model) return;
 							mcEditor.focus();
-							mcEditor.setSelection(model.getFullModelRange().collapseToEnd());
+								if (isReverseKey(tiptapState.lastKeyPress ?? ""))
+									mcEditor.setSelection(
+										model.getFullModelRange().collapseToEnd(),
+									);
+								else
+									mcEditor.setSelection(
+										model.getFullModelRange().collapseToStart(),
+									);
 						},
 					]);
 				}}
