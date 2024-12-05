@@ -89,12 +89,6 @@ export function MonacoEditor({
 		};
 	}, [editor, node, getPos, tiptapState]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => {
-		setHeight(mcEditor?.getContentHeight() ?? 0);
-		// editorRef.current?.setValue(node.attrs.content);
-	}, [content, mcEditor]);
-
 	useEffect(() => {
 		return mcEditor?.onKeyDown((e) => {
 			if (!mcEditor.hasTextFocus()) return;
@@ -269,7 +263,6 @@ export function MonacoEditor({
 							...extension.options.options,
 						}}
 						onChange={(value, ev) => {
-							setHeight(mcEditor?.getContentHeight() ?? 0);
 							editor.commands.insertContentAt(
 								{
 									// literally magic numbers right here
@@ -291,6 +284,10 @@ export function MonacoEditor({
 								overflow.popover = "manual";
 								overflow.showPopover();
 							}
+
+							mcEditor.onDidContentSizeChange((e) => {
+								setHeight(e.contentHeight);
+							});
 
 							const pos = editor.$pos(getPos() + 1 /* WHY */);
 							if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
