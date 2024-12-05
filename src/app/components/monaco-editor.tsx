@@ -66,19 +66,17 @@ export function MonacoEditor({
 	const selectionHandler = React.useContext(SelectionHandler);
 	const content = node.content.content.map((node) => node.textContent).join("");
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const callback = ({
 			editor,
 			transaction,
 		}: { editor: TiptapEditor; transaction: Transaction }) => {
 			if (transaction.selection.$head.parent === node) {
-				const pos = editor.$pos(getPos() + 1 /* TODO: WHY?? */);
 				editor.commands.setTextSelection({
 					from: transaction.selection.anchor,
 					to: isReverseKey(tiptapState.lastKeyPress ?? "")
-						? pos.from - 2
-						: pos.to + 1,
+						? getPos() - 1
+						: getPos() + node.nodeSize,
 				});
 			}
 		};
@@ -86,8 +84,7 @@ export function MonacoEditor({
 		return () => {
 			editor.off("selectionUpdate", callback);
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [editor, node, getPos]);
+	}, [editor, node, getPos, tiptapState]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -142,10 +139,11 @@ export function MonacoEditor({
 					const pos = editor.$pos(getPos() + 1 /* WHY */);
 					if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
 						editor.commands.insertContentAt(pos.to, "<p></p>");
+
 					editor.commands.focus(
 						e.code === "ArrowUp" || e.code === "ArrowLeft"
-							? pos.from - 2 // WHY
-							: pos.to + 1,
+							? getPos() - 1
+							: getPos() + node.nodeSize,
 					);
 				}, 0);
 		});
@@ -157,7 +155,7 @@ export function MonacoEditor({
 			keyHandler.dispose();
 			cursorHandler.dispose();
 		};
-	}, [editor, mcEditor, getPos]);
+	}, [editor, mcEditor, getPos, node]);
 
 	return (
 		<NodeViewWrapper ref={containerRef} className={styles.container}>
@@ -167,11 +165,7 @@ export function MonacoEditor({
 					if (!el) return;
 					selectionHandler.push([
 						el,
-						(selection) => {
-							if (!selection.isCollapsed) {
-								selection.extend(el);
-								return;
-							}
+						() => {
 							if (!mcEditor) return;
 							const model = mcEditor.getModel();
 							if (!model) return;
@@ -246,11 +240,7 @@ export function MonacoEditor({
 					if (!el) return;
 					selectionHandler.push([
 						el,
-						(selection) => {
-							if (!selection.isCollapsed) {
-								selection.extend(el);
-								return;
-							}
+						() => {
 							if (!mcEditor) return;
 							const model = mcEditor.getModel();
 							if (!model) return;
