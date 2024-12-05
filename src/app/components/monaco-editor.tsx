@@ -240,23 +240,23 @@ export function MonacoEditor({
 						// biome-ignore lint/security/noDangerouslySetInnerHtml: intentional
 						dangerouslySetInnerHTML={{
 							__html: `
-					.monaco-editor, .monaco-editor-background {
-						background: transparent;
-					}
+								.monaco-editor, .monaco-editor-background {
+									background: transparent;
+								}
 
-					.monaco-editor .margin {
-						background: transparent;
-					}
+								.monaco-editor .margin {
+									background: transparent;
+								}
 
-					.overflowingContentWidgets {
-						top: calc(var(--codeblock-padding-top) + var(--codeblock-margin));
-						left: calc(var(--codeblock-margin) + var(--codeblock-deindent-left));
-						z-index: 9999;
-						overflow: visible;
-						border: none;
-						display: block;
-					}
-				`,
+								.overflowingContentWidgets {
+									top: calc(var(--codeblock-padding-top) + var(--codeblock-margin));
+									left: calc(var(--codeblock-margin) + var(--codeblock-deindent-left));
+									z-index: 9999;
+									overflow: visible;
+									border: none;
+									display: block;
+								}
+							`,
 						}}
 					/>
 					<Editor
