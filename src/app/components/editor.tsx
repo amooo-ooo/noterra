@@ -95,6 +95,7 @@ export function Editor({
 			'input[type="text"]',
 			"textarea",
 			"[contenteditable]",
+			"select",
 		].join(", ");
 		const SPECIAL_WHITELIST = {
 			ArrowLeft: true,

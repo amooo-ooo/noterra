@@ -1,5 +1,5 @@
 "use client";
-import { Editor } from "@monaco-editor/react";
+import { Editor, useMonaco } from "@monaco-editor/react";
 import type { Transaction } from "@tiptap/pm/state";
 import {
 	type Editor as TiptapEditor,
@@ -7,10 +7,11 @@ import {
 	NodeViewWrapper,
 } from "@tiptap/react";
 import "./monaco-node-extension";
-import type { editor } from "monaco-editor";
+import type { editor as MonacoEditorNS } from "monaco-editor";
 import React, { useEffect } from "react";
 import { EditorContext } from "./editor";
 import styles from "@/app/styles/monaco-editor.module.css";
+import { Option, Select } from "./select";
 
 type RangeListener = [Node, (selection: Selection) => void];
 const SelectionHandler = React.createContext<RangeListener[]>([]);
@@ -54,23 +55,25 @@ export function MonacoEditor({
 	selected,
 	extension,
 	getPos,
-	// updateAttributes,
+	updateAttributes,
 	// deleteNode,
 }: NodeViewProps) {
 	const [height, setHeight] = React.useState(0);
 	const [mcEditor, setMcEditor] =
-		React.useState<editor.IStandaloneCodeEditor>();
+		React.useState<MonacoEditorNS.IStandaloneCodeEditor>();
 	const containerRef = React.useRef<HTMLDivElement | null>(null);
 
 	const tiptapState = React.useContext(EditorContext);
 	const selectionHandler = React.useContext(SelectionHandler);
 	const content = node.content.content.map((node) => node.textContent).join("");
+	const monaco = useMonaco();
 
 	useEffect(() => {
 		const callback = ({
 			editor,
 			transaction,
 		}: { editor: TiptapEditor; transaction: Transaction }) => {
+			if (transaction.selection.empty) return;
 			if (transaction.selection.$head.parent === node) {
 				editor.commands.setTextSelection({
 					from: transaction.selection.anchor,
@@ -94,27 +97,24 @@ export function MonacoEditor({
 
 	useEffect(() => {
 		return mcEditor?.onKeyDown((e) => {
+			if (!mcEditor.hasTextFocus()) return;
 			if (e.code !== "Backspace" && e.code !== "Delete") return;
 			const selections = mcEditor.getSelections();
 			if (!selections?.length || selections.length > 1) return;
 			const selection = selections[0];
 			if (!selection.isEmpty()) return;
+			const selectPos = selection.getPosition();
+			const range = mcEditor.getModel()?.getFullModelRange();
 			if (
+				range &&
 				e.code === "Backspace" &&
-				!mcEditor
-					.getModel()
-					?.getFullModelRange()
-					.getStartPosition()
-					.equals(selection.getPosition())
+				!range.getStartPosition().equals(selectPos)
 			)
 				return;
 			if (
+				range &&
 				e.code === "Delete" &&
-				!mcEditor
-					.getModel()
-					?.getFullModelRange()
-					.getEndPosition()
-					.equals(selection.getPosition())
+				!range.getEndPosition().equals(selectPos)
 			)
 				return;
 			editor
@@ -128,38 +128,78 @@ export function MonacoEditor({
 	}, [editor, mcEditor, getPos, node]);
 
 	useEffect(() => {
-		if (!mcEditor) return;
-		let timer: ReturnType<typeof setTimeout>;
-		const keyHandler = mcEditor.onKeyDown((e) => {
+		return mcEditor?.onKeyDown((e) => {
+			if (!mcEditor.hasTextFocus()) return;
 			if (!e.code.startsWith("Arrow")) return;
 			const selection = mcEditor.getSelection();
-			if (!selection || selection.isEmpty())
-				timer = setTimeout(() => {
-					// TODO: fix this jank
-					const pos = editor.$pos(getPos() + 1 /* WHY */);
-					if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
-						editor.commands.insertContentAt(pos.to, "<p></p>");
+			if (
+				!(
+					// extra brackets required, functionally different
+					selection?.isEmpty()
+				)
+			)
+				return;
+			const selectPos = selection.getPosition();
 
-					editor.commands.focus(
-						e.code === "ArrowUp" || e.code === "ArrowLeft"
-							? getPos() - 1
-							: getPos() + node.nodeSize,
-					);
-				}, 0);
-		});
-		const cursorHandler = mcEditor.onDidChangeCursorPosition(() => {
-			// TODO: scroll handling
-			clearTimeout(timer);
-		});
-		return () => {
-			keyHandler.dispose();
-			cursorHandler.dispose();
-		};
+			const range = mcEditor.getModel()?.getFullModelRange();
+			if (!range) return;
+			if (
+				// Should we leave codeblock?
+				(e.code === "ArrowUp" &&
+					!(selectPos.lineNumber === range.startLineNumber)) ||
+				(e.code === "ArrowDown" &&
+					!(selectPos.lineNumber === range.endLineNumber)) ||
+				(e.code === "ArrowLeft" &&
+					!selectPos.equals(range.getStartPosition())) ||
+				(e.code === "ArrowRight" && !selectPos.equals(range.getEndPosition()))
+			)
+				return;
+
+			// TODO: fix this jank TODO: soon pls
+			const pos = editor.$pos(getPos() + 1 /* WHY */);
+			if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
+				editor.commands.insertContentAt(pos.to, "<p></p>");
+
+			editor.commands.focus(
+				e.code === "ArrowUp" || e.code === "ArrowLeft"
+					? getPos() - 1
+					: getPos() + node.nodeSize,
+			);
+		}).dispose;
 	}, [editor, mcEditor, getPos, node]);
+
+	const languageOptions = React.useMemo(
+		() => [
+			<Option key="(auto)" value="(auto)" />,
+			...(monaco?.languages
+				.getLanguages()
+				.map((lang) => <Option key={lang.id} value={lang.id} />) ?? []),
+		],
+		[monaco],
+	);
+
+	const currentLanguage = React.useMemo(() => {
+		// Map language attr to the nearest available language
+		const value = (node.attrs.language as string | null | undefined)
+			?.trim()
+			.toLowerCase();
+		if (!value || value === "(auto)") return "(auto)";
+		for (const lang of monaco?.languages.getLanguages() ?? []) {
+			const langId = lang.id.toLowerCase();
+			if (langId.toLowerCase() === value) return langId.toLowerCase();
+			for (const alias of [
+				...(lang.aliases ?? []),
+				...(lang.extensions ?? []), // TODO: is this relevant/neccesary
+			]) {
+				if (alias.toLowerCase() === value) return langId.toLowerCase();
+			}
+		}
+		return "(auto)";
+	}, [monaco, node.attrs.language]);
 
 	return (
 		<NodeViewWrapper ref={containerRef} className={styles.container}>
-			<span
+			<div
 				className={styles["detector-hidden"]}
 				ref={(el) => {
 					if (!el) return;
@@ -178,7 +218,7 @@ export function MonacoEditor({
 				}}
 			>
 				```
-			</span>
+			</div>
 			<div
 				contentEditable={false}
 				style={{
@@ -233,8 +273,15 @@ export function MonacoEditor({
 						extension.options.onMount?.(editor, monaco);
 					}}
 				/>
+				<Select
+					value={currentLanguage}
+					onChange={(value) => updateAttributes({ language: value })}
+					className={styles["language-selector"]}
+				>
+					{languageOptions}
+				</Select>
 			</div>
-			<span
+			<div
 				className={styles["detector-hidden"]}
 				ref={(el) => {
 					if (!el) return;
@@ -253,8 +300,8 @@ export function MonacoEditor({
 				onInput={console.log}
 			>
 				```
-			</span>
-			{selected ? <div className={styles["select-overlay"]} /> : null}
+			</div>
+			{selected ? <div className={styles["highlight-overlay"]} /> : null}
 		</NodeViewWrapper>
 	);
 }
