@@ -1,8 +1,11 @@
 import CodeBlock from "@tiptap/extension-code-block";
-import { mergeAttributes, ReactNodeViewRenderer } from "@tiptap/react";
+import {
+	mergeAttributes,
+	ReactNodeViewRenderer,
+	type SingleCommands,
+} from "@tiptap/react";
 import { MonacoEditor } from "./monaco-editor";
 import type { EditorProps } from "@monaco-editor/react";
-import type { Node } from "@tiptap/pm/model";
 
 declare module "@tiptap/extension-code-block" {
 	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -14,20 +17,23 @@ declare module "@tiptap/extension-code-block" {
 // 	// biome-ignore lint/correctness/noEmptyCharacterClassInRegex: <explanation>
 // 	/(?:^|\s)(```|~~~)(?:(\w+)$[\r\n]+|[\r\n]*)([^]*?)\1(?:$|\s)/gm;
 
+declare module "@tiptap/core" {
+	interface Commands<ReturnType> {
+		monacoCodeBlock: Commands<ReturnType>["codeBlock"] & {
+			/**
+			 * Unset a code block
+			 * @example editor.commands.unsetCodeBlock()
+			 */
+			unsetCodeBlock: () => ReturnType;
+		};
+	}
+}
+
 export const MonacoCodeBlockExtention = CodeBlock.extend({
+	name: "monacoCodeBlock",
+
 	addNodeView() {
 		return ReactNodeViewRenderer(MonacoEditor, {});
-	},
-
-	onBeforeCreate() {
-		const original = this.type.create.bind(this.type);
-		this.type.create = (attrs, content, ...args) => {
-			return original(
-				{ content: (content as Node | null)?.text, ...attrs },
-				null,
-				...args,
-			);
-		};
 	},
 
 	renderHTML({ node, HTMLAttributes }) {
@@ -41,25 +47,23 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 						? this.options.languageClassPrefix + node.attrs.language
 						: null,
 				},
-				node.attrs.content,
+				0,
 			],
 		];
 	},
 
 	renderText({ node }) {
-		return `${"```"}${node.attrs.language ?? ""}\n${node.attrs.content}\n${"```"}`;
+		return `${"```"}${node.attrs.language ?? ""}\n${node.content}\n${"```"}`;
 	},
 
-	addAttributes() {
+	addCommands() {
 		return {
 			...this.parent?.(),
-			content: {
-				default: "",
-				parseHTML: (element) => {
-					return element.firstElementChild?.textContent ?? null;
+			unsetCodeBlock:
+				() =>
+				({ commands }: { commands: SingleCommands }) => {
+					return commands.setNode("paragraph");
 				},
-				rendered: false,
-			},
 		};
 	},
 
@@ -75,6 +79,4 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 	// 		}),
 	// 	];
 	// },
-
-	content: undefined,
 });

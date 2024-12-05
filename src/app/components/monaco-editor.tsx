@@ -6,6 +6,7 @@ import {
 	type NodeViewProps,
 	NodeViewWrapper,
 } from "@tiptap/react";
+import "./monaco-node-extension";
 import type { editor } from "monaco-editor";
 import React, { useEffect } from "react";
 import { EditorContext } from "./editor";
@@ -53,7 +54,7 @@ export function MonacoEditor({
 	selected,
 	extension,
 	getPos,
-	updateAttributes,
+	// updateAttributes,
 	// deleteNode,
 }: NodeViewProps) {
 	const [height, setHeight] = React.useState(0);
@@ -63,6 +64,7 @@ export function MonacoEditor({
 
 	const tiptapState = React.useContext(EditorContext);
 	const selectionHandler = React.useContext(SelectionHandler);
+	const content = node.content.content.map((node) => node.textContent).join("");
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
@@ -91,21 +93,71 @@ export function MonacoEditor({
 	useEffect(() => {
 		setHeight(mcEditor?.getContentHeight() ?? 0);
 		// editorRef.current?.setValue(node.attrs.content);
-	}, [node.attrs.content, mcEditor]);
+	}, [content, mcEditor]);
 
 	useEffect(() => {
 		return mcEditor?.onKeyDown((e) => {
-			console.log(node.attrs.content);
+			if (e.code !== "Backspace" && e.code !== "Delete") return;
+			const selections = mcEditor.getSelections();
+			if (!selections?.length || selections.length > 1) return;
+			const selection = selections[0];
+			if (!selection.isEmpty()) return;
 			if (
-				(e.code === "Backspace" || e.code === "Delete") &&
-				node.attrs.content === ""
-			) {
-				let chain = editor.chain().deleteCurrentNode().enter();
-				if (e.code === "Backspace") chain = chain.selectNodeBackward();
-				chain.focus().run();
-			}
+				e.code === "Backspace" &&
+				!mcEditor
+					.getModel()
+					?.getFullModelRange()
+					.getStartPosition()
+					.equals(selection.getPosition())
+			)
+				return;
+			if (
+				e.code === "Delete" &&
+				!mcEditor
+					.getModel()
+					?.getFullModelRange()
+					.getEndPosition()
+					.equals(selection.getPosition())
+			)
+				return;
+			editor
+				.chain()
+				.unsetCodeBlock()
+				.focus(
+					e.code === "Delete" ? getPos() + node.nodeSize - 1 : getPos() + 1,
+				)
+				.run();
 		}).dispose;
-	}, [node, mcEditor, editor]);
+	}, [editor, mcEditor, getPos, node]);
+
+	useEffect(() => {
+		if (!mcEditor) return;
+		let timer: ReturnType<typeof setTimeout>;
+		const keyHandler = mcEditor.onKeyDown((e) => {
+			if (!e.code.startsWith("Arrow")) return;
+			const selection = mcEditor.getSelection();
+			if (!selection || selection.isEmpty())
+				timer = setTimeout(() => {
+					// TODO: fix this jank
+					const pos = editor.$pos(getPos() + 1 /* WHY */);
+					if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
+						editor.commands.insertContentAt(pos.to, "<p></p>");
+					editor.commands.focus(
+						e.code === "ArrowUp" || e.code === "ArrowLeft"
+							? pos.from - 2 // WHY
+							: pos.to + 1,
+					);
+				}, 0);
+		});
+		const cursorHandler = mcEditor.onDidChangeCursorPosition(() => {
+			// TODO: scroll handling
+			clearTimeout(timer);
+		});
+		return () => {
+			keyHandler.dispose();
+			cursorHandler.dispose();
+		};
+	}, [editor, mcEditor, getPos]);
 
 	return (
 		<NodeViewWrapper ref={containerRef} className={styles.container}>
@@ -156,7 +208,7 @@ export function MonacoEditor({
 				<Editor
 					height={height + 19}
 					{...extension.options}
-					value={node.attrs.content}
+					value={content}
 					language={node.attrs.language ?? undefined}
 					options={{
 						automaticLayout: true,
@@ -165,7 +217,14 @@ export function MonacoEditor({
 					}}
 					onChange={(value, ev) => {
 						setHeight(mcEditor?.getContentHeight() ?? 0);
-						updateAttributes({ content: value });
+						editor.commands.insertContentAt(
+							{
+								// literally magic numbers right here
+								from: getPos() + 1,
+								to: getPos() + node.nodeSize - 1,
+							},
+							value ? editor.schema.text(value) : "",
+						);
 						extension.options.onChange?.(value, ev);
 					}}
 					onMount={(mcEditor, monaco) => {
@@ -177,30 +236,6 @@ export function MonacoEditor({
 						if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
 							editor.commands.insertContentAt(pos.to, "<p></p>");
 
-						let timer: ReturnType<typeof setTimeout>;
-						mcEditor.onKeyDown((e) => {
-							if (!e.code.startsWith("Arrow")) return;
-							const selection = mcEditor.getSelection();
-							if (!selection || selection.isEmpty())
-								timer = setTimeout(() => {
-									// TODO: fix this jank
-									const pos = editor.$pos(getPos() + 1 /* WHY */);
-									if (
-										(pos.parent?.to ?? Number.POSITIVE_INFINITY) <=
-										pos.to + 1
-									)
-										editor.commands.insertContentAt(pos.to, "<p></p>");
-									editor.commands.focus(
-										e.code === "ArrowUp" || e.code === "ArrowLeft"
-											? pos.from - 2 // WHY
-											: pos.to + 1,
-									);
-								}, 0);
-						});
-						mcEditor.onDidChangeCursorPosition(() => {
-							// TODO: scroll handling
-							clearTimeout(timer);
-						});
 						extension.options.onMount?.(editor, monaco);
 					}}
 				/>
