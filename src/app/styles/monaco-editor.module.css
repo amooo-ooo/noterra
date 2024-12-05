@@ -19,17 +19,22 @@
 	background-color: color-mix(in srgb, Highlight 40%, transparent 60%);
 }
 
+/* CAREFUL MODIFYING LAYOUT: SIZE ADJUSTMENTS MAY MISALIGN VSCODE OVERLAY WIDGETS */
 .container {
+	--codeblock-padding-top: 10px;
+	--codeblock-margin: 0.5em;
+	--codeblock-deindent-left: -10px;
+
 	position: relative;
-	padding-top: 10px;
+	padding-top: var(--codeblock-padding-top);
 	border-radius: 10px;
 	/* TODO: better */
 	background-color: #303030;
-	margin: 0.5em;
+	margin: var(--codeblock-margin);
 	overflow: hidden;
 
 	&>* {
 		/* TODO: ideally do this in a way that doesnt block overlays (e.g. intellisense popups) */
-		margin: 0 0 -9px -10px;
+		margin: 0 0 -9px var(--codeblock-deindent-left);
 	}
 }

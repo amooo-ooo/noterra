@@ -198,105 +198,24 @@ export function MonacoEditor({
 	}, [monaco, node.attrs.language]);
 
 	return (
-		<NodeViewWrapper ref={containerRef} className={styles.container}>
-			<div
-				className={styles["detector-hidden"]}
-				ref={(el) => {
-					if (!el) return;
-					selectionHandler.push([
-						el,
-						() => {
-							if (!mcEditor) return;
-							const model = mcEditor.getModel();
-							if (!model) return;
-							mcEditor.focus();
-								if (isReverseKey(tiptapState.lastKeyPress ?? ""))
-									mcEditor.setSelection(
-										model.getFullModelRange().collapseToEnd(),
-									);
-								else
-							mcEditor.setSelection(
-								model.getFullModelRange().collapseToStart(),
-							);
-						},
-					]);
-				}}
-			>
-				```
-			</div>
-			<div
-				contentEditable={false}
-				style={{
-					userSelect: "none",
-				}}
-			>
-				<style
-					// biome-ignore lint/security/noDangerouslySetInnerHtml: intentional
-					dangerouslySetInnerHTML={{
-						__html: `
-					.monaco-editor, .monaco-editor-background {
-						background: transparent;
-					}
-
-					.monaco-editor .margin {
-						background: transparent;
-					}
-				`,
-					}}
-				/>
-				<Editor
-					height={height + 19}
-					{...extension.options}
-					value={content}
-					language={node.attrs.language ?? undefined}
-					options={{
-						automaticLayout: true,
-						scrollBeyondLastLine: false,
-						...extension.options.options,
-					}}
-					onChange={(value, ev) => {
-						setHeight(mcEditor?.getContentHeight() ?? 0);
-						editor.commands.insertContentAt(
-							{
-								// literally magic numbers right here
-								from: getPos() + 1,
-								to: getPos() + node.nodeSize - 1,
-							},
-							value ? editor.schema.text(value) : "",
-						);
-						extension.options.onChange?.(value, ev);
-					}}
-					onMount={(mcEditor, monaco) => {
-						setMcEditor(mcEditor);
-						mcEditor.focus();
-						setHeight(mcEditor?.getContentHeight() ?? 0);
-
-						const pos = editor.$pos(getPos() + 1 /* WHY */);
-						if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
-							editor.commands.insertContentAt(pos.to, "<p></p>");
-
-						extension.options.onMount?.(editor, monaco);
-					}}
-				/>
-				<Select
-					value={currentLanguage}
-					onChange={(value) => updateAttributes({ language: value })}
-					className={styles["language-selector"]}
-				>
-					{languageOptions}
-				</Select>
-			</div>
-			<div
-				className={styles["detector-hidden"]}
-				ref={(el) => {
-					if (!el) return;
-					selectionHandler.push([
-						el,
-						() => {
-							if (!mcEditor) return;
-							const model = mcEditor.getModel();
-							if (!model) return;
-							mcEditor.focus();
+		<NodeViewWrapper
+			ref={containerRef}
+			style={{
+				contain: "layout", // contain overlay positions
+			}}
+		>
+			<div className={styles.container}>
+				<div // TODO: can we replace these with more tiptap-integrated detectors?? (probably)
+					className={styles["detector-hidden"]}
+					ref={(el) => {
+						if (!el) return;
+						selectionHandler.push([
+							el,
+							() => {
+								if (!mcEditor) return;
+								const model = mcEditor.getModel();
+								if (!model) return;
+								mcEditor.focus();
 								if (isReverseKey(tiptapState.lastKeyPress ?? ""))
 									mcEditor.setSelection(
 										model.getFullModelRange().collapseToEnd(),
@@ -305,15 +224,119 @@ export function MonacoEditor({
 									mcEditor.setSelection(
 										model.getFullModelRange().collapseToStart(),
 									);
-						},
-					]);
-				}}
-				onChange={console.log}
-				onInput={console.log}
-			>
-				```
+							},
+						]);
+					}}
+				>
+					```
+				</div>
+				<div
+					contentEditable={false}
+					style={{
+						userSelect: "none",
+					}}
+				>
+					<style
+						// biome-ignore lint/security/noDangerouslySetInnerHtml: intentional
+						dangerouslySetInnerHTML={{
+							__html: `
+					.monaco-editor, .monaco-editor-background {
+						background: transparent;
+					}
+
+					.monaco-editor .margin {
+						background: transparent;
+					}
+
+					.overflowingContentWidgets {
+						top: calc(var(--codeblock-padding-top) + var(--codeblock-margin));
+						left: calc(var(--codeblock-margin) + var(--codeblock-deindent-left));
+						z-index: 9999;
+						overflow: visible;
+						border: none;
+						display: block;
+					}
+				`,
+						}}
+					/>
+					<Editor
+						height={height + 19}
+						{...extension.options}
+						value={content}
+						language={node.attrs.language ?? undefined}
+						options={{
+							automaticLayout: true,
+							scrollBeyondLastLine: false,
+							...extension.options.options,
+						}}
+						onChange={(value, ev) => {
+							setHeight(mcEditor?.getContentHeight() ?? 0);
+							editor.commands.insertContentAt(
+								{
+									// literally magic numbers right here
+									from: getPos() + 1,
+									to: getPos() + node.nodeSize - 1,
+								},
+								value ? editor.schema.text(value) : "",
+							);
+							extension.options.onChange?.(value, ev);
+						}}
+						onMount={(mcEditor, monaco) => {
+							setMcEditor(mcEditor);
+							mcEditor.focus();
+							setHeight(mcEditor?.getContentHeight() ?? 0);
+							const overflow = mcEditor
+								.getDomNode()
+								?.querySelector(".overflowingContentWidgets") as HTMLElement;
+							if (overflow) {
+								// Force styles on overflowing widget container to allow for overflowing
+								overflow.popover = "true";
+							}
+
+							const pos = editor.$pos(getPos() + 1 /* WHY */);
+							if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
+								editor.commands.insertContentAt(pos.to, "<p></p>");
+
+							extension.options.onMount?.(editor, monaco);
+						}}
+					/>
+					<Select
+						value={currentLanguage}
+						onChange={(value) => updateAttributes({ language: value })}
+						className={styles["language-selector"]}
+					>
+						{languageOptions}
+					</Select>
+				</div>
+				<div
+					className={styles["detector-hidden"]}
+					ref={(el) => {
+						if (!el) return;
+						selectionHandler.push([
+							el,
+							() => {
+								if (!mcEditor) return;
+								const model = mcEditor.getModel();
+								if (!model) return;
+								mcEditor.focus();
+								if (isReverseKey(tiptapState.lastKeyPress ?? ""))
+									mcEditor.setSelection(
+										model.getFullModelRange().collapseToEnd(),
+									);
+								else
+									mcEditor.setSelection(
+										model.getFullModelRange().collapseToStart(),
+									);
+							},
+						]);
+					}}
+					onChange={console.log}
+					onInput={console.log}
+				>
+					```
+				</div>
+				{selected ? <div className={styles["highlight-overlay"]} /> : null}
 			</div>
-			{selected ? <div className={styles["highlight-overlay"]} /> : null}
 		</NodeViewWrapper>
 	);
 }
