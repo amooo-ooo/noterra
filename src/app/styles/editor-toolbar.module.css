@@ -1,0 +1,42 @@
+.toolbar {
+	--gap: 3px;
+	--divider-padding: 5px;
+
+	display: flex;
+	flex-flow: row wrap;
+	padding-inline: var(--gap);
+}
+
+.toolbar-group {
+	display: flex;
+	flex-flow: row;
+	gap: var(--gap);
+
+	&:not(:first-of-type)::before {
+		content: "";
+		width: 1px;
+		margin-inline: var(--divider-padding) calc(var(--divider-padding) - var(--gap));
+		background-color: currentColor;
+	}
+
+	button {
+		background-color: transparent;
+		border: none;
+		padding: 2px;
+		border-radius: 2px;
+		display: flex;
+
+		/* TODO: colors */
+		&:is(:hover, :focus-visible) {
+			background-color: #80808020;
+		}
+
+		&:active {
+			background-color: #80808030;
+		}
+
+		>* {
+			font-size: 1.8em;
+		}
+	}
+}

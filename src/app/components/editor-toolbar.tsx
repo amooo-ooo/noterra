@@ -4,6 +4,7 @@ import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import { unreachable } from "./util";
 import { TiptapButton } from "./tiptap-fields";
+import styles from "@/app/styles/editor-toolbar.module.css";
 
 import {
 	FormatBold,
@@ -27,7 +28,7 @@ const TOOLS = {
 		<TiptapButton
 			label="bold"
 			action={(ctx) => ctx.toggleBold()}
-			detect={(ed) => ed.isActive("bold")}
+			detect="bold"
 			icon={<FormatBold />}
 		/>
 	),
@@ -35,7 +36,7 @@ const TOOLS = {
 		<TiptapButton
 			label="italic"
 			action={(ctx) => ctx.toggleItalic()}
-			detect={(ed) => ed.isActive("italic")}
+			detect="italic"
 			icon={<FormatItalic />}
 		/>
 	),
@@ -43,7 +44,7 @@ const TOOLS = {
 		<TiptapButton
 			label="underline"
 			action={(ctx) => ctx.toggleUnderline()}
-			detect={(ed) => ed.isActive("underline")}
+			detect="underline"
 			icon={<FormatUnderline />}
 		/>
 	),
@@ -51,7 +52,7 @@ const TOOLS = {
 		<TiptapButton
 			label="strikethrough"
 			action={(ctx) => ctx.toggleStrike()}
-			detect={(ed) => ed.isActive("strike")}
+			detect="strike"
 			icon={<FormatStrikethrough />}
 		/>
 	),
@@ -59,7 +60,7 @@ const TOOLS = {
 		<TiptapButton
 			label="code"
 			action={(ctx) => ctx.toggleCode()}
-			detect={(ed) => ed.isActive("code")}
+			detect="code"
 			icon={<Code />}
 		/>
 	),
@@ -67,7 +68,7 @@ const TOOLS = {
 		<TiptapButton
 			label="codeblock"
 			action={(ctx) => ctx.toggleCodeBlock()}
-			detect={(ed) => ed.isActive("codeblock")}
+			detect="codeblock"
 			icon={<CodeBlocks />}
 		/>
 	),
@@ -75,7 +76,7 @@ const TOOLS = {
 		<TiptapButton
 			label="blockquote"
 			action={(ctx) => ctx.toggleBlockquote()}
-			detect={(ed) => ed.isActive("blockquote")}
+			detect="blockquote"
 			icon={<FormatQuote />}
 		/>
 	),
@@ -83,7 +84,7 @@ const TOOLS = {
 		<TiptapButton
 			label="superscript"
 			action={(ctx) => ctx.toggleSuperscript()}
-			detect={(ed) => ed.isActive("superscript")}
+			detect="superscript"
 			icon={<Superscript />}
 		/>
 	),
@@ -91,7 +92,7 @@ const TOOLS = {
 		<TiptapButton
 			label="subscript"
 			action={(ctx) => ctx.toggleSuperscript()}
-			detect={(ed) => ed.isActive("subscript")}
+			detect="subscript"
 			icon={<Subscript />}
 		/>
 	),
@@ -99,7 +100,7 @@ const TOOLS = {
 		<TiptapButton
 			label="orderedlist"
 			action={(ctx) => ctx.toggleOrderedList()}
-			detect={(ed) => ed.isActive("orderedList")}
+			detect="orderedList"
 			icon={<FormatListNumbered />}
 		/>
 	),
@@ -107,7 +108,7 @@ const TOOLS = {
 		<TiptapButton
 			label="bulletList"
 			action={(ctx) => ctx.toggleBulletList()}
-			detect={(ed) => ed.isActive("bulletList")}
+			detect="bulletList"
 			icon={<FormatListBulleted />}
 		/>
 	),
@@ -122,7 +123,7 @@ const TOOLS = {
 		<TiptapButton
 			label="undo"
 			action={(ctx) => ctx.undo()}
-			tiptapDisabled={(ctx) => !ctx.can().undo()}
+			disabled={(ed) => !ed.can().undo()}
 			icon={<Undo />}
 		/>
 	),
@@ -130,7 +131,7 @@ const TOOLS = {
 		<TiptapButton
 			label="redo"
 			action={(ctx) => ctx.redo()}
-			tiptapDisabled={(ctx) => !ctx.can().redo()}
+			disabled={(ed) => !ed.can().redo()}
 			icon={<Redo />}
 		/>
 	),
@@ -265,7 +266,7 @@ export function EditorToolbar({ className }: { className?: string }) {
 				put: ["editor-toolbar", "editor-toolbar-groups"],
 				pull: ["editor-toolbar-groups"],
 			}}
-			className={className}
+			className={`${styles.toolbar} ${className}`}
 		>
 			{arrangement.order.map(({ id }) => {
 				const group = arrangement.groups[id];
@@ -285,6 +286,7 @@ export function EditorToolbar({ className }: { className?: string }) {
 								order,
 							})
 						}
+						className={styles["toolbar-group"]}
 					>
 						{group.items.map((item) => {
 							return React.cloneElement(TOOLS[item.id], { key: item.id });
