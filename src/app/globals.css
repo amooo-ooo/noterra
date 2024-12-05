@@ -6,7 +6,7 @@
   --bg-1: light-dark(#ededed, #262626);
   --bg-2: light-dark(#d4d4d4, #2b2b2b);
   
-  --border-color-0: light-dark(#d4d4d4, #393939);
+  --border-color: light-dark(#d4d4d4, #393939);
 
   --fg-0: light-dark(#1f1f1f, #f9f9f9);
   --fg-1: light-dark(#262626, #ededed);
