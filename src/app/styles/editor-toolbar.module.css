@@ -25,6 +25,7 @@
 		padding: 2px;
 		border-radius: 2px;
 		display: flex;
+		transition: background-color 250ms ease;
 
 		/* TODO: colors */
 		&:is(:hover, :focus-visible) {
