@@ -59,6 +59,7 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 	addCommands() {
 		return {
 			...this.parent?.(),
+			// TODO: preserve newlines
 			unsetCodeBlock:
 				() =>
 				({ commands }: { commands: SingleCommands }) => {
