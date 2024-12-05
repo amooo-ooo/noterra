@@ -1,5 +1,6 @@
 .tabstrip {
 	display: flex;
+	align-items: stretch;
 }
 
 .tab {
@@ -92,7 +93,6 @@
 		.close-icon {
 			flex: 0 0;
 			flex-basis: content;
-			font-size: 1.5em;
 			padding: var(--close-padding);
 			border-radius: calc(var(--radius) - var(--margin));
 			/* force inline to act like block */
@@ -100,10 +100,6 @@
 
 			&:is(:hover, :focus-visible) {
 				background-color: var(--hover-color);
-			}
-
-			&>* {
-				font-size: 1em;
 			}
 		}
 

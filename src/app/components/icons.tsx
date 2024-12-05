@@ -3,7 +3,11 @@
 import "material-symbols";
 import type React from "react";
 
-export type IconProps = React.HTMLAttributes<HTMLSpanElement> & {
+export type IconProps = {
+	size?: React.CSSProperties["fontSize"];
+};
+
+type GeneralIconProps = IconProps & {
 	codePoint?: string;
 	label: string;
 	iconStyle?: "outlined" | "rounded" | "sharp";
@@ -13,22 +17,25 @@ export const Icon = ({
 	codePoint,
 	label,
 	iconStyle = "outlined",
-	...props
-}: IconProps) => (
+	size = "1.8em",
+}: GeneralIconProps) => (
 	<span
 		className={`material-symbols-${iconStyle}`}
 		role="img"
 		aria-label={label.replace(/([a-z])([A-Z])/g, "$1 $2")}
-		{...props}
+		style={{
+			display: "block",
+			fontSize: size,
+		}}
 	>
 		{codePoint ?? label}
 	</span>
 );
 
 const createIcon = (name: string, codePoint: string) => {
-	const component: React.FC = (
-		props: React.HTMLAttributes<HTMLSpanElement>,
-	) => <Icon codePoint={codePoint} label={name} {...props} />;
+	const component = (props: IconProps) => (
+		<Icon codePoint={codePoint} label={name} {...props} />
+	);
 	component.displayName = `${name}Icon`;
 	return component;
 };

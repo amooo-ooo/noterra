@@ -4,7 +4,7 @@
 
 	display: flex;
 	flex-flow: row wrap;
-	padding-inline: var(--gap);
+	padding: 5px 10px;
 }
 
 .toolbar-group {
@@ -34,10 +34,6 @@
 
 		&:active {
 			background-color: #80808030;
-		}
-
-		>* {
-			font-size: 1.8em;
 		}
 	}
 }

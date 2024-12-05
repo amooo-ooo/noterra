@@ -69,7 +69,7 @@ export function TabStrip({
 									close(tab);
 								}}
 							>
-								<Close />
+								<Close size="1.5em" />
 							</span>
 						</div>
 					</button>
@@ -93,7 +93,7 @@ export function TabStrip({
 					setCurrentTab(id);
 				}}
 			>
-				<Add />
+						<Add size="1.5em" />
 			</button>
 		</div>
 	);
