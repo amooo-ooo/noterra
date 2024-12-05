@@ -201,7 +201,7 @@ export function MonacoEditor({
 		<NodeViewWrapper
 			ref={containerRef}
 			style={{
-				contain: "layout", // contain overlay positions
+				anchorName: "--monaco", // contain overlay positions
 			}}
 		>
 			<div className={styles.container}>
@@ -249,12 +249,11 @@ export function MonacoEditor({
 								}
 
 								.overflowingContentWidgets {
-									top: calc(var(--codeblock-padding-top) + var(--codeblock-margin));
-									left: calc(var(--codeblock-margin) + var(--codeblock-deindent-left));
-									z-index: 9999;
+									position-anchor: --monaco;
+									top: calc(anchor(top) + var(--codeblock-padding-top));
+									left: calc(anchor(left) + var(--codeblock-margin) + var(--codeblock-deindent-left));
 									overflow: visible;
 									border: none;
-									display: block;
 								}
 							`,
 						}}
@@ -289,8 +288,8 @@ export function MonacoEditor({
 								.getDomNode()
 								?.querySelector(".overflowingContentWidgets") as HTMLElement;
 							if (overflow) {
-								// Force styles on overflowing widget container to allow for overflowing
-								overflow.popover = "true";
+								overflow.popover = "manual";
+								overflow.showPopover();
 							}
 
 							const pos = editor.$pos(getPos() + 1 /* WHY */);
