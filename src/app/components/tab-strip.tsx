@@ -75,26 +75,31 @@ export function TabStrip({
 					</button>
 				))}
 			</ReactSortable>
-			<button
-				type="button"
-				onClick={() => {
-					// new tab created here we might wanna do stuff
-					const id = idGen();
-					modifyTabs({
-						type: "append",
-						initialValue: {
-							id,
-							state: {
-								id: `${id}`, // TODO: get a better id
-								name: "Untitled",
-							},
-						},
-					});
-					setCurrentTab(id);
-				}}
-			>
+			<div className={styles.expanse}>
+				<div className={styles["tab-border"]}>
+					<button
+						type="button"
+						onClick={() => {
+							// new tab created here we might wanna do stuff
+							const id = idGen();
+							modifyTabs({
+								type: "append",
+								initialValue: {
+									id,
+									state: {
+										id: `${id}`, // TODO: get a better id
+										name: "Untitled",
+									},
+								},
+							});
+							setCurrentTab(id);
+						}}
+						className={styles["add-tab"]}
+					>
 						<Add size="1.5em" />
-			</button>
+					</button>
+				</div>
+			</div>
 		</div>
 	);
 }
