@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.css";
@@ -32,6 +32,7 @@ export function TabStrip({
 			predicate: (x) => x.id === tab.id,
 		});
 	};
+	const [renamingTab, setRenamingTab] = React.useState<Tab["id"]>();
 
 	return (
 		<div className={`${styles.tabstrip} ${className}`}>
@@ -45,12 +46,33 @@ export function TabStrip({
 					<button
 						type="button"
 						key={tab.id}
-						onClick={(e) => setCurrentTab(tab.id)}
-						onPointerUp={(e) => tab.state.editor?.commands.focus()}
+						onClick={() => {
+							if (currentTab === tab.id) {
+								setRenamingTab(tab.id);
+							} else setCurrentTab(tab.id);
+						}}
+						onPointerUp={(e) => {
+							if (tab.id === currentTab) return;
+							tab.state.editor?.commands.focus();
+						}}
 						className={`${styles.tab} ${tab.id === currentTab ? styles["active-tab"] : ""}`}
 					>
 						<div className={styles["tab-border"]}>
-							<span className={styles.name}>{tab.state.name}</span>
+							{tab.id === renamingTab ? (
+								<input
+									className={styles["tab-rename-field"]}
+									defaultValue={tab.state.name}
+									onBlur={() => setRenamingTab(undefined)}
+									onKeyUp={(e) => {
+										if (e.key !== "Enter") return;
+										tab.state.name = e.currentTarget.value;
+										setRenamingTab(undefined);
+									}}
+									ref={(el) => el?.select()}
+								/>
+							) : (
+								<span className={styles.name}>{tab.state.name}</span>
+							)}
 							<span
 								// biome-ignore lint/a11y/useSemanticElements: nesting
 								role="button"
