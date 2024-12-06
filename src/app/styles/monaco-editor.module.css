@@ -9,15 +9,19 @@
 .language-selector {
 	color-scheme: dark;
 	position: absolute;
-	bottom: 10px;
-	right: 10px;
+	bottom: 5px;
+	right: 5px;
 	outline: none;
 	background-color: var(--bg-1);
 	border: var(--border-width) solid var(--border-color);
 	padding: var(--padding);
 	border-radius: var(--radius);
+	/* while using native select, makes field smaller */
+	field-sizing: content;
+	/* TODO: please inherit font faces instead of redeclaring */
 	font-family: var(--font-inter-sans);
 
+	/* is this not inherited? (yes it is, just tested) */
 	option {
 		/* TODO: weird bug, inter font not loading? */
 		/* TODO: review: was it because of the missing comma perhaps? */
@@ -44,13 +48,12 @@
 	position: relative;
 	padding-top: var(--codeblock-padding-top);
 	border-radius: 10px;
-	/* TODO: better */
+	/* TODO: define color with other tiptap styles?? */
 	background-color: #303030;
 	margin: var(--codeblock-margin);
 	overflow: hidden;
 
 	&>* {
-		/* TODO: ideally do this in a way that doesnt block overlays (e.g. intellisense popups) */
 		margin: 0 0 -9px var(--codeblock-deindent-left);
 	}
 }
