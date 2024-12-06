@@ -19,6 +19,9 @@
 	--small-transition: 150ms ease;
 	--margin: 5px;
 	--adjacent-background-color: transparent;
+	--shadow-blur: 10px;
+	--shadow-spread: 0px;
+	--shadow-color: #000000bb;
 
 	background: transparent;
 	transition: background-color var(--transition);
@@ -54,6 +57,16 @@
 		z-index: -1;
 		background-color: var(--selected-color);
 
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: inherit;
+			box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--shadow-color);
+			transition: box-shadow var(--transition);
+			clip-path: inset(calc(-1 * var(--shadow-spread) - var(--shadow-blur)) calc(-1 * var(--shadow-spread) - var(--shadow-blur)) 0 calc(-1 * var(--shadow-spread) - var(--shadow-blur)));
+		}
+
 		&:first-child::after {
 			content: "";
 			position: absolute;
@@ -78,6 +91,7 @@
 		padding-block: var(--padding-block);
 		border: var(--border-width) solid var(--border-color);
 		display: flex;
+		position: relative;
 		justify-content: space-between;
 		align-items: center;
 		clip-path: inset(0 round calc(var(--radius) + var(--border-width)) calc(var(--radius) + var(--border-width)) 0 0);
@@ -117,9 +131,8 @@
 			&:is(:hover, :focus-visible) {
 				background-color: var(--hover-color);
 				color: var(--fg-3);
-				/* TODO: review */
 
-				span {
+				&>* {
 					font-weight: 500;
 				}
 			}
@@ -137,6 +150,17 @@
 		:not(.active-tab)>& {
 			border-top: none;
 			padding-top: calc(var(--padding-block) + var(--border-width));
+
+			/* intentional pseudoelement to avoid exit transition */
+			&::before {
+				content: '';
+				position: absolute;
+				inset: 0;
+				border-radius: inherit;
+				box-shadow: inset 0 calc(var(--shadow-spread) * -1 - var(--shadow-blur)) var(--shadow-blur) calc(var(--shadow-blur) * -1) var(--shadow-color);
+				/* but we still want for enter transition */
+				transition: box-shadow var(--transition);
+			}
 		}
 
 		.active-tab>& {
