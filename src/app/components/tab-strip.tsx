@@ -46,6 +46,7 @@ export function TabStrip({
 					<button
 						type="button"
 						key={tab.id}
+						title={tab.state.name}
 						onClick={() => {
 							if (currentTab === tab.id) {
 								setRenamingTab(tab.id);
