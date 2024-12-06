@@ -114,7 +114,7 @@ const TOOLS = {
 	),
 	horizontalRule: (
 		<TiptapButton
-			label="bulletList"
+			label="horizontalRule"
 			action={(ctx) => ctx.setHorizontalRule()}
 			icon={<HorizontalRule />}
 		/>

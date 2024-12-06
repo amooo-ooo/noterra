@@ -26,7 +26,7 @@
 	font-family: var(--font-inter-sans), Arial, Helvetica, sans-serif;
 	flex: 1 1;
 	flex-basis: 0;
-	max-width: 15ch;
+	max-width: 20ch;
 	outline: none;
 	border: none;
 	position: relative;
