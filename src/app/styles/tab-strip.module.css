@@ -11,9 +11,10 @@
 	--padding-right: 3px;
 	--close-padding: 3px;
 	--border-width: 1px;
-	--hover-color: var(--bg-1);
+	--hover-color: #80808020;
 	--selected-color: var(--bg-0);
 	--active-color: #80808030;
+	--transition: 200ms ease;
 	--margin: 5px;
 
 	background: transparent;
@@ -35,6 +36,7 @@
 		position: absolute;
 		inset: var(--margin);
 		border-radius: calc(var(--radius) - var(--margin) * .3);
+		transition: background-color var(--transition);
 	}
 
 	&:not(.active-tab):is(:hover, :focus-visible)::before {
@@ -110,7 +112,7 @@
 		.add-tab {
 			flex: 0 0;
 			flex-basis: content;
-			padding: var(--close-padding);
+			margin: var(--close-padding) calc(var(--close-padding) * 1.6);
 			border-radius: calc(var(--radius) - var(--margin) * .3);
 			/* force inline to act like block */
 			display: flex;
@@ -125,6 +127,10 @@
 			}
 		}
 
+		.add-tab {
+			padding: var(--close-padding);
+			margin: 0;
+		}
 
 		:not(.active-tab)>& {
 			border-top: none;
