@@ -1,11 +1,12 @@
 :root {
   color-scheme: light dark;
-  font-feature-settings: 'liga' 1, 'calt' 1;
+  font-feature-settings: 'liga'1, 'calt'1;
 
+  --bg--1: light-dark(#ffffff, #181818);
   --bg-0: light-dark(#f9f9f9, #1f1f1f);
   --bg-1: light-dark(#ededed, #262626);
   --bg-2: light-dark(#d4d4d4, #2b2b2b);
-  
+
   --border-color: light-dark(#d4d4d4, #393939);
 
   --fg-0: light-dark(#1f1f1f, #f9f9f9);
