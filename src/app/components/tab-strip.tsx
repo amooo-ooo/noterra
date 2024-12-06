@@ -4,7 +4,7 @@ import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.css";
-import { Add, Close } from "./icons";
+import { Add, Close, Upload } from "./icons";
 
 export function TabStrip({
 	tabs,
@@ -33,6 +33,22 @@ export function TabStrip({
 		});
 	};
 	const [renamingTab, setRenamingTab] = React.useState<Tab["id"]>();
+
+	const createFile = (name = "Untitled", content = "hello") => {
+		const id = idGen();
+		modifyTabs({
+			type: "append",
+			initialValue: {
+				id,
+				state: {
+					id: `${id}`, // TODO: get a better id
+					name,
+					initialContent: content,
+				},
+			},
+		});
+		setCurrentTab(id);
+	};
 
 	return (
 		<div className={`${styles.tabstrip} ${className}`}>
@@ -104,24 +120,36 @@ export function TabStrip({
 					<button
 						type="button"
 						onClick={() => {
-							// new tab created here we might wanna do stuff
-							const id = idGen();
-							modifyTabs({
-								type: "append",
-								initialValue: {
-									id,
-									state: {
-										id: `${id}`, // TODO: get a better id
-										name: "Untitled",
-									},
-								},
-							});
-							setCurrentTab(id);
+							createFile();
 						}}
 						className={styles["add-tab"]}
 					>
 						<Add size="1.5em" />
 					</button>
+					<input
+						id="fileUpload"
+						name="fileUpload"
+						type="file"
+						style={{ display: "none" }}
+						onChange={async (e) => {
+							const file = e.currentTarget.files?.[0];
+							e.currentTarget.value = "";
+							if (!file) return;
+							const reader = new FileReader();
+							const contents = await new Promise<string>((res) => {
+								reader.onload = () => res(reader.result as string);
+								reader.readAsText(file);
+							});
+							// TODO: parse contents, passed `contents` should be HTML
+							createFile(file.name, contents);
+						}}
+					/>
+					<label
+						htmlFor="fileUpload"
+						className={`${styles["upload-file"]} inherit-button-scaling`}
+					>
+						<Upload size="1.5em" />
+					</label>
 				</div>
 			</div>
 		</div>

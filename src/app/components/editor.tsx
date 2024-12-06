@@ -31,6 +31,7 @@ import styles from "@/app/styles/tiptap.module.css";
 export interface EditorData {
 	id: string;
 	name: string;
+	initialContent: string;
 	editor?: TipTapEditor;
 	lastKeyPress?: KeyboardEvent["key"];
 }
@@ -84,7 +85,7 @@ export function Editor({
 				},
 			}),
 		],
-		content: "hello",
+		content: data.initialContent,
 		immediatelyRender: false,
 	});
 	data.editor = editor ?? undefined;

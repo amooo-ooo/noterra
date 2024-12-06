@@ -36,6 +36,11 @@ body {
   margin: 0;
 }
 
+button, .inherit-button-scaling {
+  /* standardize */
+  font-size: 0.9em;
+}
+
 a {
   color: inherit;
   text-decoration: none;
