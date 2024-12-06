@@ -20,7 +20,8 @@
 
 	option {
 		/* TODO: weird bug, inter font not loading? */
-		font-family: var(--font-inter-sans) Arial, Helvetica, sans-serif;
+		/* TODO: review: was it because of the missing comma perhaps? */
+		font-family: var(--font-inter-sans), Arial, Helvetica, sans-serif;
 	}
 }
 
