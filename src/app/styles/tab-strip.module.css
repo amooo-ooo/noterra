@@ -22,6 +22,8 @@
 	--shadow-blur: 10px;
 	--shadow-spread: 0px;
 	--shadow-color: #000000bb;
+	--shadow-shift-x: 1px;
+	--shadow-shift-y: 2px;
 
 	background: transparent;
 	transition: background-color var(--transition);
@@ -63,7 +65,7 @@
 			pointer-events: none;
 			inset: 0;
 			border-radius: inherit;
-			box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--shadow-color);
+			box-shadow: var(--shadow-shift-x) var(--shadow-shift-y) var(--shadow-blur) var(--shadow-spread) var(--shadow-color);
 			transition: box-shadow var(--transition);
 			clip-path: inset(calc(-1 * var(--shadow-spread) - var(--shadow-blur)) calc(-1 * var(--shadow-spread) - var(--shadow-blur)) 0 calc(-1 * var(--shadow-spread) - var(--shadow-blur)));
 		}
@@ -164,7 +166,7 @@
 				position: absolute;
 				inset: 0;
 				border-radius: inherit;
-				box-shadow: inset 0 calc(var(--shadow-spread) * -1 - var(--shadow-blur)) var(--shadow-blur) calc(var(--shadow-blur) * -1) var(--shadow-color);
+				box-shadow: inset 0 calc(var(--shadow-shift-y) - var(--shadow-spread) - 9999px) var(--shadow-blur) -9999px var(--shadow-color);
 				/* but we still want for enter transition */
 				transition: box-shadow var(--transition);
 			}
