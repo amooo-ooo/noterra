@@ -1,0 +1,45 @@
+.select-button {
+	anchor-name: --select;
+}
+
+.popout-container {
+	flex-flow: column;
+	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
+	position-anchor: --select;
+	position-try: most-height flip-block, flip-inline, flip-block flip-inline;
+	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
+	position-visibility: anchors-visible;
+	border: none;
+	border-radius: 5px;
+	overflow: auto;
+	max-height: 40vh;
+	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
+	position-area: bottom span-right;
+
+	.right & {
+		/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
+		position-area: bottom span-left;
+	}
+
+	&:popover-open {
+		display: flex;
+	}
+}
+
+.select-option {
+	padding: 5px;
+	flex-shrink: 0;
+	text-align: left;
+
+	.right & {
+		text-align: right;
+	}
+
+	&:is(:hover, :focus-visible) {
+		background-color: #80808020;
+	}
+
+	&:active {
+		background-color: #80808040;
+	}
+}

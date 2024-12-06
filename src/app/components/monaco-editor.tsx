@@ -162,16 +162,6 @@ export function MonacoEditor({
 		}).dispose;
 	}, [editor, mcEditor, getPos, node]);
 
-	const languageOptions = React.useMemo(
-		() => [
-			<Option key="(auto)" value="(auto)" />,
-			...(monaco?.languages
-				.getLanguages()
-				.map((lang) => <Option key={lang.id} value={lang.id} />) ?? []),
-		],
-		[monaco],
-	);
-
 	const currentLanguage = React.useMemo(() => {
 		// Map language attr to the nearest available language
 		const value = (node.attrs.language as string | null | undefined)
@@ -190,6 +180,25 @@ export function MonacoEditor({
 		}
 		return "(auto)";
 	}, [monaco, node.attrs.language]);
+
+	const languageSelector = React.useMemo(
+		() => (
+			<Select
+				value={currentLanguage}
+				onChange={(value) => updateAttributes({ language: value })}
+				className={styles["language-selector"]}
+				alignRight
+			>
+				{[
+					<Option key="(auto)" value="(auto)" />,
+					...(monaco?.languages
+						.getLanguages()
+						.map((lang) => <Option key={lang.id} value={lang.id} />) ?? []),
+				]}
+			</Select>
+		),
+		[monaco, updateAttributes, currentLanguage],
+	);
 
 	return (
 		<NodeViewWrapper
@@ -296,13 +305,7 @@ export function MonacoEditor({
 							extension.options.onMount?.(editor, monaco);
 						}}
 					/>
-					<Select
-						value={currentLanguage}
-						onChange={(value) => updateAttributes({ language: value })}
-						className={styles["language-selector"]}
-					>
-						{languageOptions}
-					</Select>
+					{languageSelector}
 				</div>
 				<div
 					className={styles["detector-hidden"]}
