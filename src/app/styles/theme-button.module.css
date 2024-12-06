@@ -1,0 +1,5 @@
+.avoid-transition *,
+.avoid-transition *::before,
+.avoid-transition *::after {
+	transition: none !important;
+}

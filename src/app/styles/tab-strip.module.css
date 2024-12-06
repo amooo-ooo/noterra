@@ -119,7 +119,7 @@
 			padding-right: calc(var(--padding-right) + var(--border-width));
 		}
 
-		.close-icon, .add-tab, .upload-file {
+		.close-icon, .add-tab, .upload-file, .expander~button {
 			flex: 0 0;
 			flex-basis: content;
 			padding: 1px;
@@ -145,7 +145,7 @@
 			}
 		}
 
-		.add-tab, .upload-file {
+		.add-tab, .upload-file, .expander~button {
 			background: transparent;
 			border: none;
 		}
@@ -188,6 +188,10 @@
 			border-bottom-right-radius: var(--radius);
 		}
 	}
+}
+
+.expander {
+	flex: 1 1;
 }
 
 .tab-rename-field {

@@ -13,6 +13,7 @@ export function TabStrip({
 	setCurrentTab,
 	idGen,
 	className = "",
+	atStripEnd,
 }: {
 	tabs: Tab[];
 	modifyTabs: TabListDispatcher;
@@ -20,6 +21,7 @@ export function TabStrip({
 	setCurrentTab: React.Dispatch<Tab["id"] | undefined>;
 	idGen: () => Tab["id"];
 	className?: string;
+	atStripEnd?: React.ReactNode;
 }) {
 	const close = (tab: Tab) => {
 		if (tab.id === currentTab) {
@@ -150,6 +152,8 @@ export function TabStrip({
 					>
 						<Upload size="1.5em" />
 					</label>
+					<div className={styles.expander} />
+					{atStripEnd}
 				</div>
 			</div>
 		</div>

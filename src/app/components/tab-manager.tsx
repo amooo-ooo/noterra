@@ -3,6 +3,7 @@
 import React from "react";
 import { Editor, type EditorData } from "./editor";
 import { TabStrip } from "./tab-strip";
+import { ThemeButton } from "./theme-button";
 
 function tabReducer<T>(
 	state: T[],
@@ -67,6 +68,7 @@ export function TabManager({
 					return id;
 				}}
 				className={tabstripClass}
+				atStripEnd={<ThemeButton size="1.5em" />}
 			/>
 			{...tabs.map((tab) => {
 				return (

@@ -59,3 +59,5 @@ export const Redo = createIcon("Redo", "\ue15a");
 export const Link = createIcon("Link", "\ue157");
 export const HorizontalRule = createIcon("HorizontalRule", "\uf108");
 export const Upload = createIcon("Upload", "\uf09b");
+export const LightMode = createIcon("LightMode", "\ue518");
+export const DarkMode = createIcon("DarkMode", "\ue51c");
