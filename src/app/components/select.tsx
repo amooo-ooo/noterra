@@ -23,20 +23,21 @@ export function Option({ label, value, disabled }: OptionProps) {
 				disabled={disabled}
 				id={`${state.id}_${value}`}
 				name={`${state.id}_${value}`}
-				style={{ display: "none" }}
-				onChange={(e) => state.onChange?.(value)}
+				style={{ width: 0 }}
+				onChange={(e) => {
+					const el = e.currentTarget.parentElement;
+					setTimeout(() => el?.hidePopover(), 0);
+					state.onChange?.(value);
+				}}
 			/>
 			<label
 				htmlFor={`${state.id}_${value}`}
-				className={styles["select-option"]}
+				className={`${styles["select-option"]} ${disabled ? styles.disabled : ""}`}
 			>
 				{label ?? value}
 			</label>
 		</>
 	);
-	// <option disabled={disabled} value={value}>
-	// 	{label ?? value}
-	// </option>
 }
 
 type SelectChild = React.ReactElement<OptionProps, typeof Option>;
@@ -46,12 +47,55 @@ function SelectPopover(props: {
 	id: string;
 	children?: SelectChild | SelectChild[];
 }) {
+	const state = React.useContext(SelectState);
 	return (
-		<div id={props.id} popover="auto" className={styles["popout-container"]}>
+		<div
+			id={props.id}
+			popover="auto"
+			className={styles["popout-container"]}
+			onToggle={(e) =>
+				e.currentTarget
+					.querySelector<HTMLInputElement>(`[id="${state.id}_${state.value}"]`)
+					?.focus()
+			}
+			onKeyDownCapture={(e) => {
+				switch (e.key) {
+					case "ArrowDown":
+					case "ArrowRight": {
+						e.preventDefault();
+						let node = (e.target as HTMLInputElement)?.nextElementSibling;
+						while (node) {
+							if (node.matches('input[type="radio"]:not([disabled])')) {
+								(node as HTMLInputElement).focus();
+								node.scrollIntoView({ block: "nearest" });
+								break;
+							}
+							node = node.nextElementSibling;
+						}
+						break;
+					}
+					case "ArrowUp":
+					case "ArrowLeft": {
+						e.preventDefault();
+						let node = (e.target as HTMLInputElement)?.previousElementSibling;
+						while (node) {
+							if (node.matches('input[type="radio"]:not([disabled])')) {
+								(node as HTMLInputElement).focus();
+								node.scrollIntoView({ block: "nearest" });
+								break;
+							}
+							node = node.previousElementSibling;
+						}
+						break;
+					}
+				}
+			}}
+		>
 			{props.children}
 		</div>
 	);
 }
+
 export function Select(props: {
 	value?: string;
 	onChange?: (value: string) => void;
@@ -61,28 +105,19 @@ export function Select(props: {
 	alignRight?: boolean;
 }) {
 	const id = React.useId();
-	// const children = props.children
-	// 	? Array.isArray(props.children)
-	// 		? props.children
-	// 		: [props.children]
-	// 	: [];
-	console.log("render");
 	return (
-		// <select
-		// 	value={props.value}
-		// 	onChange={(e) => props.onChange?.(e.target.value)}
-		// 	style={props.style}
-		// 	className={props.className}
-		// >
-		// 	{props.children}
-		// </select>
 		<SelectState.Provider
-			value={{ id, value: props.value, onChange: props.onChange }}
+			value={{
+				id,
+				value: props.value,
+				onChange: props.onChange,
+			}}
 		>
 			<button
 				type="button"
 				popoverTarget={id}
 				popoverTargetAction="toggle"
+				style={props.style}
 				className={`${styles["select-button"]} ${props.alignRight ? styles.right : ""} ${props.className}`}
 			>
 				{props.value ?? "unset"}

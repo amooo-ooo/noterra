@@ -35,11 +35,16 @@
 		text-align: right;
 	}
 
-	&:is(:hover, :focus-visible) {
+	&:hover,
+	input[type="radio"]:focus-visible+& {
 		background-color: #80808020;
 	}
 
 	&:active {
 		background-color: #80808040;
+	}
+
+	.disabled {
+		color: #808080;
 	}
 }
