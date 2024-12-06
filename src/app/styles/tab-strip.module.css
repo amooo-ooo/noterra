@@ -60,6 +60,7 @@
 		&::before {
 			content: '';
 			position: absolute;
+			pointer-events: none;
 			inset: 0;
 			border-radius: inherit;
 			box-shadow: 0 0 var(--shadow-blur) var(--shadow-spread) var(--shadow-color);
@@ -121,12 +122,17 @@
 			flex: 0 0;
 			flex-basis: content;
 			padding: 1px;
+			padding-top: 2px;
 			margin: var(--button-padding);
 			border-radius: calc(var(--radius) - (var(--button-padding) + var(--margin)) / 2);
 			color: var(--fg-4);
 			transition:
 				background-color var(--small-transition),
 				color var(--small-transition);
+
+			&:active {
+				background-color: var(--active-color);
+			}
 
 			&:is(:hover, :focus-visible) {
 				background-color: var(--hover-color);
@@ -154,6 +160,7 @@
 			/* intentional pseudoelement to avoid exit transition */
 			&::before {
 				content: '';
+				pointer-events: none;
 				position: absolute;
 				inset: 0;
 				border-radius: inherit;
