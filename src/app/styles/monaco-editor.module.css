@@ -7,9 +7,21 @@
 }
 
 .language-selector {
+	color-scheme: dark;
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
+	outline: none;
+	background-color: var(--bg-1);
+	border: var(--border-width) solid var(--border-color);
+	padding: var(--padding);
+	border-radius: var(--radius);
+	font-family: var(--font-inter-sans);
+
+	option {
+		/* TODO: weird bug, inter font not loading? */
+		font-family: var(--font-inter-sans) Arial, Helvetica, sans-serif;
+	}
 }
 
 .highlight-overlay {
@@ -24,6 +36,9 @@
 	--codeblock-padding-top: 10px;
 	--codeblock-margin: 0.5em;
 	--codeblock-deindent-left: -10px;
+	--padding: 6px 8px;
+	--border-width: 1px;
+	--radius: 4px;
 
 	position: relative;
 	padding-top: var(--codeblock-padding-top);
