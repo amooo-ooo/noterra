@@ -45,7 +45,8 @@ export function TabStrip({
 					<button
 						type="button"
 						key={tab.id}
-						onClick={() => setCurrentTab(tab.id)}
+						onClick={(e) => setCurrentTab(tab.id)}
+						onPointerUp={(e) => tab.state.editor?.commands.focus()}
 						className={`${styles.tab} ${tab.id === currentTab ? styles["active-tab"] : ""}`}
 					>
 						<div className={styles["tab-border"]}>
