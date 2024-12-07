@@ -23,7 +23,7 @@
 	--shadow-spread: 0px;
 	--shadow-shift-x: 1px;
 	--shadow-shift-y: 2px;
-	--tab-font-size: .85em;
+	--tab-name-font-size: .85em;
 
 	background: transparent;
 	transition: background-color var(--transition);
@@ -108,6 +108,7 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
+			font-size: var(--tab-name-font-size);
 		}
 
 		:first-of-type:not(.active-tab)>& {
@@ -210,7 +211,7 @@
 	background-color: transparent;
 	border: none;
 	outline: none;
-	font-size: var(--tab-font-size);
+	font-size: var(--tab-name-font-size);
 }
 
 .expanse {
