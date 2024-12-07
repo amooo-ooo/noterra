@@ -193,7 +193,13 @@ export function MonacoEditor({
 					<Option key="(auto)" value="(auto)" />,
 					...(monaco?.languages
 						.getLanguages()
-						.map((lang) => <Option key={lang.id} value={lang.id} />) ?? []),
+						.map((lang) => (
+							<Option
+								key={lang.id}
+								value={lang.id}
+								valueAliases={lang.aliases}
+							/>
+						)) ?? []),
 				]}
 			</Select>
 		),

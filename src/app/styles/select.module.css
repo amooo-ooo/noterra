@@ -2,8 +2,26 @@
 	anchor-name: --select;
 }
 
-.popout-container {
+.sub {
+	color: #808080;
+	font-size: 0.7em;
+	margin-left: 2ch;
+}
+
+.highlight {
+	background-color: #ffff0040;
+	border-radius: 2px;
+	box-shadow: 0 0 0 0.1em #ffff0040;
+}
+
+.popout-scroll-container {
+	display: flex;
 	flex-flow: column;
+	overflow: auto;
+	flex: 1 1;
+}
+
+.popout-container {
 	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
 	position-anchor: --select;
 	position-try: most-height flip-block, flip-inline, flip-block flip-inline;
@@ -11,18 +29,18 @@
 	position-visibility: anchors-visible;
 	border: none;
 	border-radius: 5px;
-	overflow: auto;
 	max-height: 40vh;
 	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
 	position-area: bottom span-right;
+	flex-flow: column;
+
+	&:popover-open {
+		display: flex;
+	}
 
 	.right & {
 		/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
 		position-area: bottom span-left;
-	}
-
-	&:popover-open {
-		display: flex;
 	}
 }
 
