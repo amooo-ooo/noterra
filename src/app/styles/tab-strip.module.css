@@ -7,7 +7,7 @@
 .tab,
 .expanse {
 	--radius: 8px;
-	--padding-block: 5px;
+	--padding-block: 4px;
 	--padding-left: 10px;
 	--padding-right: 3px;
 	--button-padding: 2px;
@@ -23,6 +23,7 @@
 	--shadow-spread: 0px;
 	--shadow-shift-x: 1px;
 	--shadow-shift-y: 2px;
+	--font-size: .85rem;
 
 	background: transparent;
 	transition: background-color var(--transition);
@@ -107,6 +108,7 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
+			font-size: var(--font-size);
 		}
 
 		:first-of-type:not(.active-tab)>& {
