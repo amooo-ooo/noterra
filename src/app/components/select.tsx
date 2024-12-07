@@ -32,6 +32,7 @@ const SelectState = React.createContext<{
 	onChange?: (value: string) => void;
 	searchingValue: string;
 	setSearchingValue: (value: string) => void;
+	searchField?: React.RefObject<HTMLInputElement | null>;
 	map: {
 		[key: string]: {
 			props: OptionProps;
@@ -104,9 +105,10 @@ function SelectPopover(props: {
 	const ref = React.useRef<HTMLDivElement | null>(null);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to focus first element in search
 	useEffect(() => {
-		ref.current
-			?.querySelector<HTMLInputElement>('input[type="radio"]')
-			?.focus();
+		(
+			ref.current?.querySelector<HTMLInputElement>('input[type="radio"]') ??
+			state.searchField?.current
+		)?.focus();
 	}, [state.searchingValue]);
 	return (
 		<div
@@ -119,10 +121,8 @@ function SelectPopover(props: {
 					.querySelector<HTMLInputElement>(`[id="${state.id}_${state.value}"]`)
 					?.focus();
 			}}
-			ref={ref}
 			onKeyDown={(e) => {
 				e.stopPropagation();
-				console.log(e.type, e);
 				switch (e.key) {
 					case "ArrowDown":
 					case "ArrowRight": {
@@ -152,18 +152,15 @@ function SelectPopover(props: {
 						}
 						break;
 					}
-					case "Backspace":
-						state.setSearchingValue(state.searchingValue.slice(0, -1));
-						break;
 					default:
-						if (e.key.length > 1 || e.altKey || e.ctrlKey || e.metaKey) break;
-						state.setSearchingValue(state.searchingValue + e.key);
-						break;
+						state.searchField?.current?.focus();
 				}
 			}}
 		>
 			{props.beforeContent}
-			<div className={styles["popout-scroll-container"]}>{props.children}</div>
+			<div className={styles["popout-scroll-container"]} ref={ref}>
+				{props.children}
+			</div>
 		</div>
 	);
 }
@@ -187,6 +184,7 @@ export function Select(props: {
 		() => ({}),
 		[searchingValue],
 	);
+	const searchField = React.useRef<HTMLInputElement | null>(null);
 
 	const options = React.useMemo(
 		() =>
@@ -233,6 +231,7 @@ export function Select(props: {
 				searchingValue,
 				setSearchingValue,
 				map,
+				searchField,
 			}}
 		>
 			<button
@@ -243,10 +242,27 @@ export function Select(props: {
 				className={`${styles["select-button"]} ${props.alignRight ? styles.right : ""} ${props.className}`}
 			>
 				{props.value ?? "unset"}
-				<SelectPopover id={id}>
-					{options.length
-						? options
-						: `No items found matching '${searchingValue}'`}
+				<SelectPopover
+					id={id}
+					beforeContent={
+						<input
+							type="search"
+							ref={searchField}
+							value={searchingValue}
+							onChange={(e) => setSearchingValue(e.currentTarget.value)}
+							style={{
+								// https://www.a11yproject.com/posts/how-to-hide-content/
+								contain: "strict",
+								clipPath: "inset(50%)",
+								position: "absolute",
+								overflow: "hidden",
+								width: 1,
+								height: 1,
+							}}
+						/>
+					}
+				>
+					{options.length ? options : `No results matching '${searchingValue}'`}
 				</SelectPopover>
 			</button>
 		</SelectState.Provider>
