@@ -7,9 +7,9 @@
 .tab,
 .expanse {
 	--radius: 8px;
-	--padding-block: 4px;
-	--padding-left: 10px;
-	--padding-right: 3px;
+	--padding-block: 5px;
+	--padding-left: 11px;
+	--padding-right: 2px;
 	--button-padding: 2px;
 	--border-width: 1px;
 	--selected-color: var(--bg-0);
@@ -23,7 +23,7 @@
 	--shadow-spread: 0px;
 	--shadow-shift-x: 1px;
 	--shadow-shift-y: 2px;
-	--font-size: .85rem;
+	--tab-font-size: .85em;
 
 	background: transparent;
 	transition: background-color var(--transition);
@@ -108,7 +108,6 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			font-size: var(--font-size);
 		}
 
 		:first-of-type:not(.active-tab)>& {
@@ -154,6 +153,7 @@
 
 		.close-icon {
 			margin-right: calc(var(--button-padding) + var(--margin) - var(--padding-right));
+
 		}
 
 		:not(.active-tab)>& {
@@ -210,7 +210,7 @@
 	background-color: transparent;
 	border: none;
 	outline: none;
-	font: inherit;
+	font-size: var(--tab-font-size);
 }
 
 .expanse {
