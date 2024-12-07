@@ -78,14 +78,16 @@ export function Option({ label, value, disabled }: OptionProps) {
 				name={`${state.id}_${value}`}
 				style={{ width: 0, height: 0 }}
 				onChange={(e) => {
-					const el = e.currentTarget.parentElement;
+					const el = e.currentTarget.closest<HTMLElement>("[popover]");
 					setTimeout(() => el?.hidePopover(), 0);
 					state.onChange?.(value);
 				}}
 			/>
 			<label
 				htmlFor={`${state.id}_${value}`}
-				className={`${styles["select-option"]} ${disabled ? styles.disabled : ""}`}
+				className={`${styles["select-option"]} \
+					${disabled ? styles.disabled : ""} \
+					${value === state.value ? styles.selected : ""}`}
 			>
 				{nodes}
 			</label>
@@ -104,12 +106,12 @@ function SelectPopover(props: {
 	const state = React.useContext(SelectState);
 	const ref = React.useRef<HTMLDivElement | null>(null);
 	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to focus first element in search
-	useEffect(() => {
-		(
-			ref.current?.querySelector<HTMLInputElement>('input[type="radio"]') ??
-			state.searchField?.current
-		)?.focus();
-	}, [state.searchingValue]);
+	// useEffect(() => {
+	// 	(
+	// 		ref.current?.querySelector<HTMLInputElement>('input[type="radio"]') ??
+	// 		state.searchField?.current
+	// 	)?.focus();
+	// }, [state.searchingValue]);
 	return (
 		<div
 			id={props.id}
@@ -127,15 +129,16 @@ function SelectPopover(props: {
 					case "ArrowDown":
 					case "ArrowRight": {
 						e.preventDefault();
-						let node = (e.target as HTMLInputElement)?.nextElementSibling;
-						while (node) {
-							if (node.matches('input[type="radio"]:not([disabled])')) {
-								(node as HTMLInputElement).focus();
-								node.scrollIntoView({ block: "nearest" });
-								break;
-							}
-							node = node.nextElementSibling;
-						}
+						const id = (e.target as HTMLInputElement).id;
+						const node =
+							ref.current?.querySelector<HTMLInputElement>(
+								`[id="${id}"] ~ input[type="radio"]`,
+							) ??
+							ref.current?.querySelector<HTMLInputElement>(
+								'input[type="radio"]',
+							);
+						node?.focus();
+						node?.scrollIntoView({ block: "nearest" });
 						break;
 					}
 					case "ArrowUp":
@@ -150,8 +153,23 @@ function SelectPopover(props: {
 							}
 							node = node.previousElementSibling;
 						}
+						if (!node) {
+							const node =
+								ref.current?.querySelector<HTMLInputElement>(
+									'input[type="radio"]:last-of-type',
+								) ?? null;
+							node?.focus();
+							node?.scrollIntoView({ block: "nearest" });
+						}
 						break;
 					}
+					case "Enter":
+						(e.target as HTMLInputElement | null)?.click();
+						break;
+					case " ":
+						// use defauly behaviour - either input a space or select a radio
+						// depending on context
+						break;
 					default:
 						state.searchField?.current?.focus();
 				}

@@ -33,6 +33,8 @@
 	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
 	position-area: bottom span-right;
 	flex-flow: column;
+	box-shadow: 1px 2px 15px -5px var(--shadow-color);
+	background-color: inherit;
 
 	&:popover-open {
 		display: flex;
@@ -45,7 +47,7 @@
 }
 
 .select-option {
-	padding: 5px;
+	padding: 6px 10px;
 	flex-shrink: 0;
 	text-align: left;
 
@@ -58,8 +60,13 @@
 		background-color: #80808020;
 	}
 
-	&:active {
+	&:active, &.selected {
 		background-color: #80808040;
+	}
+
+	&.selected:hover,
+	input[type="radio"]:focus-visible+&.selected {
+		background-color: #80808060;
 	}
 
 	.disabled {
