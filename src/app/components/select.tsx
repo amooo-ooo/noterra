@@ -299,8 +299,8 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 				: []
 		), [children]);
 
-		const label = React.useMemo(() =>
-			childs.find(child => child.props.value === value)?.props.label,
+		const { label, style } = React.useMemo<Partial<OptionProps>>(() =>
+			childs.find(child => child.props.value === value)?.props ?? {},
 			[childs, value]);
 
 		const options = React.useMemo(
@@ -357,7 +357,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					ref={ref}
 					{...props}
 				>
-					<span>{label ?? value ?? "unset"}</span>
+					<span style={style}>{label ?? value ?? "unset"}</span>
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}
