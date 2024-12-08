@@ -245,6 +245,11 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 	// TODO: sortable needs fixing: broken state when dragging across sortables
 	const initGroups = [
 		[
+			"undo",
+			"redo"
+		],
+		["fontFamily"],
+		[
 			"bold",
 			"italic",
 			"underline",
@@ -252,14 +257,13 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"superscript",
 			"subscript",
 			"code",
+		],
+		[
 			"codeblock",
 			"blockquote",
 			"bulletList",
 			"orderedlist",
 			"horizontalRule",
-			"undo",
-			"redo",
-			"fontFamily",
 		],
 		["fontSize"],
 	] satisfies (keyof typeof TOOLS)[][];
