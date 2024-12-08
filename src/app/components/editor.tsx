@@ -41,6 +41,8 @@ export interface EditorData {
 
 export const EditorContext = React.createContext(null as unknown as EditorData);
 
+export const HANDLES_CHARS = 'consume-input-events';
+
 export function Editor({
 	data,
 	skipRender = false,
@@ -101,9 +103,11 @@ export function Editor({
 		const SELECTOR = [
 			"input:not([type])",
 			'input[type="text"]',
+			'input[type="search"]',
 			"textarea",
 			"[contenteditable]",
 			"select",
+			`.${HANDLES_CHARS}`
 		].join(", ");
 		const SPECIAL_WHITELIST = {
 			ArrowLeft: true,

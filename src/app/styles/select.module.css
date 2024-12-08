@@ -39,6 +39,7 @@
 .select-option, .no-results {
 	padding: 6px 10px;
 	flex-shrink: 0;
+	flex-basis: content;
 }
 
 .select-option {

@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "@/app/styles/select.module.css";
 import { WindowSize } from "./global-listeners";
+import { HANDLES_CHARS } from "./editor";
 
 type OptionProps = {
 	label?: string;
@@ -82,9 +83,11 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 					// https://www.a11yproject.com/posts/how-to-hide-content/
 					contain: "strict",
 					clipPath: "inset(50%)",
-					position: "absolute",
-					width: 1,
-					height: 1,
+					width: '100%',
+					height: 'calc(1lh + 12px)',
+					marginBottom: 'calc(-1lh - 12px)',
+					flexShrink: 0,
+					pointerEvents: 'none'
 				}}
 				onChange={(e) => {
 					const el = e.currentTarget.closest<HTMLElement>("[popover]");
@@ -168,7 +171,7 @@ function SelectPopover({
 		<div
 			id={id}
 			popover="auto"
-			className={styles["popout-container"]}
+			className={`${styles["popout-container"]} ${HANDLES_CHARS}`}
 			style={style}
 			ref={(el) => {
 				if (!el) return;
@@ -191,9 +194,9 @@ function SelectPopover({
 				state.setSearchingValue("");
 				ref.current?.scrollTo({ top: 0 });
 				updatePos();
-				e.currentTarget
+				(e.currentTarget
 					.querySelector<HTMLInputElement>(`[id="${state.id}_${state.value}"]`)
-					?.focus();
+					?? e.currentTarget.querySelector<HTMLImageElement>('input'))?.focus();
 			}}
 			onKeyDown={(e) => {
 				e.stopPropagation();
