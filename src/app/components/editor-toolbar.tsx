@@ -124,7 +124,6 @@ const TOOLS = {
 		<TiptapButton
 			label="undo"
 			action={(ctx) => ctx.undo()}
-			disabled={(ed) => !ed.can().undo()}
 			icon={<Undo />}
 		/>
 	),
@@ -132,7 +131,6 @@ const TOOLS = {
 		<TiptapButton
 			label="redo"
 			action={(ctx) => ctx.redo()}
-			disabled={(ed) => !ed.can().redo()}
 			icon={<Redo />}
 		/>
 	),

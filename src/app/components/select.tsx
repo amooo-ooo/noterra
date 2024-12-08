@@ -315,6 +315,7 @@ export type SelectProps = {
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
+	disabled?: boolean;
 };
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(

@@ -8,14 +8,12 @@ export function TiptapButton({
 	label,
 	action,
 	detect,
-	disabled,
 	icon,
 	...props
 }: {
 	label: string;
 	action?: (ctx: ChainedCommands) => ChainedCommands;
 	detect?: string | ((editor: Editor) => boolean);
-	disabled?: boolean | ((editor: Editor) => boolean);
 	icon?: React.ReactNode;
 } & Omit<React.HTMLProps<HTMLButtonElement>, "action" | "disabled">) {
 	const editor = React.useContext(EditorContext).editor;
@@ -41,8 +39,7 @@ export function TiptapButton({
 			}
 			disabled={
 				!editor ||
-				(typeof disabled === "function" ? disabled(editor) : disabled) ||
-				!action
+				!action?.(editor.can().chain().focus()).run()
 			}
 			className={`${styles['toolbar-button']} ${isActive ? styles.active : ""} ${props.className ?? ""}`}
 		>
@@ -69,6 +66,10 @@ export function TiptapSelect({
 			title={label}
 			value={editor ? detect(editor): ""}
 			{...props}
+			disabled={
+				!editor ||
+				!action?.('', editor.can().chain().focus()).run()
+			}
 			onChange={(value) => {
 				onChange?.(value);
 				if (editor) action?.(value, editor.chain().focus()).run();
