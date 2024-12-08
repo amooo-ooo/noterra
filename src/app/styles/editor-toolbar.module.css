@@ -30,11 +30,11 @@
 		transition: box-shadow 250ms ease;
 
 		/* TODO: colors */
-		&:is(:hover, :focus-visible, .active) {
+		&:is(:hover, :focus-visible, .active):not(:has([popover]:hover)) {
 			box-shadow: inset 0 0 0 100vmax #80808020;
 		}
 
-		&:is(:active, .active:is(:hover, :focus-visible)) {
+		&:is(:active, .active:is(:hover, :focus-visible)):not(:has([popover]:hover)) {
 			box-shadow: inset 0 0 0 100vmax #80808030;
 		}
 
