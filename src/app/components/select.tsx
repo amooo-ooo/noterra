@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "@/app/styles/select.module.css";
+import { WindowSize } from "./global-listeners";
 
 type OptionProps = {
 	label?: string;
@@ -123,34 +124,24 @@ function SelectPopover({
 	const state = React.useContext(SelectState);
 	const ref = React.useRef<HTMLDivElement | null>(null);
 
-	const [[winWidth, winHeight], setWindowSize] = React.useState([
-		window.innerWidth,
-		window.innerHeight,
-	] as const);
-
-	React.useEffect(() =>
-		window.addEventListener("resize", () =>
-			setWindowSize([window.innerWidth, window.innerHeight]),
-		),
-	);
 
 	const [rect, setRect] = React.useState<DOMRect | null>(null);
 	const updatePos = React.useCallback(
-		() =>
-			setRect(
-				ref.current
-					?.closest(`.${styles["select-button"]}`)
-					?.getBoundingClientRect() ?? null,
-			),
+		() => {
+			if (!(ref.current?.parentElement?.matches(':popover-open'))) return;
+			setRect(ref.current.closest(`.${styles['select-button']}`)
+				?.getBoundingClientRect() ?? null);
+		},
 		[],
 	);
+
+	const [winWidth, winHeight] = React.useContext(WindowSize);
 
 	React.useEffect(() => {
 		if (typeof updatePosition === "function") return updatePosition(updatePos);
 		if (updatePosition) updatePosition.current = updatePos;
 	}, [updatePosition, updatePos]);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: umm biome hello what???
 	const style = React.useMemo(() => {
 		const style: React.CSSProperties = {};
 		if (rect) {
