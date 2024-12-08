@@ -141,13 +141,12 @@ export function Editor({
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
-			<div className={className}>
+			<div className={className} ref={(el) => {
+				data.scrollingElement = el ?? undefined;
+			}}>
 				<EditorToolbar className={toolbarClass} />
 				<EditorContent
 					editor={editor}
-					ref={(el) => {
-						data.scrollingElement = el ?? undefined;
-					}}
 					className={`${styles.tiptap} ${editorClass}`}
 					onKeyDownCapture={(e) => {
 						data.lastKeyPress = e.key;
