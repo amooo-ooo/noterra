@@ -24,6 +24,8 @@ import Blockquote from "@tiptap/extension-blockquote";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
+import FontFamily from "@tiptap/extension-font-family";
+import TextStyle from "@tiptap/extension-text-style";
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
 import styles from "@/app/styles/tiptap.module.css";
@@ -85,6 +87,8 @@ export function Editor({
 					theme: "vs-dark",
 				},
 			}),
+			FontFamily,
+			TextStyle,
 		],
 		content: data.initialContent,
 		immediatelyRender: false,

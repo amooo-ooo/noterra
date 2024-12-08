@@ -1,6 +1,7 @@
 import type { ChainedCommands, Editor } from "@tiptap/react";
 import { EditorContext } from "./editor";
 import React from "react";
+import { Select, type SelectProps } from "./select";
 
 export function TiptapButton({
 	label,
@@ -46,5 +47,31 @@ export function TiptapButton({
 		>
 			{props.children ?? icon ?? label}
 		</button>
+	);
+}
+
+export function TiptapSelect({
+	label,
+	action,
+	detect,
+	onChange,
+	...props
+}: {
+	label: string;
+	action?: (value: string, ctx: ChainedCommands) => ChainedCommands;
+	detect: (editor: Editor) => string;
+} & SelectProps) {
+	const editor = React.useContext(EditorContext).editor;
+
+	return (
+		<Select
+			title={label}
+			value={editor ? detect(editor) : ""}
+			onChange={(value) => {
+				onChange?.(value);
+				if (editor) action?.(value, editor.chain().focus()).run();
+			}}
+			{...props}
+		/>
 	);
 }

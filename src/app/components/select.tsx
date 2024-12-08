@@ -6,6 +6,7 @@ type OptionProps = {
 	value: string;
 	valueAliases?: string[];
 	disabled?: boolean;
+	style?: React.CSSProperties;
 };
 
 function match(search: string, aliases: string[]) {
@@ -42,7 +43,7 @@ const SelectState = React.createContext<{
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 }>(null!);
 
-export function Option({ label, value, disabled }: OptionProps) {
+export function Option({ label, value, disabled, style }: OptionProps) {
 	const state = React.useContext(SelectState);
 	const nodes = React.useMemo(() => {
 		const matches = state.map[value]?.matches;
@@ -95,6 +96,7 @@ export function Option({ label, value, disabled }: OptionProps) {
 				className={`${styles["select-option"]} \
 					${disabled ? styles.disabled : ""} \
 					${value === state.value ? styles.selected : ""}`}
+				style={style}
 			>
 				{nodes}
 			</label>

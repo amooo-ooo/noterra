@@ -3,7 +3,7 @@
 import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import { unreachable } from "./util";
-import { TiptapButton } from "./tiptap-fields";
+import { TiptapButton, TiptapSelect } from "./tiptap-fields";
 import styles from "@/app/styles/editor-toolbar.module.css";
 
 import {
@@ -22,6 +22,7 @@ import {
 	HorizontalRule,
 	FormatQuote,
 } from "./icons";
+import { Option } from "./select";
 
 const TOOLS = {
 	bold: (
@@ -136,6 +137,17 @@ const TOOLS = {
 		/>
 	),
 	fontSize: <input type="number" />,
+	fontFamily: (
+		<TiptapSelect
+			label="fontFamily"
+			detect={(ed) => ed.getAttributes("textStyle").fontFamily}
+			action={(value, ctx) => ctx.setFontFamily(value)}
+		>
+			{["Inter", "Comic Sans", "Arial"].map((font) => (
+				<Option value={font} key={font} style={{ fontFamily: font }} />
+			))}
+		</TiptapSelect>
+	),
 	/// ...
 };
 
@@ -231,6 +243,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"horizontalRule",
 			"undo",
 			"redo",
+			"fontFamily",
 		],
 		["fontSize"],
 	] satisfies (keyof typeof TOOLS)[][];
