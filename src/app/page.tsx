@@ -9,19 +9,21 @@ export default function Home() {
 		<WindowSizeProvider>
 			<div className={styles.page}>
 				<main className={styles.main}>
-					<div className={styles.sidebar} />
-					<div className={styles["editor-container"]}>
-						<EditorSelectionHandler>
-							<ToolbarConfigProvider>
-								<TabManager
-									tabstripClass={styles.tabstrip}
-									toolbarClass={styles.toolbar}
-									editorClass={styles.editor}
-								/>
-							</ToolbarConfigProvider>
-						</EditorSelectionHandler>
-					</div>
-					<div className={styles.sidebar} />
+					<EditorSelectionHandler>
+						<ToolbarConfigProvider>
+							<TabManager
+								tabstripClass={styles.tabstrip}
+								contentRowClass={styles['content-row']}
+								editorContainerClass={styles['editor-container']}
+								toolbarClass={styles.toolbar}
+								editorClass={styles.editor}
+								contentRowContent={<>
+									<div className={styles.sidebar} />
+									<div className={`${styles.sidebar} ${styles.right}`} />
+								</>}
+							/>
+						</ToolbarConfigProvider>
+					</EditorSelectionHandler>
 				</main>
 				<footer className={styles.footer} />
 			</div>

@@ -44,11 +44,13 @@ export const EditorContext = React.createContext(null as unknown as EditorData);
 export function Editor({
 	data,
 	skipRender = false,
+	className,
 	toolbarClass,
 	editorClass = "",
 }: {
 	data: EditorData;
 	skipRender?: boolean;
+	className?: string;
 	toolbarClass?: string;
 	editorClass?: string;
 }) {
@@ -139,17 +141,19 @@ export function Editor({
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
-			<EditorToolbar className={toolbarClass} />
-			<EditorContent
-				editor={editor}
-				ref={(el) => {
-					data.scrollingElement = el ?? undefined;
-				}}
-				className={`${styles.tiptap} ${editorClass}`}
-				onKeyDownCapture={(e) => {
-					data.lastKeyPress = e.key;
-				}}
-			/>
+			<div className={className}>
+				<EditorToolbar className={toolbarClass} />
+				<EditorContent
+					editor={editor}
+					ref={(el) => {
+						data.scrollingElement = el ?? undefined;
+					}}
+					className={`${styles.tiptap} ${editorClass}`}
+					onKeyDownCapture={(e) => {
+						data.lastKeyPress = e.key;
+					}}
+				/>
+			</div>
 		</EditorContext.Provider>
 	);
 }

@@ -52,9 +52,19 @@ export type TabListDispatcher = React.Dispatch<
 
 export function TabManager({
 	tabstripClass,
+	contentRowContent,
+	contentRowClass,
+	editorContainerClass,
 	toolbarClass,
 	editorClass,
-}: { tabstripClass?: string; toolbarClass?: string; editorClass?: string }) {
+}: {
+	tabstripClass?: string;
+	contentRowClass?: string;
+	contentRowContent?: React.ReactNode;
+	editorContainerClass?: string;
+	toolbarClass?: string;
+	editorClass?: string;
+}) {
 	const [tabs, modifyTabs] = React.useReducer(tabReducer<Tab>, []);
 	const [currentTab, setCurrentTab] = React.useState<Tab["id"]>();
 	const [nextId, setNextId] = React.useState(0);
@@ -70,17 +80,21 @@ export function TabManager({
 				className={tabstripClass}
 				atStripEnd={<ThemeButton size="1.5em" />}
 			/>
-			{...tabs.map((tab) => {
-				return (
-					<Editor
-						key={tab.id}
-						data={tab.state}
-						skipRender={tab.id !== currentTab}
-						toolbarClass={toolbarClass}
-						editorClass={editorClass}
-					/>
-				);
-			})}
+			<div className={contentRowClass}>
+				{contentRowContent}
+				{...tabs.map((tab) => {
+					return (
+						<Editor
+							key={tab.id}
+							data={tab.state}
+							skipRender={tab.id !== currentTab}
+							className={editorContainerClass}
+							toolbarClass={toolbarClass}
+							editorClass={editorClass}
+						/>
+					);
+				})}
+			</div>
 		</>
 	);
 }

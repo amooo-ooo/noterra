@@ -14,14 +14,11 @@ html, body {
 }
 
 .main {
-	display: flex;
-}
-
-.editor-container {
+	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
-	flex: 1;
 }
+
 
 .tabstrip {
 	z-index: 1;
@@ -30,23 +27,42 @@ html, body {
 	flex-shrink: 0;
 }
 
-.toolbar {
-	z-index: 1;
-	backdrop-filter: blur(10px);
-	flex-shrink: 0;
+.content-row {
+	flex-grow: 1;
+	display: flex;
 }
 
-.editor {
-	/* TODO: we have capability of allowing scroll content underneath navs if wanted (e.g for translucent/blurred nav overlays) */
+.editor-container {
+	flex: 1;
 	display: flex;
 	flex-direction: column;
 	overflow: auto;
+}
+
+.toolbar {
+	position: sticky;
+	inset: 0;
+	bottom: unset;
+	flex-shrink: 0;
+	z-index: 1;
+	backdrop-filter: blur(10px);
+}
+
+.editor {
+	flex-grow: 1;
+	/* force full size */
+	display: grid;
 
 	&>* {
 		/* contenteditable area */
 		padding: 50px;
-		grid-row: editor;
 		outline: none;
 		min-height: fit-content;
+	}
+}
+
+.sidebar {
+	.right {
+		order: 1;
 	}
 }
