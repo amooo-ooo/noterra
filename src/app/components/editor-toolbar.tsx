@@ -144,8 +144,24 @@ const TOOLS = {
 			action={(value, ctx) => ctx.setFontFamily(value)}
 			defaultValue="Inter"
 		>
-			{["Inter", "Comic Sans", "Arial"].map((font) => (
-				<Option value={font} key={font} style={{ fontFamily: font }} />
+			{[
+				["Inter", "var(--font-inter-sans), sans-serif"],
+				["Comic Sans", "'Comic Sans MS', cursive, sans-serif"],
+				["Arial", "Arial, Helvetica, sans-serif"],
+				["Georgia", "Georgia, serif"],
+				["Times New Roman", "'Times New Roman', Times, serif"],
+				["Courier New", "'Courier New', Courier, monospace"],
+				["Verdana", "Verdana, Geneva, sans-serif"],
+				["Tahoma", "Tahoma, Geneva, sans-serif"],
+				["Trebuchet MS", "'Trebuchet MS', Helvetica, sans-serif"],
+				["Lucida Sans", "'Lucida Sans', 'Lucida Grande', sans-serif"]
+			].map(([font, src]) => (
+				<Option 
+					label={font} 
+					value={src} 
+					key={font} 
+					style={{ fontFamily: src }} 
+				/>
 			))}
 		</TiptapSelect>
 	),
@@ -170,17 +186,17 @@ function toolbarDispatch(
 	state: ToolbarConfig,
 	action:
 		| {
-				type: "rearrange";
-				order: (
-					| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-					| ToolbarItemTypes
-				)[];
-		  }
+			type: "rearrange";
+			order: (
+				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+				| ToolbarItemTypes
+			)[];
+		}
 		| {
-				type: "rearrange-child";
-				childId: ToolbarGroup["id"];
-				order: ToolbarItemTypes[];
-		  },
+			type: "rearrange-child";
+			childId: ToolbarGroup["id"];
+			order: ToolbarItemTypes[];
+		},
 ): ToolbarConfig {
 	switch (action.type) {
 		case "rearrange": {
