@@ -4,7 +4,7 @@ import { WindowSize } from "./global-listeners";
 import { HANDLES_CHARS } from "./editor";
 
 export type OptionProps = {
-	label?: string;
+	label?: React.ReactNode;
 	value: string;
 	valueAliases?: string[];
 	disabled?: boolean;
