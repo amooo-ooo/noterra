@@ -140,9 +140,8 @@ const TOOLS = {
 	fontFamily: (
 		<TiptapSelect
 			label="fontFamily"
-			detect={(ed) => ed.getAttributes("textStyle").fontFamily}
+			detect={(ed) => ed.getAttributes("textStyle").fontFamily ?? "Inter"}
 			action={(value, ctx) => ctx.setFontFamily(value)}
-			defaultValue="Inter"
 		>
 			{[
 				["Inter", "var(--font-inter-sans), sans-serif"],
