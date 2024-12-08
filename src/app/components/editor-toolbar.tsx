@@ -142,6 +142,7 @@ const TOOLS = {
 			label="fontFamily"
 			detect={(ed) => ed.getAttributes("textStyle").fontFamily}
 			action={(value, ctx) => ctx.setFontFamily(value)}
+			defaultValue="Inter"
 		>
 			{["Inter", "Comic Sans", "Arial"].map((font) => (
 				<Option value={font} key={font} style={{ fontFamily: font }} />

@@ -52,12 +52,14 @@ export function TiptapButton({
 
 export function TiptapSelect({
 	label,
+	defaultValue,
 	action,
 	detect,
 	onChange,
 	...props
 }: {
 	label: string;
+	defaultValue?: string;
 	action?: (value: string, ctx: ChainedCommands) => ChainedCommands;
 	detect: (editor: Editor) => string;
 } & SelectProps) {
@@ -66,7 +68,7 @@ export function TiptapSelect({
 	return (
 		<Select
 			title={label}
-			value={editor ? detect(editor) : ""}
+			value={editor ? detect(editor) ?? defaultValue : ""}
 			onChange={(value) => {
 				onChange?.(value);
 				if (editor) action?.(value, editor.chain().focus()).run();
