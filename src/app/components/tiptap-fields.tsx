@@ -2,6 +2,7 @@ import type { ChainedCommands, Editor } from "@tiptap/react";
 import { EditorContext } from "./editor";
 import React from "react";
 import { Select, type SelectProps } from "./select";
+import styles from '@/app/styles/editor-toolbar.module.css';
 
 export function TiptapButton({
 	label,
@@ -43,7 +44,7 @@ export function TiptapButton({
 				(typeof disabled === "function" ? disabled(editor) : disabled) ||
 				!action
 			}
-			className={`toolbar-button ${isActive ? "is-active" : ""} ${props.className ?? ""}`}
+			className={`${styles['toolbar-button']} ${isActive ? styles.active : ""} ${props.className ?? ""}`}
 		>
 			{props.children ?? icon ?? label}
 		</button>
@@ -67,11 +68,12 @@ export function TiptapSelect({
 		<Select
 			title={label}
 			value={editor ? detect(editor): ""}
+			{...props}
 			onChange={(value) => {
 				onChange?.(value);
 				if (editor) action?.(value, editor.chain().focus()).run();
 			}}
-			{...props}
+			className={`${styles['toolbar-select']} ${props.className ?? ''}`}
 		/>
 	);
 }
