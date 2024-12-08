@@ -270,13 +270,21 @@ export type SelectProps = {
 	value?: string;
 	onChange?: (value: string) => void;
 	children?: SelectChild | SelectChild[];
+	updatePosition?: MutableRef<() => void>;
 	style?: React.CSSProperties;
 	className?: string;
-	updatePosition?: MutableRef<() => void>;
+	title?: string;
 };
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
-	function Select(props, ref) {
+	function Select({
+		value,
+		onChange,
+		children,
+		updatePosition,
+		className,
+		...props
+	}, ref) {
 		const id = React.useId();
 		const [searchingValue, setSearchingValue] = React.useState("");
 		// biome-ignore lint/correctness/useExhaustiveDependencies: very intentional
@@ -289,10 +297,10 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 
 		const options = React.useMemo(
 			() =>
-				(Array.isArray(props.children)
-					? props.children
-					: props.children
-						? [props.children]
+				(Array.isArray(children)
+					? children
+					: children
+						? [children]
 						: []
 				)
 					.map((el) => {
@@ -323,15 +331,15 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					.filter((x) => !!x)
 					.sort((a, b) => b[1] - a[1])
 					.map((x) => x[0]),
-			[props.children, searchingValue, map],
+			[children, searchingValue, map],
 		);
 
 		return (
 			<SelectState.Provider
 				value={{
 					id,
-					value: props.value,
-					onChange: props.onChange,
+					value,
+					onChange,
 					searchingValue,
 					setSearchingValue,
 					map,
@@ -343,13 +351,14 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					popoverTarget={id}
 					popoverTargetAction="toggle"
 					style={props.style}
-					className={`${styles["select-button"]} ${props.className}`}
+					className={`${styles["select-button"]} ${className}`}
 					ref={ref}
+					{...props}
 				>
-					{props.value ?? "unset"}
+					{value ?? "unset"}
 					<SelectPopover
 						id={id}
-						updatePosition={props.updatePosition}
+						updatePosition={updatePosition}
 						beforeContent={
 							<input
 								type="search"
