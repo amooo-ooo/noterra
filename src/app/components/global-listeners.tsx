@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 export const WindowSize = React.createContext<readonly [number, number]>(null!);
