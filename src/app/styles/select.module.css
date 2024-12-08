@@ -43,6 +43,10 @@
 .select-option {
 	text-align: inherit;
 
+	.disabled {
+		color: #808080;
+	}
+
 	&:hover,
 	input[type="radio"]:focus-visible+& {
 		background-color: #80808020;
@@ -55,9 +59,5 @@
 	&.selected:hover,
 	input[type="radio"]:focus-visible+&.selected {
 		background-color: #80808060;
-	}
-
-	.disabled {
-		color: #808080;
 	}
 }

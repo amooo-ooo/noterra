@@ -190,7 +190,8 @@ function SelectPopover({
 			onBlurCapture={(e) => {
 				const el = e.currentTarget;
 				setTimeout(() => {
-					if (!el.contains(document.activeElement)) el.hidePopover();
+					if (!el.parentElement?.contains(document.activeElement))
+						el.hidePopover();
 				}, 0);
 			}}
 			onToggle={(e) => {
