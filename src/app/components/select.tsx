@@ -281,10 +281,10 @@ function SelectPopover({
 					const el = ref.current;
 					if (!el || el.scrollHeight > el.clientHeight) return;
 					let dist = e.deltaY ?? e.detail;
+					console.log(e)
 					switch (e.deltaMode) {
 						case DeltaMode.DOM_DELTA_PIXEL:
-							dist /= 100;
-							dist = Math.round(dist);
+							dist = Math.sign(dist);
 							break;
 						case DeltaMode.DOM_DELTA_PAGE:
 							dist *= (el.clientHeight ?? 100) / (el.lastElementChild?.clientHeight ?? 26);
