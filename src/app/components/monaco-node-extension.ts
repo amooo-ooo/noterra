@@ -46,6 +46,7 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 					class: node.attrs.language
 						? this.options.languageClassPrefix + node.attrs.language
 						: null,
+					...(node.attrs.hasUsed ? {} : { 'data-should-focus': true })
 				},
 				0,
 			],
@@ -67,6 +68,16 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 				},
 		};
 	},
+
+	addAttributes() {
+		return {
+			...this.parent?.(),
+			hasUsed: {
+				default: false,
+				parseHTML: (el) => !el.dataset.shouldFocus,
+			}
+		}
+	}
 
 	// addPasteRules() {
 	// 	return [

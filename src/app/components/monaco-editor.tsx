@@ -8,7 +8,7 @@ import {
 } from "@tiptap/react";
 import "./monaco-node-extension";
 import type { editor as MonacoEditorNS } from "monaco-editor";
-import React, { useEffect } from "react";
+import React from "react";
 import { EditorContext } from "./editor";
 import styles from "@/app/styles/monaco-editor.module.css";
 import { Option, Select } from "./select";
@@ -149,16 +149,17 @@ export function MonacoEditor({
 			)
 				return;
 
-			// TODO: fix this jank TODO: soon pls
 			const pos = editor.$pos(getPos() + 1 /* WHY */);
-			if ((pos.parent?.to ?? Number.POSITIVE_INFINITY) <= pos.to + 1)
-				editor.commands.insertContentAt(pos.to, "<p></p>");
-
-			editor.commands.focus(
-				e.code === "ArrowUp" || e.code === "ArrowLeft"
-					? getPos() - 1
-					: getPos() + node.nodeSize,
-			);
+			if (e.code === "ArrowUp" || e.code === "ArrowLeft") {
+				if (!pos.before || pos.before.node.type === editor.schema.nodes.monacoCodeBlock) {
+					editor.commands.insertContentAt(pos.from - 1, "<p></p>");
+					editor.commands.focus(pos.from - 1);
+				} else editor.commands.focus(pos.from - 2);
+			} else {
+				if (!pos.after || pos.after.node.type === editor.schema.nodes.monacoCodeBlock)
+					editor.commands.insertContentAt(pos.to, "<p></p>");
+				editor.commands.focus(pos.to);
+			}
 		}).dispose;
 	}, [editor, mcEditor, getPos, node]);
 
@@ -302,8 +303,11 @@ export function MonacoEditor({
 						}}
 						onMount={(mcEditor, monaco) => {
 							setMcEditor(mcEditor);
-							mcEditor.focus();
 							setHeight(mcEditor?.getContentHeight() ?? 0);
+							if (!node.attrs.hasUsed) {
+								mcEditor.focus();
+								updateAttributes({ hasUsed: true });
+							}
 							const overflow = mcEditor
 								.getDomNode()
 								?.querySelector(".overflowingContentWidgets") as HTMLElement;
