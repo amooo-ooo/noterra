@@ -26,6 +26,7 @@ import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
+import Heading from '@tiptap/extension-heading'
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
 import styles from "@/app/styles/tiptap.module.css";
@@ -93,6 +94,7 @@ export function Editor({
 			}),
 			FontFamily,
 			TextStyle,
+			Heading,
 		],
 		content: data.initialContent,
 		immediatelyRender: false,

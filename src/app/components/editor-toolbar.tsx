@@ -164,6 +164,28 @@ const TOOLS = {
 			))}
 		</TiptapSelect>
 	),
+	heading: (
+		<TiptapSelect
+			label="heading"
+			detect={(ed) => 
+				ed.getAttributes("heading").level 
+				? `Heading ${ed.getAttributes("heading").level}` 
+				: "Paragraph"
+			}
+			action={(value, ctx) => 
+				value 
+				? ctx.toggleHeading({ level: value })
+				: ctx.setParagraph()
+			}
+		>
+			{[0, 1, 2, 3, 4, 5, 6].map((level) => (
+				<Option 
+					label={level ? `Heading ${level}` : "Paragraph"} 
+					value={level} 
+					key={level}
+				/>
+			))}
+		</TiptapSelect>)
 	/// ...
 };
 
@@ -248,6 +270,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"undo",
 			"redo"
 		],
+		["heading"],
 		["fontFamily"],
 		[
 			"bold",

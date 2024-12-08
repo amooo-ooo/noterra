@@ -4,8 +4,8 @@ import { WindowSize } from "./global-listeners";
 import { HANDLES_CHARS } from "./editor";
 
 type OptionProps = {
-	label?: string;
-	value: string;
+	label?: string | number;
+	value: string | number;
 	valueAliases?: string[];
 	disabled?: boolean;
 	style?: React.CSSProperties;
