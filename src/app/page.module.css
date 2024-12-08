@@ -37,15 +37,39 @@ html, body {
 	display: flex;
 	flex-direction: column;
 	overflow: auto;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: sticky;
+		width: 100%;
+		height: 0;
+		top: 0;
+		left: 0;
+		box-shadow: 0 0 12px 24px var(--bg-0);
+		z-index: 1;
+	}
 }
 
 .toolbar {
 	position: sticky;
 	inset: 0;
+	top: 12px;
 	bottom: unset;
 	flex-shrink: 0;
-	z-index: 1;
-	backdrop-filter: blur(10px);
+	background-color: color-mix(in srgb, var(--bg-0) 50%, transparent 50%);
+	margin-inline: 12px;
+	box-shadow: 1px 2px 10px -2px var(--shadow-color);
+	z-index: 2;
+	overflow: hidden;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		backdrop-filter: blur(10px);
+		z-index: -1;
+	}
 }
 
 .editor {
