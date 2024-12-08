@@ -29,6 +29,7 @@
 	background-color: inherit;
 	height: auto;
 	inset: unset;
+	min-width: inherit;
 
 	&:popover-open {
 		display: flex;

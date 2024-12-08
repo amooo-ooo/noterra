@@ -353,7 +353,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					ref={ref}
 					{...props}
 				>
-					{label ?? value ?? "unset"}
+					<p>{label ?? value ?? "unset"}</p>
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}

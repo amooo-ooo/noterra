@@ -2,6 +2,7 @@
 	--gap: 3px;
 	--divider-padding: 5px;
 	--icon-weight: 350;
+	--border-width: 1px;
 
 	display: flex;
 	flex-flow: row wrap;
@@ -12,33 +13,45 @@
 	display: flex;
 	flex-flow: row;
 	gap: var(--gap);
-
+	
 	&:not(:first-of-type)::before {
 		content: "";
 		width: 1px;
 		margin-inline: var(--divider-padding) calc(var(--divider-padding) - var(--gap));
 		background-color: currentColor;
 	}
-
+	
 	button {
 		background-color: transparent;
 		border: none;
 		padding: 2px;
-		border-radius: 2px;
+		border-radius: 5px;
 		display: flex;
 		transition: background-color 250ms ease;
-
+		
 		/* TODO: colors */
 		&:is(:hover, :focus-visible) {
 			background-color: #80808020;
 		}
-
+		
 		&:active {
 			background-color: #80808030;
 		}	
-
+		
 		>span {
 			font-weight: var(--icon-weight);
 		}
 	}
+
+	.toolbar-select {
+		background-color: var(--bg-0) !important;
+		border: var(--border-width) solid var(--border-color);
+		padding: 4px 8px;
+		min-width: 10em;
+
+		>p {
+			align-content: center;
+		}
+	}
 }
+

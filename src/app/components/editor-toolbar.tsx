@@ -142,7 +142,7 @@ const TOOLS = {
 			label="fontFamily"
 			detect={(ed) => ed.getAttributes("textStyle").fontFamily ?? "Inter"}
 			action={(value, ctx) => ctx.setFontFamily(value)}
-			style={{ backgroundColor: "var(--bg-0)" }}
+			className={styles["toolbar-select"]}
 		>
 			{[
 				["Inter", "var(--font-inter-sans), sans-serif"],
