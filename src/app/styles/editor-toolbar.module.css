@@ -49,7 +49,7 @@
 		padding: 4px 8px;
 		min-width: 10em;
 
-		>p {
+		>span {
 			align-content: center;
 		}
 	}

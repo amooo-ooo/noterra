@@ -1,5 +1,8 @@
 .select-button {
 	/* anchor-name: --select; */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .sub {
