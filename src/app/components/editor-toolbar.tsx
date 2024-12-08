@@ -172,7 +172,7 @@ const TOOLS = {
 			}
 			action={(value, ctx) => 
 				value 
-				? ctx.toggleHeading({ level: value })
+				? ctx.setHeading({ level: value })
 				: ctx.setParagraph()
 			}
 		>
