@@ -31,11 +31,13 @@
 
 		/* TODO: colors */
 		&:is(:hover, :focus-visible, .active):not(:has([popover]:hover)) {
-			box-shadow: inset 0 0 0 100vmax #80808020;
+			background-color: #80808020;
 		}
 
-		&:is(:active, .active:is(:hover, :focus-visible)):not(:has([popover]:hover)) {
-			box-shadow: inset 0 0 0 100vmax #80808030;
+		&:active:not(:has([popover]:active)),
+		&.active:hover:not(:has([popover]:hover)),
+		&:focus-visible {
+			background-color: #80808030;
 		}
 
 		>span {
@@ -44,9 +46,12 @@
 	}
 
 	.toolbar-select {
-		background-color: var(--bg-0);
 		border: var(--border-width) solid var(--border-color);
 		padding: 4px 8px;
 		min-width: 10em;
+
+		>[popover] {
+			background-color: var(--bg-0);
+		}
 	}
 }
