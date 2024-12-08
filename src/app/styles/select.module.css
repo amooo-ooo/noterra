@@ -8,6 +8,8 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		/* reser from <button> styles */
+		text-align: left;
 	}
 }
 
