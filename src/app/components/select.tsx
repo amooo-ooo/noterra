@@ -114,6 +114,12 @@ type SelectChild = React.ReactElement<OptionProps, typeof Option>;
 
 type MutableRef<T> = React.MutableRefObject<T> | ((value: T) => void);
 
+enum DeltaMode {
+	DOM_DELTA_PIXEL = 0x00,
+	DOM_DELTA_LINE = 0x01,
+	DOM_DELTA_PAGE = 0x02,
+}
+
 function SelectPopover({
 	id,
 	children,
@@ -168,6 +174,47 @@ function SelectPopover({
 		return style;
 	}, [winWidth, winHeight, rect]);
 
+
+	const focusPrev = (count = 1) => {
+		let node = (document.activeElement as HTMLInputElement | null)?.previousElementSibling;
+		while (node) {
+			if (node.matches('input[type="radio"]:not([disabled])') && !--count) {
+				(node as HTMLInputElement).focus();
+				node.nextElementSibling?.scrollIntoView({ block: "nearest" });
+				break;
+			}
+			node = node.previousElementSibling;
+		}
+		if (!node) {
+			const node =
+				ref.current?.querySelector<HTMLInputElement>(
+					'input[type="radio"]:last-of-type',
+				) ?? null;
+			node?.focus();
+			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
+		}
+	}
+
+	const focusNext = (count = 1) => {
+		let node = (document.activeElement as HTMLInputElement | null)?.nextElementSibling;
+		while (node) {
+			if (node.matches('input[type="radio"]:not([disabled])') && !--count) {
+				(node as HTMLInputElement).focus();
+				node.nextElementSibling?.scrollIntoView({ block: "nearest" });
+				break;
+			}
+			node = node.nextElementSibling;
+		}
+		if (!node) {
+			const node =
+				ref.current?.querySelector<HTMLInputElement>(
+					'input[type="radio"]',
+				) ?? null;
+			node?.focus();
+			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
+		}
+	}
+
 	return (
 		<div
 			id={id}
@@ -205,38 +252,13 @@ function SelectPopover({
 					case "ArrowDown":
 					case "ArrowRight": {
 						e.preventDefault();
-						const id = (e.target as HTMLInputElement).id;
-						const node =
-							ref.current?.querySelector<HTMLInputElement>(
-								`[id="${id}"] ~ input[type="radio"]`,
-							) ??
-							ref.current?.querySelector<HTMLInputElement>(
-								'input[type="radio"]',
-							);
-						node?.focus();
-						node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
+						focusNext();
 						break;
 					}
 					case "ArrowUp":
 					case "ArrowLeft": {
 						e.preventDefault();
-						let node = (e.target as HTMLInputElement)?.previousElementSibling;
-						while (node) {
-							if (node.matches('input[type="radio"]:not([disabled])')) {
-								(node as HTMLInputElement).focus();
-								node.nextElementSibling?.scrollIntoView({ block: "nearest" });
-								break;
-							}
-							node = node.previousElementSibling;
-						}
-						if (!node) {
-							const node =
-								ref.current?.querySelector<HTMLInputElement>(
-									'input[type="radio"]:last-of-type',
-								) ?? null;
-							node?.focus();
-							node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
-						}
+						focusPrev();
 						break;
 					}
 					case "Enter":
@@ -252,7 +274,29 @@ function SelectPopover({
 			}}
 		>
 			{beforeContent}
-			<div className={styles["popout-scroll-container"]} ref={ref}>
+			<div
+				className={styles["popout-scroll-container"]}
+				ref={ref}
+				onWheel={e => {
+					const el = ref.current;
+					if (!el || el.scrollHeight > el.clientHeight) return;
+					let dist = e.deltaY ?? e.detail;
+					switch (e.deltaMode) {
+						case DeltaMode.DOM_DELTA_PIXEL:
+							dist /= 100;
+							dist = Math.round(dist);
+							break;
+						case DeltaMode.DOM_DELTA_PAGE:
+							dist *= (el.clientHeight ?? 100) / (el.lastElementChild?.clientHeight ?? 26);
+							dist = Math.round(dist);
+					}
+					if (dist < 0) {
+						focusPrev(-dist);
+					} else {
+						focusNext(dist);
+					}
+				}}
+			>
 				{children}
 			</div>
 		</div>
