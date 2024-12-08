@@ -34,6 +34,7 @@ export interface EditorData {
 	initialContent: string;
 	editor?: TipTapEditor;
 	lastKeyPress?: KeyboardEvent["key"];
+	scrollingElement?: HTMLElement;
 }
 
 export const EditorContext = React.createContext(null as unknown as EditorData);
@@ -137,6 +138,9 @@ export function Editor({
 			<EditorToolbar className={toolbarClass} />
 			<EditorContent
 				editor={editor}
+				ref={(el) => {
+					data.scrollingElement = el ?? undefined;
+				}}
 				className={`${styles.tiptap} ${editorClass}`}
 				onKeyDownCapture={(e) => {
 					data.lastKeyPress = e.key;

@@ -1,5 +1,5 @@
 .select-button {
-	anchor-name: --select;
+	/* anchor-name: --select; */
 }
 
 .sub {
@@ -10,8 +10,8 @@
 
 .highlight {
 	background-color: #ffff0040;
-	border-radius: 2px;
-	box-shadow: 0 0 0 0.1em #ffff0040;
+	border-radius: 3px;
+	box-shadow: 0 0 0 0.3ch #ffff0040;
 }
 
 .popout-scroll-container {
@@ -22,38 +22,26 @@
 }
 
 .popout-container {
-	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
-	position-anchor: --select;
-	position-try: most-height flip-block, flip-inline, flip-block flip-inline;
-	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
-	position-visibility: anchors-visible;
 	border: none;
-	border-radius: 5px;
-	max-height: 40vh;
-	/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
-	position-area: bottom span-right;
+	border-radius: 10px;
 	flex-flow: column;
 	box-shadow: 1px 2px 15px -5px var(--shadow-color);
 	background-color: inherit;
+	height: auto;
+	inset: unset;
 
 	&:popover-open {
 		display: flex;
 	}
+}
 
-	.right & {
-		/* biome-ignore lint/correctness/noUnknownProperty: <explanation> */
-		position-area: bottom span-left;
-	}
+.select-option, .no-results {
+	padding: 6px 10px;
+	flex-shrink: 0;
 }
 
 .select-option {
-	padding: 6px 10px;
-	flex-shrink: 0;
-	text-align: left;
-
-	.right & {
-		text-align: right;
-	}
+	text-align: inherit;
 
 	&:hover,
 	input[type="radio"]:focus-visible+& {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styles from "@/app/styles/select.module.css";
 
 type OptionProps = {
@@ -76,7 +76,14 @@ export function Option({ label, value, disabled }: OptionProps) {
 				disabled={disabled}
 				id={`${state.id}_${value}`}
 				name={`${state.id}_${value}`}
-				style={{ width: 0, height: 0 }}
+				style={{
+					// https://www.a11yproject.com/posts/how-to-hide-content/
+					contain: "strict",
+					clipPath: "inset(50%)",
+					position: "absolute",
+					width: 1,
+					height: 1,
+				}}
 				onChange={(e) => {
 					const el = e.currentTarget.closest<HTMLElement>("[popover]");
 					setTimeout(() => el?.hidePopover(), 0);
@@ -98,27 +105,98 @@ export function Option({ label, value, disabled }: OptionProps) {
 type SelectChild = React.ReactElement<OptionProps, typeof Option>;
 // | React.ReactElement<React.HTMLProps<HTMLOptGroupElement>, "optgroup">;
 
-function SelectPopover(props: {
+type MutableRef<T> = React.MutableRefObject<T> | ((value: T) => void);
+
+function SelectPopover({
+	id,
+	children,
+	beforeContent,
+	updatePosition,
+}: {
 	id: string;
 	children?: React.ReactNode;
 	beforeContent?: React.ReactNode;
+	updatePosition?: MutableRef<() => void>;
 }) {
 	const state = React.useContext(SelectState);
 	const ref = React.useRef<HTMLDivElement | null>(null);
-	// biome-ignore lint/correctness/useExhaustiveDependencies: we want to focus first element in search
-	// useEffect(() => {
-	// 	(
-	// 		ref.current?.querySelector<HTMLInputElement>('input[type="radio"]') ??
-	// 		state.searchField?.current
-	// 	)?.focus();
-	// }, [state.searchingValue]);
+
+	const [[winWidth, winHeight], setWindowSize] = React.useState([
+		window.innerWidth,
+		window.innerHeight,
+	] as const);
+
+	React.useEffect(() =>
+		window.addEventListener("resize", () =>
+			setWindowSize([window.innerWidth, window.innerHeight]),
+		),
+	);
+
+	const [rect, setRect] = React.useState<DOMRect | null>(null);
+	const updatePos = React.useCallback(
+		() =>
+			setRect(
+				ref.current
+					?.closest(`.${styles["select-button"]}`)
+					?.getBoundingClientRect() ?? null,
+			),
+		[],
+	);
+
+	React.useEffect(() => {
+		if (typeof updatePosition === "function") return updatePosition(updatePos);
+		if (updatePosition) updatePosition.current = updatePos;
+	}, [updatePosition, updatePos]);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: umm biome hello what???
+	const style = React.useMemo(() => {
+		const style: React.CSSProperties = {};
+		if (rect) {
+			// Horizontal positioning
+			if (rect.x + rect.width / 2 > winWidth / 2) {
+				style.right = winWidth - rect.right;
+				style.textAlign = "right";
+			} else {
+				style.left = rect.left;
+				style.textAlign = "left";
+			}
+			if (rect.y + rect.height / 2 > winHeight / 2) {
+				style.maxHeight = rect.top - 10;
+				style.bottom = winHeight - rect.top;
+			} else {
+				style.maxHeight = winHeight - rect.bottom - 10;
+				style.top = rect.bottom;
+			}
+		}
+		return style;
+	}, [winWidth, winHeight, rect]);
+
 	return (
 		<div
-			id={props.id}
+			id={id}
 			popover="auto"
 			className={styles["popout-container"]}
+			style={style}
+			ref={(el) => {
+				if (!el) return;
+				const observer = new IntersectionObserver((es) => {
+					for (const evt of es) {
+						if (!evt.isIntersecting)
+							ref.current?.closest<HTMLElement>("[popover]")?.hidePopover();
+					}
+				});
+				observer.observe(el?.closest(`.${styles["select-button"]}`) ?? el);
+			}}
+			onBlurCapture={(e) => {
+				const el = e.currentTarget;
+				setTimeout(() => {
+					if (!el.contains(document.activeElement)) el.hidePopover();
+				}, 0);
+			}}
 			onToggle={(e) => {
 				state.setSearchingValue("");
+				ref.current?.scrollTo({ top: 0 });
+				updatePos();
 				e.currentTarget
 					.querySelector<HTMLInputElement>(`[id="${state.id}_${state.value}"]`)
 					?.focus();
@@ -138,7 +216,7 @@ function SelectPopover(props: {
 								'input[type="radio"]',
 							);
 						node?.focus();
-						node?.scrollIntoView({ block: "nearest" });
+						node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
 						break;
 					}
 					case "ArrowUp":
@@ -148,7 +226,7 @@ function SelectPopover(props: {
 						while (node) {
 							if (node.matches('input[type="radio"]:not([disabled])')) {
 								(node as HTMLInputElement).focus();
-								node.scrollIntoView({ block: "nearest" });
+								node.nextElementSibling?.scrollIntoView({ block: "nearest" });
 								break;
 							}
 							node = node.previousElementSibling;
@@ -159,7 +237,7 @@ function SelectPopover(props: {
 									'input[type="radio"]:last-of-type',
 								) ?? null;
 							node?.focus();
-							node?.scrollIntoView({ block: "nearest" });
+							node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
 						}
 						break;
 					}
@@ -175,9 +253,9 @@ function SelectPopover(props: {
 				}
 			}}
 		>
-			{props.beforeContent}
+			{beforeContent}
 			<div className={styles["popout-scroll-container"]} ref={ref}>
-				{props.children}
+				{children}
 			</div>
 		</div>
 	);
@@ -187,102 +265,121 @@ function setEquals<T>(a: T[], b: T[]) {
 	return !new Set(a).symmetricDifference(new Set(b)).size;
 }
 
-export function Select(props: {
+export type SelectProps = {
 	value?: string;
 	onChange?: (value: string) => void;
 	children?: SelectChild | SelectChild[];
 	style?: React.CSSProperties;
 	className?: string;
-	alignRight?: boolean;
-}) {
-	const id = React.useId();
-	const [searchingValue, setSearchingValue] = React.useState("");
-	// biome-ignore lint/correctness/useExhaustiveDependencies: very intentional
-	const map = React.useMemo<React.ContextType<typeof SelectState>["map"]>(
-		() => ({}),
-		[searchingValue],
-	);
-	const searchField = React.useRef<HTMLInputElement | null>(null);
+	updatePosition?: MutableRef<() => void>;
+};
 
-	const options = React.useMemo(
-		() =>
-			(Array.isArray(props.children)
-				? props.children
-				: props.children
-					? [props.children]
-					: []
-			)
-				.map((el) => {
-					if (!el) return;
-					const props = el.props;
-					const oldProps = map[props.value]?.props;
-					if (
-						oldProps &&
-						oldProps.label === props.label &&
-						oldProps.value === props.value &&
-						(oldProps.valueAliases === props.valueAliases ||
-							setEquals(oldProps.valueAliases ?? [], props.valueAliases ?? []))
-					)
-						return [el, map[props.value].matches.score] as const;
-					const matches = match(searchingValue, [
-						props.label ?? props.value,
-						props.value,
-						...(props.valueAliases ?? []),
-					]);
-					if (!matches) return;
-					if (matches.in === (props.label ?? props.value)) matches.score++;
-					map[props.value] = { matches, props };
-					return [el, matches.score] as const;
-				})
-				.filter((x) => !!x)
-				.sort((a, b) => b[1] - a[1])
-				.map((x) => x[0]),
-		[props.children, searchingValue, map],
-	);
+export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
+	function Select(props, ref) {
+		const id = React.useId();
+		const [searchingValue, setSearchingValue] = React.useState("");
+		// biome-ignore lint/correctness/useExhaustiveDependencies: very intentional
+		const map = React.useMemo<React.ContextType<typeof SelectState>["map"]>(
+			() => ({}),
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+			[searchingValue],
+		);
+		const searchField = React.useRef<HTMLInputElement | null>(null);
 
-	return (
-		<SelectState.Provider
-			value={{
-				id,
-				value: props.value,
-				onChange: props.onChange,
-				searchingValue,
-				setSearchingValue,
-				map,
-				searchField,
-			}}
-		>
-			<button
-				type="button"
-				popoverTarget={id}
-				popoverTargetAction="toggle"
-				style={props.style}
-				className={`${styles["select-button"]} ${props.alignRight ? styles.right : ""} ${props.className}`}
+		const options = React.useMemo(
+			() =>
+				(Array.isArray(props.children)
+					? props.children
+					: props.children
+						? [props.children]
+						: []
+				)
+					.map((el) => {
+						if (!el) return;
+						const props = el.props;
+						const oldProps = map[props.value]?.props;
+						if (
+							oldProps &&
+							oldProps.label === props.label &&
+							oldProps.value === props.value &&
+							(oldProps.valueAliases === props.valueAliases ||
+								setEquals(
+									oldProps.valueAliases ?? [],
+									props.valueAliases ?? [],
+								))
+						)
+							return [el, map[props.value].matches.score] as const;
+						const matches = match(searchingValue, [
+							props.label ?? props.value,
+							props.value,
+							...(props.valueAliases ?? []),
+						]);
+						if (!matches) return;
+						if (matches.in === (props.label ?? props.value)) matches.score++;
+						map[props.value] = { matches, props };
+						return [el, matches.score] as const;
+					})
+					.filter((x) => !!x)
+					.sort((a, b) => b[1] - a[1])
+					.map((x) => x[0]),
+			[props.children, searchingValue, map],
+		);
+
+		return (
+			<SelectState.Provider
+				value={{
+					id,
+					value: props.value,
+					onChange: props.onChange,
+					searchingValue,
+					setSearchingValue,
+					map,
+					searchField,
+				}}
 			>
-				{props.value ?? "unset"}
-				<SelectPopover
-					id={id}
-					beforeContent={
-						<input
-							type="search"
-							ref={searchField}
-							value={searchingValue}
-							onChange={(e) => setSearchingValue(e.currentTarget.value)}
-							style={{
-								// https://www.a11yproject.com/posts/how-to-hide-content/
-								contain: "strict",
-								clipPath: "inset(50%)",
-								position: "absolute",
-								overflow: "hidden",
-								width: 1,
-								height: 1,
-							}}
-						/>
-					}
+				<button
+					type="button"
+					popoverTarget={id}
+					popoverTargetAction="toggle"
+					style={props.style}
+					className={`${styles["select-button"]} ${props.className}`}
+					ref={ref}
 				>
-					{options.length ? options : `No results matching '${searchingValue}'`}
-				</SelectPopover>
-			</button>
-		</SelectState.Provider>
-	);
-}
+					{props.value ?? "unset"}
+					<SelectPopover
+						id={id}
+						updatePosition={props.updatePosition}
+						beforeContent={
+							<input
+								type="search"
+								ref={searchField}
+								value={searchingValue}
+								onChange={(e) => setSearchingValue(e.currentTarget.value)}
+								onFocus={(e) =>
+									e.currentTarget.parentElement?.scrollTo({ top: 0 })
+								}
+								style={{
+									// https://www.a11yproject.com/posts/how-to-hide-content/
+									contain: "strict",
+									clipPath: "inset(50%)",
+									position: "absolute",
+									overflow: "hidden",
+									width: 1,
+									height: 1,
+								}}
+							/>
+						}
+					>
+						{options.length ? (
+							options
+						) : (
+							<span className={styles["no-results"]}>
+								No results matching &lsquo;{searchingValue}&rsquo;
+							</span>
+						)}
+					</SelectPopover>
+				</button>
+			</SelectState.Provider>
+		);
+	},
+);

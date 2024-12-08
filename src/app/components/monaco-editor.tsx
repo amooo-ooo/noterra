@@ -68,7 +68,7 @@ export function MonacoEditor({
 	const content = node.content.content.map((node) => node.textContent).join("");
 	const monaco = useMonaco();
 
-	useEffect(() => {
+	React.useEffect(() => {
 		const callback = ({
 			editor,
 			transaction,
@@ -89,7 +89,7 @@ export function MonacoEditor({
 		};
 	}, [editor, node, getPos, tiptapState]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		return mcEditor?.onKeyDown((e) => {
 			if (!mcEditor.hasTextFocus()) return;
 			if (e.code !== "Backspace" && e.code !== "Delete") return;
@@ -121,7 +121,7 @@ export function MonacoEditor({
 		}).dispose;
 	}, [editor, mcEditor, getPos, node]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		return mcEditor?.onKeyDown((e) => {
 			if (!mcEditor.hasTextFocus()) return;
 			if (!e.code.startsWith("Arrow")) return;
@@ -181,29 +181,41 @@ export function MonacoEditor({
 		return "(auto)";
 	}, [monaco, node.attrs.language]);
 
+	const languageOptions = React.useMemo(
+		() => [
+			<Option key="(auto)" value="(auto)" />,
+			...(monaco?.languages
+				.getLanguages()
+				.map((lang) => (
+					<Option key={lang.id} value={lang.id} valueAliases={lang.aliases} />
+				)) ?? []),
+		],
+		[monaco],
+	);
 	const languageSelector = React.useMemo(
 		() => (
 			<Select
 				value={currentLanguage}
 				onChange={(value) => updateAttributes({ language: value })}
 				className={styles["language-selector"]}
-				alignRight
+				updatePosition={(update) => {
+					requestAnimationFrame(update);
+					tiptapState.scrollingElement?.addEventListener("scroll", update, {
+						passive: true,
+					});
+					return () =>
+						tiptapState.scrollingElement?.removeEventListener("scroll", update);
+				}}
 			>
-				{[
-					<Option key="(auto)" value="(auto)" />,
-					...(monaco?.languages
-						.getLanguages()
-						.map((lang) => (
-							<Option
-								key={lang.id}
-								value={lang.id}
-								valueAliases={lang.aliases}
-							/>
-						)) ?? []),
-				]}
+				{languageOptions}
 			</Select>
 		),
-		[monaco, updateAttributes, currentLanguage],
+		[
+			currentLanguage,
+			updateAttributes,
+			languageOptions,
+			tiptapState.scrollingElement,
+		],
 	);
 
 	return (
