@@ -148,6 +148,7 @@ function SelectPopover({
 	const style = React.useMemo(() => {
 		const style: React.CSSProperties = {};
 		if (rect) {
+			style.minWidth = rect.width;
 			// Horizontal positioning
 			if (rect.x + rect.width / 2 > winWidth / 2) {
 				style.right = winWidth - rect.right;
