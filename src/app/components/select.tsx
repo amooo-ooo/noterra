@@ -97,6 +97,7 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 				className={`${styles["select-option"]} \
 					${disabled ? styles.disabled : ""} \
 					${value === state.value ? styles.selected : ""}`}
+				title={value}
 				style={style}
 			>
 				{nodes}
@@ -123,7 +124,6 @@ function SelectPopover({
 }) {
 	const state = React.useContext(SelectState);
 	const ref = React.useRef<HTMLDivElement | null>(null);
-
 
 	const [rect, setRect] = React.useState<DOMRect | null>(null);
 	const updatePos = React.useCallback(
@@ -288,15 +288,20 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 		);
 		const searchField = React.useRef<HTMLInputElement | null>(null);
 
+		const childs = React.useMemo(() => (Array.isArray(children)
+			? children
+			: children
+				? [children]
+				: []
+		), [children]);
+
+		const label = React.useMemo(() =>
+			childs.find(child => child.props.value === value)?.props.label,
+			[childs, value]);
+
 		const options = React.useMemo(
 			() =>
-				(Array.isArray(children)
-					? children
-					: children
-						? [children]
-						: []
-				)
-					.map((el) => {
+				childs.map((el) => {
 						if (!el) return;
 						const props = el.props;
 						const oldProps = map[props.value]?.props;
@@ -324,7 +329,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					.filter((x) => !!x)
 					.sort((a, b) => b[1] - a[1])
 					.map((x) => x[0]),
-			[children, searchingValue, map],
+			[childs, searchingValue, map],
 		);
 
 		return (
@@ -348,7 +353,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					ref={ref}
 					{...props}
 				>
-					{value ?? "unset"}
+					{label ?? value ?? "unset"}
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}
