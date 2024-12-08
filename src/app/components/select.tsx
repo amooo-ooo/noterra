@@ -3,9 +3,9 @@ import styles from "@/app/styles/select.module.css";
 import { WindowSize } from "./global-listeners";
 import { HANDLES_CHARS } from "./editor";
 
-type OptionProps = {
-	label?: string | number;
-	value: string | number;
+export type OptionProps = {
+	label?: string;
+	value: string;
 	valueAliases?: string[];
 	disabled?: boolean;
 	style?: React.CSSProperties;
