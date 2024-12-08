@@ -21,21 +21,21 @@
 		background-color: currentColor;
 	}
 
-	.toolbar-button {
+	.toolbar-button, .toolbar-select {
 		background-color: transparent;
 		border: none;
 		padding: 2px;
 		border-radius: 5px;
 		display: flex;
-		transition: background-color 250ms ease;
+		transition: box-shadow 250ms ease;
 
 		/* TODO: colors */
 		&:is(:hover, :focus-visible, .active) {
-			background-color: #80808020;
+			box-shadow: inset 0 0 0 100vmax #80808020;
 		}
 
 		&:is(:active, .active:is(:hover, :focus-visible)) {
-			background-color: #80808030;
+			box-shadow: inset 0 0 0 100vmax #80808030;
 		}
 
 		>span {
@@ -44,13 +44,9 @@
 	}
 
 	.toolbar-select {
-		background-color: var(--bg-0) !important;
+		background-color: var(--bg-0);
 		border: var(--border-width) solid var(--border-color);
 		padding: 4px 8px;
 		min-width: 10em;
-
-		>span {
-			align-content: center;
-		}
 	}
 }
