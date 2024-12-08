@@ -351,8 +351,6 @@ export function MonacoEditor({
 							},
 						]);
 					}}
-					onChange={console.log}
-					onInput={console.log}
 				>
 					```
 				</div>
