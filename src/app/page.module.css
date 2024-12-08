@@ -14,34 +14,32 @@ html, body {
 }
 
 .main {
-	display: grid;
-	grid-template-columns: [start sidebar-left] min-content [sidebar-left-end main] 1fr [main-end sidebar-right] min-content [sidebar-right-end end];
-	grid-template-rows: [top nav] min-content [nav-end toolbar] min-content [toolbar-end main] 1fr [main-end bottom];
-	flex: 1 1;
+	display: flex;
 }
 
 .editor-container {
-	display: contents;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
 }
 
 .tabstrip {
-	grid-area: nav / start / nav-end / end;
 	z-index: 1;
 	backdrop-filter: blur(10px);
 	padding-top: 6px;
+	flex-shrink: 0;
 }
 
 .toolbar {
-	grid-area: toolbar / main / toolbar-end / main-end;
 	z-index: 1;
 	backdrop-filter: blur(10px);
+	flex-shrink: 0;
 }
 
 .editor {
 	/* TODO: we have capability of allowing scroll content underneath navs if wanted (e.g for translucent/blurred nav overlays) */
-	grid-area: toolbar / main / bottom / main-end;
-	display: grid;
-	grid-template-rows: subgrid;
+	display: flex;
+	flex-direction: column;
 	overflow: auto;
 
 	&>* {
