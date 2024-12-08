@@ -92,7 +92,7 @@ const TOOLS = {
 	subscript: (
 		<TiptapButton
 			label="subscript"
-			action={(ctx) => ctx.toggleSuperscript()}
+			action={(ctx) => ctx.toggleSubscript()}
 			detect="subscript"
 			icon={<Subscript />}
 		/>
