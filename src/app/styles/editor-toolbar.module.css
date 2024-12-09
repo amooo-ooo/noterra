@@ -3,6 +3,7 @@
 	--divider-padding: 5px;
 	--icon-weight: 350;
 	--border-width: 1px;
+	--padding: 2px;
 
 	display: flex;
 	flex-flow: row wrap;
@@ -29,7 +30,7 @@
 	.toolbar-select {
 		background-color: transparent;
 		border: none;
-		padding: 2px;
+		padding: var(--padding);
 		border-radius: 5px;
 		display: flex;
 		transition: box-shadow 250ms ease;
@@ -61,10 +62,21 @@
 		}
 	}
 
-	.toolbar-select.horizontal {
-		padding: 2px;
+	.toolbar-select.button {
+		padding: var(--padding);
 		border: none;
 		font-size: .8em;
-		min-width: 0;
+		min-width: 2.3em;
+		
+		.color-swatch {
+			display: block;
+			margin: auto;
+			width: 1.4em;
+			aspect-ratio: 1;
+		}
+	}
+
+	.color-swatch-grid>[popover]>div {
+		grid-template-columns: repeat(16, auto);
 	}
 }

@@ -33,6 +33,10 @@
 	.horizontal & {
 		flex-flow: row;
 	}
+
+	.grid & {
+		display: grid;
+	}
 }
 
 .popout-container {
@@ -65,6 +69,11 @@
 	.horizontal & {
 		flex-flow: column;
 		padding: 8px 6px;
+	}
+
+	.grid & {
+		padding: 5px;
+		border-radius: 5px;
 	}
 
 	&.disabled {

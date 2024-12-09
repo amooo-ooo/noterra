@@ -152,14 +152,14 @@ const TOOLS = {
 			action={(value, ctx) =>
 				value.startsWith("heading")
 					? ctx.setHeading({
-							level: Number.parseInt(value.split(".")[1] ?? 1) as
-								| 1
-								| 2
-								| 3
-								| 4
-								| 5
-								| 6,
-						})
+						level: Number.parseInt(value.split(".")[1] ?? 1) as
+							| 1
+							| 2
+							| 3
+							| 4
+							| 5
+							| 6,
+					})
 					: ctx.setParagraph()
 			}
 		>
@@ -179,12 +179,13 @@ const TOOLS = {
 		<TiptapSelect
 			label="Text Align"
 			detect={(ed) =>
-				ed.getAttributes("paragraph").textAlign ??
-				ed.getAttributes("heading").textAlign ?? <FormatAlignLeft />
+				ed.getAttributes("paragraph").textAlign
+				?? ed.getAttributes("heading").textAlign
+				?? <FormatAlignLeft />
 			}
 			action={(value, ctx) => ctx.setTextAlign(value)}
-			className={`${styles["toolbar-select"]} ${styles.horizontal}`}
-			horizontal
+			className={`${styles["toolbar-select"]} ${styles.button}`}
+			display="horizontal"
 		>
 			{Object.entries({
 				left: <FormatAlignLeft />,
@@ -194,6 +195,36 @@ const TOOLS = {
 			}).map(([pos, icon]) => (
 				<Option label={icon} value={pos} key={pos} />
 			))}
+		</TiptapSelect>
+	),
+	textColor: (
+		<TiptapSelect
+			label="Text Color"
+			detect={(ed) =>
+				ed.getAttributes("textStyle").color
+				?? (<span 
+						className={styles["color-swatch"]}
+						style={{ backgroundColor: "#000", borderRadius: "50%" }} 
+					/>)
+			}
+			action={(value, ctx) => ctx.setColor(value)}
+			className={`${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
+			display="grid"
+		>
+			{
+				[
+					"#932c19", "#d02700", "#f34e16", "#fbd745", "#3df3c2", "#271ecf", "#5f01cb", "#fe4564",
+					"#b3291f", "#ff4632", "#feb22d", "#dff05d", "#9cf0e1", "#7783e5", "#905ccc", "#f137a6",
+				].map((color, index) => (
+					<Option
+						label={<span
+							className={styles["color-swatch"]}
+							style={{ backgroundColor: color, borderRadius: "50%" }} />}
+						value={color}
+						key={`${color}-${index}`}
+					/>)
+				)
+			}
 		</TiptapSelect>
 	),
 	/// ...
@@ -217,17 +248,17 @@ function toolbarDispatch(
 	state: ToolbarConfig,
 	action:
 		| {
-				type: "rearrange";
-				order: (
-					| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-					| ToolbarItemTypes
-				)[];
-		  }
+			type: "rearrange";
+			order: (
+				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+				| ToolbarItemTypes
+			)[];
+		}
 		| {
-				type: "rearrange-child";
-				childId: ToolbarGroup["id"];
-				order: ToolbarItemTypes[];
-		  },
+			type: "rearrange-child";
+			childId: ToolbarGroup["id"];
+			order: ToolbarItemTypes[];
+		},
 ): ToolbarConfig {
 	switch (action.type) {
 		case "rearrange": {
@@ -286,6 +317,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"strikethrough",
 			"superscript",
 			"subscript",
+			"textColor",
 			"code",
 		],
 		[

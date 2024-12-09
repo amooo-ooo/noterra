@@ -42,6 +42,7 @@ const createIcon = (name: string, codePoint: string) => {
 
 export const Close = createIcon("Close", "\ue5cd");
 export const Add = createIcon("Add", "\ue145");
+export const AddCircle = createIcon("AddCircle", "\ue147");
 export const Remove = createIcon("Remove", "\ue15b");
 export const FormatBold = createIcon("FormatBold", "\ue238");
 export const FormatItalic = createIcon("FormatItalic", "\ue23f");
