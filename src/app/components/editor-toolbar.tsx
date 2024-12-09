@@ -3,7 +3,7 @@
 import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import { unreachable } from "./util";
-import { TiptapButton, TiptapSelect } from "./tiptap-fields";
+import { FontFamilySelect, TiptapButton, TiptapSelect } from "./tiptap-fields";
 import styles from "@/app/styles/editor-toolbar.module.css";
 
 import {
@@ -140,33 +140,7 @@ const TOOLS = {
 		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo />} />
 	),
 	fontSize: <input type="number" />,
-	fontFamily: (
-		<TiptapSelect
-			label="fontFamily"
-			detect={(ed) => ed.getAttributes("textStyle").fontFamily ?? "Inter"}
-			action={(value, ctx) => ctx.setFontFamily(value)}
-		>
-			{[
-				["Inter", "var(--font-inter-sans), sans-serif"],
-				["Comic Sans", "'Comic Sans MS', cursive, sans-serif"],
-				["Arial", "Arial, Helvetica, sans-serif"],
-				["Georgia", "Georgia, serif"],
-				["Times New Roman", "'Times New Roman', Times, serif"],
-				["Courier New", "'Courier New', Courier, monospace"],
-				["Verdana", "Verdana, Geneva, sans-serif"],
-				["Tahoma", "Tahoma, Geneva, sans-serif"],
-				["Trebuchet MS", "'Trebuchet MS', Helvetica, sans-serif"],
-				["Lucida Sans", "'Lucida Sans', 'Lucida Grande', sans-serif"],
-			].map(([font, src]) => (
-				<Option
-					label={font}
-					value={src}
-					key={font}
-					style={{ fontFamily: src }}
-				/>
-			))}
-		</TiptapSelect>
-	),
+	fontFamily: <FontFamilySelect />,
 	heading: (
 		<TiptapSelect
 			label="heading"
