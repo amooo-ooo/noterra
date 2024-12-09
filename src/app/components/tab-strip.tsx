@@ -70,7 +70,7 @@ export function TabStrip({
 								setRenamingTab(tab.id);
 							} else setCurrentTab(tab.id);
 						}}
-						onPointerUp={(e) => {
+						onPointerUp={() => {
 							if (tab.id === currentTab) return;
 							tab.state.editor?.commands.focus();
 						}}

@@ -87,10 +87,8 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 					// https://www.a11yproject.com/posts/how-to-hide-content/
 					contain: "strict",
 					clipPath: "inset(50%)",
-					width: '100%',
-					height: 'calc(1lh + 12px)',
-					marginBottom: 'calc(-1lh - 12px)',
-					flexShrink: 0,
+					width: 0,
+					height: 0,
 					pointerEvents: 'none'
 				}}
 				onChange={(e) => {

@@ -89,6 +89,7 @@ export function TiptapSelect({
 			const usable = !editor || !action
 				|| action(opt.props.value, editor.can().chain().focus()).run();
 			if (usable) hasUsable = true;
+			if (opt.props.disabled || usable) return opt; // no change
 			return React.cloneElement(opt, {
 				disabled: opt.props.disabled || !usable
 			});
