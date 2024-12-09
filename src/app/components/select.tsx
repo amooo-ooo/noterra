@@ -191,7 +191,7 @@ function SelectPopover({
 		if (!node) {
 			const node =
 				ref.current?.querySelector<HTMLInputElement>(
-					'input[type="radio"]:last-of-type',
+					'input[type="radio"]:not([disabled]):last-of-type',
 				) ?? null;
 			node?.focus();
 			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
@@ -211,7 +211,7 @@ function SelectPopover({
 		if (!node) {
 			const node =
 				ref.current?.querySelector<HTMLInputElement>(
-					'input[type="radio"]',
+					'input[type="radio"]:not([disabled])',
 				) ?? null;
 			node?.focus();
 			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
@@ -375,7 +375,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 						)
 							return [el, map[props.value].matches.score] as const;
 						const matches = match(searchingValue, [
-							props.label ?? props.value,
+							...(typeof props.label === 'string' ? (props.label) : []),
 							props.value,
 							...(props.valueAliases ?? []),
 						]);
