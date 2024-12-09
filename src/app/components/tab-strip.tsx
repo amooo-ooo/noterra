@@ -4,7 +4,8 @@ import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.css";
-import { Add, Close, Upload } from "./icons";
+import { Upload, Plus, X } from "lucide-react";
+
 
 export function TabStrip({
 	tabs,
@@ -111,7 +112,7 @@ export function TabStrip({
 									close(tab);
 								}}
 							>
-								<Close size="1.5em" />
+								<X size="1.5em" />
 							</span>
 						</div>
 					</button>
@@ -126,7 +127,7 @@ export function TabStrip({
 						}}
 						className={styles["add-tab"]}
 					>
-						<Add size="1.5em" />
+						<Plus size="1.5em" />
 					</button>
 					<input
 						id="fileUpload"

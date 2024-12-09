@@ -5,18 +5,20 @@ import type React from "react";
 
 export type IconProps = {
 	size?: React.CSSProperties["fontSize"];
+	iconStyle?: "outlined" | "rounded" | "sharp";
+	style?: React.CSSProperties
 };
 
 type GeneralIconProps = IconProps & {
 	codePoint?: string;
 	label: string;
-	iconStyle?: "outlined" | "rounded" | "sharp";
 };
 
 export const Icon = ({
 	codePoint,
 	label,
-	iconStyle = "outlined",
+	style,
+	iconStyle = "rounded",
 	size = "1.8em",
 }: GeneralIconProps) => (
 	<span
@@ -26,6 +28,7 @@ export const Icon = ({
 		style={{
 			display: "block",
 			fontSize: size,
+			...style
 		}}
 	>
 		{codePoint ?? label}
@@ -40,30 +43,9 @@ const createIcon = (name: string, codePoint: string) => {
 	return component;
 };
 
-export const Close = createIcon("Close", "\ue5cd");
-export const Add = createIcon("Add", "\ue145");
-export const AddCircle = createIcon("AddCircle", "\ue147");
-export const Remove = createIcon("Remove", "\ue15b");
 export const FormatBold = createIcon("FormatBold", "\ue238");
 export const FormatItalic = createIcon("FormatItalic", "\ue23f");
 export const FormatUnderline = createIcon("FormatUnderline", "\ue249");
 export const FormatStrikethrough = createIcon("FormatStrikethrough", "\ue246");
-export const Superscript = createIcon("Superscript", "\uf112");
-export const Subscript = createIcon("Subscript", "\uf111");
-export const FormatListBulleted = createIcon("FormatListBulleted", "\ue241");
-export const FormatListNumbered = createIcon("FormatListNumbered", "\ue242");
-export const Checklist = createIcon("checklist", "\ue6b1");
-export const Code = createIcon("Code", "\ue86f");
-export const CodeBlocks = createIcon("CodeBlocks", "\uf84d");
 export const FormatQuote = createIcon("FormatQuote", "\ue244");
-export const Undo = createIcon("Undo", "\ue166");
-export const Redo = createIcon("Redo", "\ue15a");
 export const Link = createIcon("Link", "\ue157");
-export const HorizontalRule = createIcon("HorizontalRule", "\uf108");
-export const Upload = createIcon("Upload", "\uf09b");
-export const LightMode = createIcon("LightMode", "\ue518");
-export const DarkMode = createIcon("DarkMode", "\ue51c");
-export const FormatAlignLeft = createIcon("FormatAlignLeft", "\ue236");
-export const FormatAlignCenter = createIcon("FormatAlignCenter", "\ue234");
-export const FormatAlignRight = createIcon("FormatAlignRight", "\ue237");
-export const FormatAlignJustify = createIcon("FormatAlignJustify", "\ue235");

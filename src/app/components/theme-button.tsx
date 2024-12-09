@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { DarkMode, LightMode } from "./icons";
 import styles from "@/app/styles/theme-button.module.css";
+import { Moon, Sun } from "lucide-react";
 
 export function ThemeButton({
 	size,
@@ -32,7 +32,7 @@ export function ThemeButton({
 				props.onClick?.(e);
 			}}
 		>
-			{state ? <LightMode size={size} /> : <DarkMode size={size} />}
+			{state ? <Sun size={size} /> : <Moon size={size} />}
 		</button>
 	);
 }

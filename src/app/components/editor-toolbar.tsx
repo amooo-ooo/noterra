@@ -11,22 +11,26 @@ import {
 	FormatItalic,
 	FormatUnderline,
 	FormatStrikethrough,
+	FormatQuote,
+} from "./icons";
+
+import {
 	Code,
-	CodeBlocks,
+	SquareCode,
+	List,
+	Undo2,
+	Redo2,
+	ListOrdered,
+	Minus,
 	Superscript,
 	Subscript,
-	FormatListNumbered,
-	Undo,
-	Redo,
-	FormatListBulleted,
-	HorizontalRule,
-	FormatQuote,
-	FormatAlignLeft,
-	FormatAlignCenter,
-	FormatAlignRight,
-	FormatAlignJustify,
-	Checklist,
-} from "./icons";
+	AlignLeft,
+	AlignCenter,
+	AlignRight,
+	AlignJustify,
+	ListCheck,
+} from "lucide-react";
+
 import { Option } from "./select";
 
 const COLORS = [
@@ -81,7 +85,7 @@ const TOOLS = {
 			label="Code Block"
 			action={(ctx) => ctx.toggleCodeBlock()}
 			detect="codeblock"
-			icon={<CodeBlocks />}
+			icon={<SquareCode />}
 		/>
 	),
 	blockquote: (
@@ -89,7 +93,7 @@ const TOOLS = {
 			label="Block Quote"
 			action={(ctx) => ctx.toggleBlockquote()}
 			detect="blockquote"
-			icon={<FormatQuote />}
+			icon={<FormatQuote style={{ fontVariationSettings: "'FILL' 1"}}/>}
 		/>
 	),
 	superscript: (
@@ -113,7 +117,7 @@ const TOOLS = {
 			label="Ordered list"
 			action={(ctx) => ctx.toggleOrderedList()}
 			detect="orderedList"
-			icon={<FormatListNumbered />}
+			icon={<ListOrdered />}
 		/>
 	),
 	bulletList: (
@@ -121,7 +125,7 @@ const TOOLS = {
 			label="Bullet List"
 			action={(ctx) => ctx.toggleBulletList()}
 			detect="bulletList"
-			icon={<FormatListBulleted />}
+			icon={<List />}
 		/>
 	),
 	tasklist: (
@@ -129,21 +133,21 @@ const TOOLS = {
 			label="Task List"
 			action={(ctx) => ctx.toggleTaskList()}
 			detect="taskList"
-			icon={<Checklist />}
+			icon={<ListCheck />}
 		/>
 	),
 	horizontalRule: (
 		<TiptapButton
 			label="Horizontal Rule"
 			action={(ctx) => ctx.setHorizontalRule()}
-			icon={<HorizontalRule />}
+			icon={<Minus />}
 		/>
 	),
 	undo: (
-		<TiptapButton label="Undo" action={(ctx) => ctx.undo()} icon={<Undo />} />
+		<TiptapButton label="Undo" action={(ctx) => ctx.undo()} icon={<Undo2 />} />
 	),
 	redo: (
-		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo />} />
+		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo2 />} />
 	),
 	fontSize: <input type="number" />,
 	fontFamily: <FontFamilySelect />,
@@ -187,17 +191,17 @@ const TOOLS = {
 			detect={(ed) =>
 				ed.getAttributes("paragraph").textAlign
 				?? ed.getAttributes("heading").textAlign
-				?? <FormatAlignLeft />
+				?? <AlignLeft />
 			}
 			action={(value, ctx) => ctx.setTextAlign(value)}
 			className={`${styles["toolbar-select"]} ${styles.button}`}
 			display="horizontal"
 		>
 			{Object.entries({
-				left: <FormatAlignLeft />,
-				center: <FormatAlignCenter />,
-				right: <FormatAlignRight />,
-				justify: <FormatAlignJustify />,
+				left: <AlignLeft />,
+				center: <AlignCenter />,
+				right: <AlignRight />,
+				justify: <AlignJustify />,
 			}).map(([pos, icon]) => (
 				<Option label={icon} value={pos} key={pos} />
 			))}

@@ -125,10 +125,15 @@
 			flex: 0 0;
 			flex-basis: content;
 			padding: 1px;
-			padding-top: 2px;
 			margin: var(--button-padding);
 			border-radius: calc(var(--radius) - (var(--button-padding) + var(--margin)) / 2);
 			color: var(--fg-4);
+			aspect-ratio: 1;
+
+			svg {
+				padding: 2px;
+			}
+
 			transition:
 				background-color var(--small-transition),
 				color var(--small-transition);
