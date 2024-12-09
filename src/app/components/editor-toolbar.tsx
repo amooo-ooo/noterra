@@ -34,10 +34,31 @@ import {
 import { Option } from "./select";
 
 const COLORS = [
-	"#000000", "#434343", "#999999", "#b7b7b7", "#cccccc", "#efefef", "#f3f3f3", "#ffffff",
-	"#932c19", "#d02700", "#f34e16", "#fbd745", "#3df3c2", "#271ecf", "#5f01cb", "#fe4564",
-	"#b3291f", "#ff4632", "#feb22d", "#dff05d", "#9cf0e1", "#7783e5", "#905ccc", "#f137a6",
-];
+	"#000000",
+	"#434343",
+	"#999999",
+	"#b7b7b7",
+	"#cccccc",
+	"#efefef",
+	"#f3f3f3",
+	"#ffffff",
+	"#932c19",
+	"#d02700",
+	"#f34e16",
+	"#fbd745",
+	"#3df3c2",
+	"#271ecf",
+	"#5f01cb",
+	"#fe4564",
+	"#b3291f",
+	"#ff4632",
+	"#feb22d",
+	"#dff05d",
+	"#9cf0e1",
+	"#7783e5",
+	"#905ccc",
+	"#f137a6",
+] as const;
 
 const TOOLS = {
 	bold: (
@@ -93,7 +114,7 @@ const TOOLS = {
 			label="Block Quote"
 			action={(ctx) => ctx.toggleBlockquote()}
 			detect="blockquote"
-			icon={<FormatQuote style={{ fontVariationSettings: "'FILL' 1"}}/>}
+			icon={<FormatQuote style={{ fontVariationSettings: "'FILL' 1" }} />}
 		/>
 	),
 	superscript: (
@@ -162,14 +183,14 @@ const TOOLS = {
 			action={(value, ctx) =>
 				value.startsWith("heading")
 					? ctx.setHeading({
-						level: Number.parseInt(value.split(".")[1] ?? 1) as
-							| 1
-							| 2
-							| 3
-							| 4
-							| 5
-							| 6,
-					})
+							level: Number.parseInt(value.split(".")[1] ?? 1) as
+								| 1
+								| 2
+								| 3
+								| 4
+								| 5
+								| 6,
+						})
 					: ctx.setParagraph()
 			}
 		>
@@ -189,9 +210,8 @@ const TOOLS = {
 		<TiptapSelect
 			label="Text Align"
 			detect={(ed) =>
-				ed.getAttributes("paragraph").textAlign
-				?? ed.getAttributes("heading").textAlign
-				?? <AlignLeft />
+				ed.getAttributes("paragraph").textAlign ??
+				ed.getAttributes("heading").textAlign ?? <AlignLeft />
 			}
 			action={(value, ctx) => ctx.setTextAlign(value)}
 			className={`${styles["toolbar-select"]} ${styles.button}`}
@@ -211,54 +231,58 @@ const TOOLS = {
 		<TiptapSelect
 			label="Text Color"
 			detect={(ed) =>
-				ed.getAttributes("textStyle").color
-				?? (<span 
+				ed.getAttributes("textStyle").color ?? (
+					<span
 						className={styles["color-swatch"]}
-						style={{ backgroundColor: "#000", borderRadius: "50%" }} 
-					/>)
-			}
-			action={(value, ctx) => ctx.setColor(value)}
-			className={`${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
-			display="grid"
-		>
-			{
-				COLORS.map((color, index) => (
-					<Option
-						label={<span
-							className={styles["color-swatch"]}
-							style={{ backgroundColor: color, borderRadius: "50%" }} />}
-						value={color}
-						key={`textColor-${color}-${index}`}
-					/>)
+						style={{ backgroundColor: "var(--fg-0)" }}
+					/>
 				)
 			}
+			action={(value, ctx) => ctx.setColor(value)}
+			className={`${styles["text-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
+			display="grid"
+		>
+			{COLORS.map((color) => (
+				<Option
+					label={
+						<span
+							className={styles["color-swatch"]}
+							style={{ backgroundColor: color }}
+						/>
+					}
+					value={color}
+					key={`textColor-${color}-default`}
+				/>
+			))}
 		</TiptapSelect>
 	),
 	highlight: (
 		<TiptapSelect
-			label="Text Color"
+			label="Highlight Color"
 			detect={(ed) =>
-				ed.getAttributes("highlight").color
-				?? (<span 
+				ed.getAttributes("highlight").color ?? (
+					<span
 						className={styles["color-swatch"]}
-						style={{ backgroundColor: "#000", borderRadius: "50%" }} 
-					/>)
-			}
-			action={(value, ctx) => ctx.setHighlight({ color: value})}
-			className={`${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
-			display="grid"
-		>
-			{
-				COLORS.map((color, index) => (
-					<Option
-						label={<span
-							className={styles["color-swatch"]}
-							style={{ backgroundColor: color, borderRadius: "50%" }} />}
-						value={color}
-						key={`highlight-${color}-${index}`}
-					/>)
+						style={{ backgroundColor: "transparent" }}
+					/>
 				)
 			}
+			action={(value, ctx) => ctx.setHighlight({ color: value })}
+			className={`${styles["highlight-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
+			display="grid"
+		>
+			{COLORS.map((color) => (
+				<Option
+					label={
+						<span
+							className={styles["color-swatch"]}
+							style={{ backgroundColor: color }}
+						/>
+					}
+					value={color}
+					key={`highlight-${color}-default`}
+				/>
+			))}
 		</TiptapSelect>
 	),
 	/// ...
@@ -282,17 +306,17 @@ function toolbarDispatch(
 	state: ToolbarConfig,
 	action:
 		| {
-			type: "rearrange";
-			order: (
-				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-				| ToolbarItemTypes
-			)[];
-		}
+				type: "rearrange";
+				order: (
+					| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+					| ToolbarItemTypes
+				)[];
+		  }
 		| {
-			type: "rearrange-child";
-			childId: ToolbarGroup["id"];
-			order: ToolbarItemTypes[];
-		},
+				type: "rearrange-child";
+				childId: ToolbarGroup["id"];
+				order: ToolbarItemTypes[];
+		  },
 ): ToolbarConfig {
 	switch (action.type) {
 		case "rearrange": {

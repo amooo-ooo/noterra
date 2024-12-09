@@ -46,6 +46,7 @@
 			background-color: #80808030;
 		}
 
+		/* TODO: this currently also selects <select> inlined contents */
 		>span {
 			font-weight: var(--icon-weight);
 		}
@@ -54,26 +55,58 @@
 	.toolbar-select {
 		border: var(--border-width) solid var(--border-color);
 		padding: 4px 8px;
-		min-width: 10em;
+		width: 10em;
 
 		>[popover] {
 			background-color: color-mix(in srgb, var(--bg-0) 75%, transparent 25%);
 			backdrop-filter: blur(10px);
+		}
+
+		.color-swatch {
+			display: block;
+			margin: auto;
+			width: 1.4em;
+			aspect-ratio: 1;
+			border-radius: 50%;
+		}
+
+		&.highlight-color>span>.color-swatch {
+			/* inline in select */
+			border-radius: 2px;
+			padding: 2px;
+			display: grid;
+
+			&::before {
+				content: "";
+				background-color: var(--fg-0);
+				/* https://lucide.dev/icons/type */
+				mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWhpZ2hsaWdodGVyIj48cGF0aCBkPSJtOSAxMS02IDZ2M2g5bDMtMyIvPjxwYXRoIGQ9Im0yMiAxMi00LjYgNC42YTIgMiAwIDAgMS0yLjggMGwtNS4yLTUuMmEyIDIgMCAwIDEgMC0yLjhMMTQgNCIvPjwvc3ZnPg==");
+				mask-size: contain;
+			}
+		}
+
+		&.text-color>span>.color-swatch {
+			border-radius: 2px;
+			box-shadow: inset 0 0 0 100vmax var(--bg-0);
+			background-clip: text;
+			display: grid;
+
+			&::before {
+				content: "";
+				background-color: inherit;
+				/* https://lucide.dev/icons/highlighter */
+				mask-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXR5cGUiPjxwb2x5bGluZSBwb2ludHM9IjQgNyA0IDQgMjAgNCAyMCA3Ii8+PGxpbmUgeDE9IjkiIHgyPSIxNSIgeTE9IjIwIiB5Mj0iMjAiLz48bGluZSB4MT0iMTIiIHgyPSIxMiIgeTE9IjQiIHkyPSIyMCIvPjwvc3ZnPg==");
+				mask-size: contain;
+			}
 		}
 	}
 
 	.toolbar-select.button {
 		padding: var(--padding);
 		border: none;
-		font-size: .8em;
-		min-width: 2.3em;
-		
-		.color-swatch {
-			display: block;
-			margin: auto;
-			width: 1.4em;
-			aspect-ratio: 1;
-		}
+		width: auto;
+		height: 100%;
+		aspect-ratio: 1;
 	}
 
 	.color-swatch-grid>[popover]>div {
