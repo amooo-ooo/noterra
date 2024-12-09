@@ -167,22 +167,23 @@ const TOOLS = {
 			label="heading"
 			detect={(ed) => 
 				ed.getAttributes("heading").level 
-				? `Heading ${ed.getAttributes("heading").level}` 
-				: "Paragraph"
-			}
+				? `heading.${ed.getAttributes("heading").level}` 
+				: "paragraph"}
 			action={(value, ctx) => 
-				value 
-				? ctx.setHeading({ level: value })
-				: ctx.setParagraph()
-			}
+				value.startsWith('heading')
+					? ctx.setHeading({
+						level: parseInt(value.split('.')[1] ?? 1) as (1 | 2 | 3 | 4 | 5 | 6)
+					 })
+					: ctx.setParagraph()}
 		>
-			{[0, 1, 2, 3, 4, 5, 6].map((level) => (
-				<Option 
-					label={level ? `Heading ${level}` : "Paragraph"} 
-					value={level} 
+			{[<Option label="Paragraph" value="paragraph" key="paragraph" />,
+			...[1, 2, 3, 4, 5, 6].map((level) => (
+				<Option
+					label={`Heading ${level}`} 
+					value={`heading.${level}`}
 					key={level}
 				/>
-			))}
+			))]}
 		</TiptapSelect>)
 	/// ...
 };

@@ -56,7 +56,7 @@
 .select-option {
 	text-align: inherit;
 
-	.disabled {
+	&.disabled {
 		color: #808080;
 	}
 

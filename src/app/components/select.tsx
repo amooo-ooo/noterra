@@ -109,7 +109,8 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 	);
 }
 
-type SelectChild = React.ReactElement<OptionProps, typeof Option>;
+type SelectChild = React.ReactElement<OptionProps, typeof Option>
+	|  React.FunctionComponentElement<OptionProps>
 // | React.ReactElement<React.HTMLProps<HTMLOptGroupElement>, "optgroup">;
 
 type MutableRef<T> = React.MutableRefObject<T> | ((value: T) => void);
@@ -125,11 +126,13 @@ function SelectPopover({
 	children,
 	beforeContent,
 	updatePosition,
+	onToggleOpen,
 }: {
 	id: string;
 	children?: React.ReactNode;
 	beforeContent?: React.ReactNode;
 	updatePosition?: MutableRef<() => void>;
+	onToggleOpen?: (open: boolean) => void;
 }) {
 	const state = React.useContext(SelectState);
 	const ref = React.useRef<HTMLDivElement | null>(null);
@@ -239,12 +242,16 @@ function SelectPopover({
 				}, 0);
 			}}
 			onToggle={(e) => {
-				state.setSearchingValue("");
-				ref.current?.scrollTo({ top: 0 });
-				updatePos();
-				(e.currentTarget
-					.querySelector<HTMLInputElement>(`[id="${state.id}_${state.value}"]`)
-					?? e.currentTarget.querySelector<HTMLImageElement>('input'))?.focus();
+				const open = e.currentTarget.matches(':popover-open');
+				onToggleOpen?.(open);
+				if (open) {
+					state.setSearchingValue("");
+					ref.current?.scrollTo({ top: 0 });
+					updatePos();
+					(e.currentTarget
+						.querySelector<HTMLInputElement>(`[id="${state.id}_${state.value}"]`)
+						?? e.currentTarget.querySelector<HTMLImageElement>('input'))?.focus();
+				}
 			}}
 			onKeyDown={(e) => {
 				e.stopPropagation();
@@ -310,6 +317,7 @@ function setEquals<T>(a: T[], b: T[]) {
 export type SelectProps = {
 	value?: string;
 	onChange?: (value: string) => void;
+	onToggleOpen?: (open: boolean) => void;
 	children?: SelectChild | SelectChild[];
 	updatePosition?: MutableRef<() => void>;
 	style?: React.CSSProperties;
@@ -325,6 +333,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 		children,
 		updatePosition,
 		className,
+		onToggleOpen,
 		...props
 	}, ref) {
 		const id = React.useId();
@@ -406,6 +415,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}
+						onToggleOpen={onToggleOpen}
 						beforeContent={
 							<input
 								type="search"
