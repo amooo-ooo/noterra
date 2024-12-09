@@ -224,7 +224,7 @@ const TOOLS = {
 							className={styles["color-swatch"]}
 							style={{ backgroundColor: color, borderRadius: "50%" }} />}
 						value={color}
-						key={`${color}-${index}`}
+						key={`textColor-${color}-${index}`}
 					/>)
 				)
 			}
@@ -251,7 +251,7 @@ const TOOLS = {
 							className={styles["color-swatch"]}
 							style={{ backgroundColor: color, borderRadius: "50%" }} />}
 						value={color}
-						key={`${color}-${index}`}
+						key={`highlight-${color}-${index}`}
 					/>)
 				)
 			}
