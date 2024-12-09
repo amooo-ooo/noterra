@@ -34,6 +34,7 @@ import styles from "@/app/styles/tiptap.module.css";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
 
 export interface EditorData {
 	id: string;
@@ -106,7 +107,10 @@ export function Editor({
 				nested: true,
 			}),
 			TaskList,
-			Color
+			Color,
+			Highlight.configure({
+				multicolor: true
+			})
 		],
 		content: data.initialContent,
 		immediatelyRender: false,

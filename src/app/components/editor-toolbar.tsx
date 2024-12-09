@@ -29,6 +29,12 @@ import {
 } from "./icons";
 import { Option } from "./select";
 
+const COLORS = [
+	"#000000", "#434343", "#999999", "#b7b7b7", "#cccccc", "#efefef", "#f3f3f3", "#ffffff",
+	"#932c19", "#d02700", "#f34e16", "#fbd745", "#3df3c2", "#271ecf", "#5f01cb", "#fe4564",
+	"#b3291f", "#ff4632", "#feb22d", "#dff05d", "#9cf0e1", "#7783e5", "#905ccc", "#f137a6",
+];
+
 const TOOLS = {
 	bold: (
 		<TiptapButton
@@ -212,11 +218,34 @@ const TOOLS = {
 			display="grid"
 		>
 			{
-				[
-					"#000000", "#434343", "#999999", "#b7b7b7", "#cccccc", "#efefef", "#f3f3f3", "#ffffff",
-					"#932c19", "#d02700", "#f34e16", "#fbd745", "#3df3c2", "#271ecf", "#5f01cb", "#fe4564",
-					"#b3291f", "#ff4632", "#feb22d", "#dff05d", "#9cf0e1", "#7783e5", "#905ccc", "#f137a6",
-				].map((color, index) => (
+				COLORS.map((color, index) => (
+					<Option
+						label={<span
+							className={styles["color-swatch"]}
+							style={{ backgroundColor: color, borderRadius: "50%" }} />}
+						value={color}
+						key={`${color}-${index}`}
+					/>)
+				)
+			}
+		</TiptapSelect>
+	),
+	highlight: (
+		<TiptapSelect
+			label="Text Color"
+			detect={(ed) =>
+				ed.getAttributes("highlight").color
+				?? (<span 
+						className={styles["color-swatch"]}
+						style={{ backgroundColor: "#000", borderRadius: "50%" }} 
+					/>)
+			}
+			action={(value, ctx) => ctx.setHighlight({ color: value})}
+			className={`${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
+			display="grid"
+		>
+			{
+				COLORS.map((color, index) => (
 					<Option
 						label={<span
 							className={styles["color-swatch"]}
@@ -319,6 +348,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"superscript",
 			"subscript",
 			"textColor",
+			"highlight",
 			"code",
 		],
 		[
