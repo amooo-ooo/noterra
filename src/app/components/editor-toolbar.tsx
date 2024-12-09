@@ -122,7 +122,7 @@ const TOOLS = {
 			label="Superscript"
 			action={(ctx) => ctx.toggleSuperscript()}
 			detect="superscript"
-			icon={<Superscript />}
+			icon={<Superscript style={{ translate: "0 -3px" }} />}
 		/>
 	),
 	subscript: (
@@ -130,7 +130,7 @@ const TOOLS = {
 			label="Subscript"
 			action={(ctx) => ctx.toggleSubscript()}
 			detect="subscript"
-			icon={<Subscript />}
+			icon={<Subscript style={{ translate: "0 3px" }} />}
 		/>
 	),
 	orderedlist: (
