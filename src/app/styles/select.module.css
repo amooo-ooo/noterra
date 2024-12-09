@@ -2,15 +2,17 @@
 	/* anchor-name: --select; */
 	display: flex;
 	align-items: center;
+}
 
-	>span {
-		flex: 1 1;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		/* reset from <button> styles */
-		text-align: left;
-	}
+.select-value-container {
+	flex: 1 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* reset from <button> styles */
+	text-align: left;
+	display: flex;
+	align-items: center;
 }
 
 .sub {

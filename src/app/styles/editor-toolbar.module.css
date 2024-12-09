@@ -1,7 +1,7 @@
 .toolbar {
 	--gap: 3px;
 	--divider-padding: 5px;
-	--icon-weight: 350;
+	--icon-weight: 250;
 	--border-width: 1px;
 	--padding: 2px;
 
@@ -34,6 +34,7 @@
 		border-radius: 5px;
 		display: flex;
 		transition: box-shadow 250ms ease;
+		align-items: center;
 
 		/* TODO: colors */
 		&:is(:hover, :focus-visible, .active):not(:has([popover]:hover)) {
@@ -45,11 +46,10 @@
 		&:focus-visible {
 			background-color: #80808030;
 		}
+	}
 
-		/* TODO: this currently also selects <select> inlined contents */
-		>span {
-			font-weight: var(--icon-weight);
-		}
+	.toolbar-button>span {
+		font-weight: var(--icon-weight);
 	}
 
 	.toolbar-select {

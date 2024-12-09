@@ -336,7 +336,7 @@ export type SelectProps = {
 	onToggleOpen?: (open: boolean) => void;
 	children?: SelectChild | SelectChild[];
 	updatePosition?: MutableRef<() => void>;
-	display?: "vertical" | "horizontal" | "grid"
+	display?: "vertical" | "horizontal" | "grid";
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
@@ -352,7 +352,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 			updatePosition,
 			className,
 			onToggleOpen,
-			display="vertical",
+			display = "vertical",
 			...props
 		},
 		ref,
@@ -439,7 +439,9 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					ref={ref}
 					{...props}
 				>
-					<span style={style}>{label ?? value ?? "unset"}</span>
+					<span style={style} className={styles["select-value-container"]}>
+						{label ?? value ?? "unset"}
+					</span>
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}
