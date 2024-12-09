@@ -373,9 +373,12 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 									props.valueAliases ?? [],
 								))
 						)
-							return [el, map[props.value].matches.score] as const;
+						return [el, map[props.value].matches.score] as const;
+						const labelString = typeof props.label === 'string' ? props.label
+							: Array.isArray(props.label)
+								? props.label.find(x => typeof x === 'string') : undefined;
 						const matches = match(searchingValue, [
-							...(typeof props.label === 'string' ? (props.label) : []),
+							...(labelString ? [labelString] : []),
 							props.value,
 							...(props.valueAliases ?? []),
 						]);
