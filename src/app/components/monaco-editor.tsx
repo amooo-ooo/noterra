@@ -151,17 +151,23 @@ export function MonacoEditor({
 
 			const pos = editor.$pos(getPos() + 1 /* WHY */);
 			if (e.code === "ArrowUp" || e.code === "ArrowLeft") {
-				if (!pos.before || pos.before.node.type === editor.schema.nodes.monacoCodeBlock) {
+				if (
+					!pos.before ||
+					pos.before.node.type === editor.schema.nodes.monacoCodeBlock
+				) {
 					editor.commands.insertContentAt(pos.from - 1, "<p></p>");
 					editor.commands.focus(pos.from - 1);
 				} else editor.commands.focus(pos.from - 2);
 			} else {
-				if (!pos.after || pos.after.node.type === editor.schema.nodes.monacoCodeBlock)
+				if (
+					!pos.after ||
+					pos.after.node.type === editor.schema.nodes.monacoCodeBlock
+				)
 					editor.commands.insertContentAt(pos.to, "<p></p>");
 				editor.commands.focus(pos.to);
 			}
 		}).dispose;
-	}, [editor, mcEditor, getPos, node]);
+	}, [editor, mcEditor, getPos]);
 
 	const currentLanguage = React.useMemo(() => {
 		// Map language attr to the nearest available language

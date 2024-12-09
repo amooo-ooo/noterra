@@ -8,7 +8,7 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		/* reser from <button> styles */
+		/* reset from <button> styles */
 		text-align: left;
 	}
 }
@@ -16,7 +16,6 @@
 .sub {
 	color: #808080;
 	font-size: 0.7em;
-	margin-left: 2ch;
 }
 
 .highlight {
@@ -30,6 +29,10 @@
 	flex-flow: column;
 	overflow: auto;
 	flex: 1 1;
+
+	.horizontal & {
+		flex-flow: row;
+	}
 }
 
 .popout-container {
@@ -55,6 +58,14 @@
 
 .select-option {
 	text-align: inherit;
+	display: flex;
+	column-gap: 1ch;
+	align-items: center;
+
+	.horizontal & {
+		flex-flow: column;
+		padding: 8px 6px;
+	}
 
 	&.disabled {
 		color: #808080;

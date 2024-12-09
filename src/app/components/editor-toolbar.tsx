@@ -134,18 +134,10 @@ const TOOLS = {
 		/>
 	),
 	undo: (
-		<TiptapButton
-			label="Undo"
-			action={(ctx) => ctx.undo()}
-			icon={<Undo />}
-		/>
+		<TiptapButton label="Undo" action={(ctx) => ctx.undo()} icon={<Undo />} />
 	),
 	redo: (
-		<TiptapButton
-			label="Redo"
-			action={(ctx) => ctx.redo()}
-			icon={<Redo />}
-		/>
+		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo />} />
 	),
 	fontSize: <input type="number" />,
 	fontFamily: (
@@ -164,13 +156,13 @@ const TOOLS = {
 				["Verdana", "Verdana, Geneva, sans-serif"],
 				["Tahoma", "Tahoma, Geneva, sans-serif"],
 				["Trebuchet MS", "'Trebuchet MS', Helvetica, sans-serif"],
-				["Lucida Sans", "'Lucida Sans', 'Lucida Grande', sans-serif"]
+				["Lucida Sans", "'Lucida Sans', 'Lucida Grande', sans-serif"],
 			].map(([font, src]) => (
-				<Option 
-					label={font} 
-					value={src} 
-					key={font} 
-					style={{ fontFamily: src }} 
+				<Option
+					label={font}
+					value={src}
+					key={font}
+					style={{ fontFamily: src }}
 				/>
 			))}
 		</TiptapSelect>
@@ -178,49 +170,58 @@ const TOOLS = {
 	heading: (
 		<TiptapSelect
 			label="heading"
-			detect={(ed) => 
-				ed.getAttributes("heading").level 
-				? `heading.${ed.getAttributes("heading").level}` 
-				: "paragraph"}
-			action={(value, ctx) => 
-				value.startsWith('heading')
+			detect={(ed) =>
+				ed.getAttributes("heading").level
+					? `heading.${ed.getAttributes("heading").level}`
+					: "paragraph"
+			}
+			action={(value, ctx) =>
+				value.startsWith("heading")
 					? ctx.setHeading({
-						level: parseInt(value.split('.')[1] ?? 1) as (1 | 2 | 3 | 4 | 5 | 6)
-					 })
-					: ctx.setParagraph()}
+							level: Number.parseInt(value.split(".")[1] ?? 1) as
+								| 1
+								| 2
+								| 3
+								| 4
+								| 5
+								| 6,
+						})
+					: ctx.setParagraph()
+			}
 		>
-			{[<Option label="Paragraph" value="paragraph" key="paragraph" />,
-			...[1, 2, 3, 4, 5, 6].map((level) => (
-				<Option
-					label={`Heading ${level}`} 
-					value={`heading.${level}`}
-					key={level}
-				/>
-			))]}
-		</TiptapSelect>),
+			{[
+				<Option label="Paragraph" value="paragraph" key="paragraph" />,
+				...[1, 2, 3, 4, 5, 6].map((level) => (
+					<Option
+						label={`Heading ${level}`}
+						value={`heading.${level}`}
+						key={level}
+					/>
+				)),
+			]}
+		</TiptapSelect>
+	),
 	textAlign: (
 		<TiptapSelect
 			label="Text Align"
-			detect={(ed) => 
-				ed.getAttributes("paragraph").textAlign 
-				?? ed.getAttributes("heading").textAlign 
-				?? <FormatAlignLeft/>}
+			detect={(ed) =>
+				ed.getAttributes("paragraph").textAlign ??
+				ed.getAttributes("heading").textAlign ?? <FormatAlignLeft />
+			}
 			action={(value, ctx) => ctx.setTextAlign(value)}
-			className={styles["toolbar-select-horizontal"]}
+			className={`${styles["toolbar-select"]} ${styles.horizontal}`}
+			horizontal
 		>
-			{[
-				["left", <FormatAlignLeft/>], 
-				["center", <FormatAlignCenter/>], 
-				["right", <FormatAlignRight/>], 
-				["justify", <FormatAlignJustify/>]
-			].map(([pos, icon]) => (
-				<Option 
-					label={icon} 
-					value={pos} 
-					key={pos}
-				/>
+			{Object.entries({
+				left: <FormatAlignLeft />,
+				center: <FormatAlignCenter />,
+				right: <FormatAlignRight />,
+				justify: <FormatAlignJustify />,
+			}).map(([pos, icon]) => (
+				<Option label={icon} value={pos} key={pos} />
 			))}
-		</TiptapSelect>)
+		</TiptapSelect>
+	),
 	/// ...
 };
 
@@ -242,17 +243,17 @@ function toolbarDispatch(
 	state: ToolbarConfig,
 	action:
 		| {
-			type: "rearrange";
-			order: (
-				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-				| ToolbarItemTypes
-			)[];
-		}
+				type: "rearrange";
+				order: (
+					| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+					| ToolbarItemTypes
+				)[];
+		  }
 		| {
-			type: "rearrange-child";
-			childId: ToolbarGroup["id"];
-			order: ToolbarItemTypes[];
-		},
+				type: "rearrange-child";
+				childId: ToolbarGroup["id"];
+				order: ToolbarItemTypes[];
+		  },
 ): ToolbarConfig {
 	switch (action.type) {
 		case "rearrange": {
@@ -301,10 +302,7 @@ const ToolbarConfigContext = React.createContext<{
 export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 	// TODO: sortable needs fixing: broken state when dragging across sortables
 	const initGroups = [
-		[
-			"undo",
-			"redo"
-		],
+		["undo", "redo"],
 		["heading"],
 		["fontFamily"],
 		[

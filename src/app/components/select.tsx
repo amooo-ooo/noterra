@@ -46,7 +46,7 @@ const SelectState = React.createContext<{
 }>(null!);
 
 function safe_id(id: string) {
-	return id.replaceAll(/\W/g, '-');
+	return id.replaceAll(/\W/g, "-");
 }
 
 export function Option({ label, value, disabled, style }: OptionProps) {
@@ -66,7 +66,7 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 			);
 		}
 		return matches.in === (label ?? value) ? (
-			arr
+			<span>{arr}</span>
 		) : (
 			<>
 				{label ?? value}
@@ -89,7 +89,7 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 					clipPath: "inset(50%)",
 					width: 0,
 					height: 0,
-					pointerEvents: 'none'
+					pointerEvents: "none",
 				}}
 				onChange={(e) => {
 					const el = e.currentTarget.closest<HTMLElement>("[popover]");
@@ -111,8 +111,9 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 	);
 }
 
-type SelectChild = React.ReactElement<OptionProps, typeof Option>
-	|  React.FunctionComponentElement<OptionProps>
+type SelectChild =
+	| React.ReactElement<OptionProps, typeof Option>
+	| React.FunctionComponentElement<OptionProps>;
 // | React.ReactElement<React.HTMLProps<HTMLOptGroupElement>, "optgroup">;
 
 type MutableRef<T> = React.MutableRefObject<T> | ((value: T) => void);
@@ -140,14 +141,14 @@ function SelectPopover({
 	const ref = React.useRef<HTMLDivElement | null>(null);
 
 	const [rect, setRect] = React.useState<DOMRect | null>(null);
-	const updatePos = React.useCallback(
-		() => {
-			if (!(ref.current?.parentElement?.matches(':popover-open'))) return;
-			setRect(ref.current.closest(`.${styles['select-button']}`)
-				?.getBoundingClientRect() ?? null);
-		},
-		[],
-	);
+	const updatePos = React.useCallback(() => {
+		if (!ref.current?.parentElement?.matches(":popover-open")) return;
+		setRect(
+			ref.current
+				.closest(`.${styles["select-button"]}`)
+				?.getBoundingClientRect() ?? null,
+		);
+	}, []);
 
 	const [winWidth, winHeight] = React.useContext(WindowSize);
 
@@ -179,11 +180,12 @@ function SelectPopover({
 		return style;
 	}, [winWidth, winHeight, rect]);
 
-
 	const focusPrev = (count = 1) => {
-		let node = (document.activeElement as HTMLInputElement | null)?.previousElementSibling;
+		let i = count;
+		let node = (document.activeElement as HTMLInputElement | null)
+			?.previousElementSibling;
 		while (node) {
-			if (node.matches('input[type="radio"]:not([disabled])') && !--count) {
+			if (node.matches('input[type="radio"]:not([disabled])') && !--i) {
 				(node as HTMLInputElement).focus();
 				node.nextElementSibling?.scrollIntoView({ block: "nearest" });
 				break;
@@ -198,12 +200,14 @@ function SelectPopover({
 			node?.focus();
 			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
 		}
-	}
+	};
 
 	const focusNext = (count = 1) => {
-		let node = (document.activeElement as HTMLInputElement | null)?.nextElementSibling;
+		let i = count;
+		let node = (document.activeElement as HTMLInputElement | null)
+			?.nextElementSibling;
 		while (node) {
-			if (node.matches('input[type="radio"]:not([disabled])') && !--count) {
+			if (node.matches('input[type="radio"]:not([disabled])') && !--i) {
 				(node as HTMLInputElement).focus();
 				node.nextElementSibling?.scrollIntoView({ block: "nearest" });
 				break;
@@ -218,13 +222,15 @@ function SelectPopover({
 			node?.focus();
 			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
 		}
-	}
+	};
 
 	const activeEl = React.useContext(ActiveElement);
 	React.useEffect(() => {
-		if (!ref.current?.closest(`.${styles['select-button']}`)?.contains(activeEl))
-			ref.current?.closest<HTMLElement>('[popover]')?.hidePopover();
-	}, [activeEl])
+		if (
+			!ref.current?.closest(`.${styles["select-button"]}`)?.contains(activeEl)
+		)
+			ref.current?.closest<HTMLElement>("[popover]")?.hidePopover();
+	}, [activeEl]);
 
 	return (
 		<div
@@ -243,7 +249,7 @@ function SelectPopover({
 				observer.observe(el?.closest(`.${styles["select-button"]}`) ?? el);
 			}}
 			onToggle={(e) => {
-				const open = e.currentTarget.matches(':popover-open');
+				const open = e.currentTarget.matches(":popover-open");
 				onToggleOpen?.(open);
 				state.setSearchingValue("");
 				ref.current?.scrollTo({ top: 0 });
@@ -251,9 +257,13 @@ function SelectPopover({
 				if (open) {
 					const root = e.currentTarget;
 					setTimeout(() => {
-						let el = document.getElementById(`${state.id}_${safe_id(state.value ?? '')}`);
-						if (!el || el.hasAttribute('disabled'))
-							el = root.querySelector<HTMLInputElement>('input:not([disabled])');
+						let el = document.getElementById(
+							`${state.id}_${safe_id(state.value ?? "")}`,
+						);
+						if (!el || el.hasAttribute("disabled"))
+							el = root.querySelector<HTMLInputElement>(
+								"input:not([disabled])",
+							);
 						el?.focus();
 					}, 0);
 				}
@@ -289,7 +299,7 @@ function SelectPopover({
 			<div
 				className={styles["popout-scroll-container"]}
 				ref={ref}
-				onWheel={e => {
+				onWheel={(e) => {
 					const el = ref.current;
 					if (!el || el.scrollHeight > el.clientHeight) return;
 					let dist = e.deltaY ?? e.detail;
@@ -298,7 +308,9 @@ function SelectPopover({
 							dist = Math.sign(dist);
 							break;
 						case DeltaMode.DOM_DELTA_PAGE:
-							dist *= (el.clientHeight ?? 100) / (el.lastElementChild?.clientHeight ?? 26);
+							dist *=
+								(el.clientHeight ?? 100) /
+								(el.lastElementChild?.clientHeight ?? 26);
 							dist = Math.round(dist);
 					}
 					if (dist < 0) {
@@ -324,6 +336,7 @@ export type SelectProps = {
 	onToggleOpen?: (open: boolean) => void;
 	children?: SelectChild | SelectChild[];
 	updatePosition?: MutableRef<() => void>;
+	horizontal?: boolean;
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
@@ -331,15 +344,19 @@ export type SelectProps = {
 };
 
 export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
-	function Select({
-		value,
-		onChange,
-		children,
-		updatePosition,
-		className,
-		onToggleOpen,
-		...props
-	}, ref) {
+	function Select(
+		{
+			value,
+			onChange,
+			children,
+			updatePosition,
+			className,
+			onToggleOpen,
+			horizontal,
+			...props
+		},
+		ref,
+	) {
 		const id = React.useId();
 		const [searchingValue, setSearchingValue] = React.useState("");
 		// biome-ignore lint/correctness/useExhaustiveDependencies: very intentional
@@ -349,52 +366,55 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 			[searchingValue],
 		);
 		const searchField = React.useRef<HTMLInputElement | null>(null);
-		const [open, setOpen] = React.useState(false);
+		// const [open, setOpen] = React.useState(false);
 
-		const childs = React.useMemo(() => (Array.isArray(children)
-			? children
-			: children
-				? [children]
-				: []
-		), [children]);
+		const childs = React.useMemo(
+			() => (Array.isArray(children) ? children : children ? [children] : []),
+			[children],
+		);
 
-		const { label, style } = React.useMemo<Partial<OptionProps>>(() =>
-			childs.find(child => child.props.value === value)?.props ?? {},
-			[childs, value]);
+		const { label, style } = React.useMemo<Partial<OptionProps>>(
+			() => childs.find((child) => child.props.value === value)?.props ?? {},
+			[childs, value],
+		);
 
 		const options = React.useMemo(
 			() =>
-				childs.map((el) => {
-					if (!el) return;
-					const props = el.props;
-					const oldProps = map[props.value]?.props;
-					if (
-						oldProps &&
-						oldProps.label === props.label &&
-						oldProps.value === props.value &&
-						(oldProps.valueAliases === props.valueAliases ||
-							setEquals(
-								oldProps.valueAliases ?? [],
-								props.valueAliases ?? [],
-							))
-					)
-					return [el, map[props.value].matches.score] as const;
-					const labelString = typeof props.label === 'string' ? props.label
-						: Array.isArray(props.label)
-							? props.label.find(x => typeof x === 'string') : undefined;
-					const matches = match(searchingValue, [
-						...(labelString ? [labelString] : []),
-						props.value,
-						...(props.valueAliases ?? []),
-					]);
-					if (!matches) return;
-					if (matches.in === (props.label ?? props.value)) matches.score++;
-					map[props.value] = { matches, props };
-					return [el, matches.score] as const;
-				})
-				.filter((x) => !!x)
-				.sort((a, b) => b[1] - a[1])
-				.map((x) => x[0]),
+				childs
+					.map((el) => {
+						if (!el) return;
+						const props = el.props;
+						const oldProps = map[props.value]?.props;
+						if (
+							oldProps &&
+							oldProps.label === props.label &&
+							oldProps.value === props.value &&
+							(oldProps.valueAliases === props.valueAliases ||
+								setEquals(
+									oldProps.valueAliases ?? [],
+									props.valueAliases ?? [],
+								))
+						)
+							return [el, map[props.value].matches.score] as const;
+						const labelString =
+							typeof props.label === "string"
+								? props.label
+								: Array.isArray(props.label)
+									? props.label.find((x) => typeof x === "string")
+									: undefined;
+						const matches = match(searchingValue, [
+							...(labelString ? [labelString] : []),
+							props.value,
+							...(props.valueAliases ?? []),
+						]);
+						if (!matches) return;
+						if (matches.in === (props.label ?? props.value)) matches.score++;
+						map[props.value] = { matches, props };
+						return [el, matches.score] as const;
+					})
+					.filter((x) => !!x)
+					.sort((a, b) => b[1] - a[1])
+					.map((x) => x[0]),
 			[childs, searchingValue, map],
 		);
 
@@ -415,7 +435,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					popoverTarget={id}
 					popoverTargetAction="toggle"
 					style={props.style}
-					className={`${styles["select-button"]} ${className}`}
+					className={`${styles["select-button"]} ${horizontal ? styles.horizontal : ""} ${className}`}
 					ref={ref}
 					{...props}
 				>
@@ -423,10 +443,11 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}
-						onToggleOpen={(open) => {
-							onToggleOpen?.(open);
-							setOpen(open);
-						}}
+						onToggleOpen={onToggleOpen}
+						// onToggleOpen={(open) => {
+						// 	onToggleOpen?.(open);
+						// 	setOpen(open);
+						// }}
 						beforeContent={
 							<input
 								type="search"

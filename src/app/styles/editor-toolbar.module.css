@@ -26,9 +26,7 @@
 
 
 	.toolbar-button,
-	.toolbar-select,
-	.toolbar-select-horizontal,
-	.toolbar-select-horizontal [popover]>div label {
+	.toolbar-select {
 		background-color: transparent;
 		border: none;
 		padding: 2px;
@@ -50,7 +48,6 @@
 		>span {
 			font-weight: var(--icon-weight);
 		}
-
 	}
 
 	.toolbar-select {
@@ -64,16 +61,10 @@
 		}
 	}
 
-	.toolbar-select-horizontal {
+	.toolbar-select.horizontal {
 		padding: 2px;
 		border: none;
 		font-size: .8em;
-		min-width: fit-content;
-
-		[popover]>div {
-			padding: 6px 6px;
-			gap: var(--gap);
-			flex-flow: row;
-		}
+		min-width: 0;
 	}
 }

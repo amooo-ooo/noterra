@@ -79,8 +79,7 @@
         font-size: 1rem;
     }
 
-    &>code,
-    :not(pre)>code {
+    &>code, :not(pre)>code {
         background-color: var(--purple-light);
         border-radius: 0.4rem;
         color: var(--black);
