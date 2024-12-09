@@ -27,6 +27,7 @@ import Typography from "@tiptap/extension-typography";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
 import Heading from '@tiptap/extension-heading'
+import TextAlign from "@tiptap/extension-text-align";
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
 import styles from "@/app/styles/tiptap.module.css";
@@ -95,6 +96,9 @@ export function Editor({
 			FontFamily,
 			TextStyle,
 			Heading,
+			TextAlign.configure({
+				types: ['heading', 'paragraph'],
+			}),
 		],
 		content: data.initialContent,
 		immediatelyRender: false,

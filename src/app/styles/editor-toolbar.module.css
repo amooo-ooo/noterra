@@ -24,7 +24,11 @@
 		margin: 4px var(--gap) 4px calc(var(--gap) * 2);
 	}
 
-	.toolbar-button, .toolbar-select {
+
+	.toolbar-button,
+	.toolbar-select,
+	.toolbar-select-horizontal,
+	.toolbar-select-horizontal [popover]>div label {
 		background-color: transparent;
 		border: none;
 		padding: 2px;
@@ -46,6 +50,7 @@
 		>span {
 			font-weight: var(--icon-weight);
 		}
+
 	}
 
 	.toolbar-select {
@@ -56,6 +61,19 @@
 		>[popover] {
 			background-color: color-mix(in srgb, var(--bg-0) 75%, transparent 25%);
 			backdrop-filter: blur(10px);
+		}
+	}
+
+	.toolbar-select-horizontal {
+		padding: 2px;
+		border: none;
+		font-size: .8em;
+		min-width: fit-content;
+
+		[popover]>div {
+			padding: 6px 6px;
+			gap: var(--gap);
+			flex-flow: row;
 		}
 	}
 }

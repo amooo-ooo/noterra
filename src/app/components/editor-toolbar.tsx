@@ -21,13 +21,17 @@ import {
 	FormatListBulleted,
 	HorizontalRule,
 	FormatQuote,
+	FormatAlignLeft,
+	FormatAlignCenter,
+	FormatAlignRight,
+	FormatAlignJustify,
 } from "./icons";
 import { Option } from "./select";
 
 const TOOLS = {
 	bold: (
 		<TiptapButton
-			label="bold"
+			label="Bold"
 			action={(ctx) => ctx.toggleBold()}
 			detect="bold"
 			icon={<FormatBold />}
@@ -35,7 +39,7 @@ const TOOLS = {
 	),
 	italic: (
 		<TiptapButton
-			label="italic"
+			label="Italic"
 			action={(ctx) => ctx.toggleItalic()}
 			detect="italic"
 			icon={<FormatItalic />}
@@ -43,7 +47,7 @@ const TOOLS = {
 	),
 	underline: (
 		<TiptapButton
-			label="underline"
+			label="Underline"
 			action={(ctx) => ctx.toggleUnderline()}
 			detect="underline"
 			icon={<FormatUnderline />}
@@ -51,7 +55,7 @@ const TOOLS = {
 	),
 	strikethrough: (
 		<TiptapButton
-			label="strikethrough"
+			label="Strikethrough"
 			action={(ctx) => ctx.toggleStrike()}
 			detect="strike"
 			icon={<FormatStrikethrough />}
@@ -59,7 +63,7 @@ const TOOLS = {
 	),
 	code: (
 		<TiptapButton
-			label="code"
+			label="Code"
 			action={(ctx) => ctx.toggleCode()}
 			detect="code"
 			icon={<Code />}
@@ -67,7 +71,7 @@ const TOOLS = {
 	),
 	codeblock: (
 		<TiptapButton
-			label="codeblock"
+			label="Code Block"
 			action={(ctx) => ctx.toggleCodeBlock()}
 			detect="codeblock"
 			icon={<CodeBlocks />}
@@ -75,7 +79,7 @@ const TOOLS = {
 	),
 	blockquote: (
 		<TiptapButton
-			label="blockquote"
+			label="Block Quote"
 			action={(ctx) => ctx.toggleBlockquote()}
 			detect="blockquote"
 			icon={<FormatQuote />}
@@ -83,7 +87,7 @@ const TOOLS = {
 	),
 	superscript: (
 		<TiptapButton
-			label="superscript"
+			label="Superscript"
 			action={(ctx) => ctx.toggleSuperscript()}
 			detect="superscript"
 			icon={<Superscript />}
@@ -91,7 +95,7 @@ const TOOLS = {
 	),
 	subscript: (
 		<TiptapButton
-			label="subscript"
+			label="Subscript"
 			action={(ctx) => ctx.toggleSubscript()}
 			detect="subscript"
 			icon={<Subscript />}
@@ -99,7 +103,7 @@ const TOOLS = {
 	),
 	orderedlist: (
 		<TiptapButton
-			label="orderedlist"
+			label="Ordered list"
 			action={(ctx) => ctx.toggleOrderedList()}
 			detect="orderedList"
 			icon={<FormatListNumbered />}
@@ -107,7 +111,7 @@ const TOOLS = {
 	),
 	bulletList: (
 		<TiptapButton
-			label="bulletList"
+			label="Bullet List"
 			action={(ctx) => ctx.toggleBulletList()}
 			detect="bulletList"
 			icon={<FormatListBulleted />}
@@ -115,21 +119,21 @@ const TOOLS = {
 	),
 	horizontalRule: (
 		<TiptapButton
-			label="horizontalRule"
+			label="Horizontal Rule"
 			action={(ctx) => ctx.setHorizontalRule()}
 			icon={<HorizontalRule />}
 		/>
 	),
 	undo: (
 		<TiptapButton
-			label="undo"
+			label="Undo"
 			action={(ctx) => ctx.undo()}
 			icon={<Undo />}
 		/>
 	),
 	redo: (
 		<TiptapButton
-			label="redo"
+			label="Redo"
 			action={(ctx) => ctx.redo()}
 			icon={<Redo />}
 		/>
@@ -184,6 +188,29 @@ const TOOLS = {
 					key={level}
 				/>
 			))]}
+		</TiptapSelect>),
+	textAlign: (
+		<TiptapSelect
+			label="Text Align"
+			detect={(ed) => 
+				ed.getAttributes("paragraph").textAlign 
+				?? ed.getAttributes("heading").textAlign 
+				?? <FormatAlignLeft/>}
+			action={(value, ctx) => ctx.setTextAlign(value)}
+			className={styles["toolbar-select-horizontal"]}
+		>
+			{[
+				["left", <FormatAlignLeft/>], 
+				["center", <FormatAlignCenter/>], 
+				["right", <FormatAlignRight/>], 
+				["justify", <FormatAlignJustify/>]
+			].map(([pos, icon]) => (
+				<Option 
+					label={icon} 
+					value={pos} 
+					key={pos}
+				/>
+			))}
 		</TiptapSelect>)
 	/// ...
 };
@@ -283,6 +310,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 		[
 			"codeblock",
 			"blockquote",
+			"textAlign",
 			"bulletList",
 			"orderedlist",
 			"horizontalRule",

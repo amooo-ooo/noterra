@@ -61,3 +61,7 @@ export const HorizontalRule = createIcon("HorizontalRule", "\uf108");
 export const Upload = createIcon("Upload", "\uf09b");
 export const LightMode = createIcon("LightMode", "\ue518");
 export const DarkMode = createIcon("DarkMode", "\ue51c");
+export const FormatAlignLeft = createIcon("FormatAlignLeft", "\ue236");
+export const FormatAlignCenter = createIcon("FormatAlignCenter", "\ue234");
+export const FormatAlignRight = createIcon("FormatAlignRight", "\ue237");
+export const FormatAlignJustify = createIcon("FormatAlignJustify", "\ue235");

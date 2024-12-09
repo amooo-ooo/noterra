@@ -34,7 +34,7 @@
 
 .popout-container {
 	border: none;
-	border-radius: 10px;
+	border-radius: 8px;
 	flex-flow: column;
 	box-shadow: 1px 2px 15px -5px var(--shadow-color);
 	background-color: inherit;
