@@ -45,6 +45,10 @@ const SelectState = React.createContext<{
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 }>(null!);
 
+function safe_id(id: string) {
+	return id.replaceAll(/\W/g, '-');
+}
+
 export function Option({ label, value, disabled, style }: OptionProps) {
 	const state = React.useContext(SelectState);
 	const nodes = React.useMemo(() => {
@@ -77,8 +81,8 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 				type="radio"
 				checked={state.value === value}
 				disabled={disabled}
-				id={`${state.id}_${value}`}
-				name={`${state.id}_${value}`}
+				id={`${state.id}_${safe_id(value)}`}
+				name={`${state.id}_${safe_id(value)}`}
 				style={{
 					// https://www.a11yproject.com/posts/how-to-hide-content/
 					contain: "strict",
@@ -96,7 +100,7 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 				}}
 			/>
 			<label
-				htmlFor={`${state.id}_${value}`}
+				htmlFor={`${state.id}_${safe_id(value)}`}
 				className={`${styles["select-option"]} \
 					${disabled ? styles.disabled : ""} \
 					${value === state.value ? styles.selected : ""}`}
@@ -244,13 +248,17 @@ function SelectPopover({
 			onToggle={(e) => {
 				const open = e.currentTarget.matches(':popover-open');
 				onToggleOpen?.(open);
+				state.setSearchingValue("");
+				ref.current?.scrollTo({ top: 0 });
+				updatePos();
 				if (open) {
-					state.setSearchingValue("");
-					ref.current?.scrollTo({ top: 0 });
-					updatePos();
-					(e.currentTarget
-						.querySelector<HTMLInputElement>(`[id="${state.id}_${state.value}"]`)
-						?? e.currentTarget.querySelector<HTMLImageElement>('input'))?.focus();
+					const root = e.currentTarget;
+					setTimeout(() => {
+						let el = document.getElementById(`${state.id}_${safe_id(state.value ?? '')}`);
+						if (!el || el.hasAttribute('disabled'))
+							el = root.querySelector<HTMLInputElement>('input:not([disabled])');
+						el?.focus();
+					}, 0);
 				}
 			}}
 			onKeyDown={(e) => {
@@ -288,7 +296,6 @@ function SelectPopover({
 					const el = ref.current;
 					if (!el || el.scrollHeight > el.clientHeight) return;
 					let dist = e.deltaY ?? e.detail;
-					console.log(e)
 					switch (e.deltaMode) {
 						case DeltaMode.DOM_DELTA_PIXEL:
 							dist = Math.sign(dist);
@@ -345,6 +352,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 			[searchingValue],
 		);
 		const searchField = React.useRef<HTMLInputElement | null>(null);
+		const [open, setOpen] = React.useState(false);
 
 		const childs = React.useMemo(() => (Array.isArray(children)
 			? children
@@ -360,36 +368,36 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 		const options = React.useMemo(
 			() =>
 				childs.map((el) => {
-						if (!el) return;
-						const props = el.props;
-						const oldProps = map[props.value]?.props;
-						if (
-							oldProps &&
-							oldProps.label === props.label &&
-							oldProps.value === props.value &&
-							(oldProps.valueAliases === props.valueAliases ||
-								setEquals(
-									oldProps.valueAliases ?? [],
-									props.valueAliases ?? [],
-								))
-						)
-						return [el, map[props.value].matches.score] as const;
-						const labelString = typeof props.label === 'string' ? props.label
-							: Array.isArray(props.label)
-								? props.label.find(x => typeof x === 'string') : undefined;
-						const matches = match(searchingValue, [
-							...(labelString ? [labelString] : []),
-							props.value,
-							...(props.valueAliases ?? []),
-						]);
-						if (!matches) return;
-						if (matches.in === (props.label ?? props.value)) matches.score++;
-						map[props.value] = { matches, props };
-						return [el, matches.score] as const;
-					})
-					.filter((x) => !!x)
-					.sort((a, b) => b[1] - a[1])
-					.map((x) => x[0]),
+					if (!el) return;
+					const props = el.props;
+					const oldProps = map[props.value]?.props;
+					if (
+						oldProps &&
+						oldProps.label === props.label &&
+						oldProps.value === props.value &&
+						(oldProps.valueAliases === props.valueAliases ||
+							setEquals(
+								oldProps.valueAliases ?? [],
+								props.valueAliases ?? [],
+							))
+					)
+					return [el, map[props.value].matches.score] as const;
+					const labelString = typeof props.label === 'string' ? props.label
+						: Array.isArray(props.label)
+							? props.label.find(x => typeof x === 'string') : undefined;
+					const matches = match(searchingValue, [
+						...(labelString ? [labelString] : []),
+						props.value,
+						...(props.valueAliases ?? []),
+					]);
+					if (!matches) return;
+					if (matches.in === (props.label ?? props.value)) matches.score++;
+					map[props.value] = { matches, props };
+					return [el, matches.score] as const;
+				})
+				.filter((x) => !!x)
+				.sort((a, b) => b[1] - a[1])
+				.map((x) => x[0]),
 			[childs, searchingValue, map],
 		);
 
@@ -418,7 +426,10 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}
-						onToggleOpen={onToggleOpen}
+						onToggleOpen={(open) => {
+							onToggleOpen?.(open);
+							setOpen(open);
+						}}
 						beforeContent={
 							<input
 								type="search"
