@@ -31,6 +31,8 @@ import TextAlign from "@tiptap/extension-text-align";
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
 import styles from "@/app/styles/tiptap.module.css";
+import TaskItem from "@tiptap/extension-task-item";
+import TaskList from "@tiptap/extension-task-list";
 
 export interface EditorData {
 	id: string;
@@ -99,6 +101,10 @@ export function Editor({
 			TextAlign.configure({
 				types: ['heading', 'paragraph'],
 			}),
+			TaskItem.configure({
+				nested: true,
+			}),
+			TaskList,
 		],
 		content: data.initialContent,
 		immediatelyRender: false,

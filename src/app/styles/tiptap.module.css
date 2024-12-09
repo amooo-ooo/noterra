@@ -13,6 +13,37 @@
         }
     }
 
+    /* Task list specific styles */
+    ul[data-type="taskList"] {
+        list-style: none;
+        margin-left: 0;
+        padding: 0;
+
+        li {
+            align-items: flex-start;
+            display: flex;
+
+            >label {
+                margin-top: .25em;
+                margin-right: 0.5rem;
+                user-select: none;
+                align-content: center;
+            }
+
+            >div {
+                flex: 1 1 auto;
+            }
+        }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+        }
+
+        ul[data-type="taskList"] {
+            margin: 0;
+        }
+    }
+
     h1,
     h2,
     h3,
@@ -48,7 +79,8 @@
         font-size: 1rem;
     }
 
-    &>code, :not(pre)>code {
+    &>code,
+    :not(pre)>code {
         background-color: var(--purple-light);
         border-radius: 0.4rem;
         color: var(--black);

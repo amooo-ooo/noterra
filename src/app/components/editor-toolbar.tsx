@@ -25,6 +25,7 @@ import {
 	FormatAlignCenter,
 	FormatAlignRight,
 	FormatAlignJustify,
+	Checklist,
 } from "./icons";
 import { Option } from "./select";
 
@@ -115,6 +116,14 @@ const TOOLS = {
 			action={(ctx) => ctx.toggleBulletList()}
 			detect="bulletList"
 			icon={<FormatListBulleted />}
+		/>
+	),
+	tasklist: (
+		<TiptapButton
+			label="Task List"
+			action={(ctx) => ctx.toggleTaskList()}
+			detect="taskList"
+			icon={<Checklist />}
 		/>
 	),
 	horizontalRule: (
@@ -313,6 +322,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"textAlign",
 			"bulletList",
 			"orderedlist",
+			"tasklist",
 			"horizontalRule",
 		],
 		["fontSize"],

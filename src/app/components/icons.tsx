@@ -51,6 +51,7 @@ export const Superscript = createIcon("Superscript", "\uf112");
 export const Subscript = createIcon("Subscript", "\uf111");
 export const FormatListBulleted = createIcon("FormatListBulleted", "\ue241");
 export const FormatListNumbered = createIcon("FormatListNumbered", "\ue242");
+export const Checklist = createIcon("checklist", "\ue6b1");
 export const Code = createIcon("Code", "\ue86f");
 export const CodeBlocks = createIcon("CodeBlocks", "\uf84d");
 export const FormatQuote = createIcon("FormatQuote", "\ue244");
