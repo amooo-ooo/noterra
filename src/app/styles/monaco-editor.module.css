@@ -50,7 +50,7 @@
 	border-radius: 10px;
 	/* TODO: define color with other tiptap styles?? */
 	background-color: #303030;
-	margin: var(--codeblock-margin);
+	margin: var(--codeblock-margin) 0;
 	overflow: hidden;
 
 	&>* {
