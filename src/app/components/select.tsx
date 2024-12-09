@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "@/app/styles/select.module.css";
-import { WindowSize } from "./global-listeners";
+import { ActiveElement, WindowSize } from "./global-listeners";
 import { HANDLES_CHARS } from "./editor";
 
 export type OptionProps = {
@@ -220,6 +220,12 @@ function SelectPopover({
 		}
 	}
 
+	const activeEl = React.useContext(ActiveElement);
+	React.useEffect(() => {
+		if (!ref.current?.closest(`.${styles['select-button']}`)?.contains(activeEl))
+			ref.current?.closest<HTMLElement>('[popover]')?.hidePopover();
+	}, [activeEl])
+
 	return (
 		<div
 			id={id}
@@ -235,13 +241,6 @@ function SelectPopover({
 					}
 				});
 				observer.observe(el?.closest(`.${styles["select-button"]}`) ?? el);
-			}}
-			onBlurCapture={(e) => {
-				const el = e.currentTarget;
-				setTimeout(() => {
-					if (!el.parentElement?.contains(document.activeElement))
-						el.hidePopover();
-				}, 0);
 			}}
 			onToggle={(e) => {
 				const open = e.currentTarget.matches(':popover-open');

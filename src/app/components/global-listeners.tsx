@@ -16,3 +16,16 @@ export function WindowSizeProvider({ children }: React.PropsWithChildren<object>
 	);
 	return <WindowSize.Provider value={windowSize}>{children}</WindowSize.Provider>
 }
+
+export const ActiveElement = React.createContext<Element | null>(null);
+export function ActiveElementProvider({ children }: React.PropsWithChildren<object>) {
+	const [activeElement, setActiveElement] = React.useState(document.activeElement);
+
+	React.useEffect(() =>
+		document.addEventListener("focus", () =>
+			setActiveElement(document.activeElement),
+			{ capture: true }
+		),
+	);
+	return <ActiveElement.Provider value={activeElement}>{children}</ActiveElement.Provider>
+}
