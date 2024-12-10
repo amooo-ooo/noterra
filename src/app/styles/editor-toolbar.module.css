@@ -122,8 +122,4 @@
 		height: 100%;
 		aspect-ratio: 1;
 	}
-
-	.color-swatch-grid>[popover]>div {
-		grid-template-columns: repeat(16, auto);
-	}
 }

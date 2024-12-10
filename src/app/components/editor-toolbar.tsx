@@ -80,7 +80,7 @@ export function TextColorSelect() {
 			}
 			action={(value, ctx) => ctx.setColor(value)}
 			className={`${styles["text-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
-			display="grid"
+			display={{ type: "grid", width: 8 }}
 		>
 			{COLORS.map((color) => (
 				<Option
@@ -310,7 +310,7 @@ const TOOLS = {
 			detect={(ed) => ed.getAttributes("highlight").color ?? "transparent"}
 			action={(value, ctx) => ctx.setHighlight({ color: value })}
 			className={`${styles["highlight-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
-			display="grid"
+			display={{ type: "grid", width: 8 }}
 		>
 			{[
 				<Option

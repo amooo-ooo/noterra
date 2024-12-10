@@ -130,12 +130,20 @@ function SelectPopover({
 	beforeContent,
 	updatePosition,
 	onToggleOpen,
+	display = "vertical",
 }: {
 	id: string;
 	children?: React.ReactNode;
 	beforeContent?: React.ReactNode;
 	updatePosition?: MutableRef<() => void>;
 	onToggleOpen?: (open: boolean) => void;
+	display?:
+		| "vertical"
+		| "horizontal"
+		| {
+				type: "grid";
+				width: number;
+		  };
 }) {
 	const state = React.useContext(SelectState);
 	const ref = React.useRef<HTMLDivElement | null>(null);
@@ -274,13 +282,25 @@ function SelectPopover({
 					case "ArrowDown":
 					case "ArrowRight": {
 						e.preventDefault();
-						focusNext();
+						focusNext(
+							e.key === "ArrowDown" &&
+								typeof display === "object" &&
+								display.type === "grid"
+								? display.width
+								: 1,
+						);
 						break;
 					}
 					case "ArrowUp":
 					case "ArrowLeft": {
 						e.preventDefault();
-						focusPrev();
+						focusPrev(
+							e.key === "ArrowUp" &&
+								typeof display === "object" &&
+								display.type === "grid"
+								? display.width
+								: 1,
+						);
 						break;
 					}
 					case "Enter":
@@ -298,6 +318,11 @@ function SelectPopover({
 			{beforeContent}
 			<div
 				className={styles["popout-scroll-container"]}
+				style={
+					typeof display === "object" && display.type === "grid"
+						? { gridTemplateColumns: `repeat(${display.width * 2}, auto)` }
+						: {}
+				}
 				ref={ref}
 				onWheel={(e) => {
 					const el = ref.current;
@@ -336,7 +361,13 @@ export type SelectProps = {
 	onToggleOpen?: (open: boolean) => void;
 	children?: SelectChild | SelectChild[];
 	updatePosition?: MutableRef<() => void>;
-	display?: "vertical" | "horizontal" | "grid";
+	display?:
+		| "vertical"
+		| "horizontal"
+		| {
+				type: "grid";
+				width: number;
+		  };
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
@@ -435,7 +466,13 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					popoverTarget={id}
 					popoverTargetAction="toggle"
 					style={props.style}
-					className={`${styles["select-button"]} ${styles[display]} ${className}`}
+					className={`${styles["select-button"]} ${
+						display === "horizontal"
+							? styles.horizontal
+							: display === "vertical"
+								? ""
+								: styles.grid
+					} ${className}`}
 					ref={ref}
 					{...props}
 				>
@@ -445,6 +482,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 					<SelectPopover
 						id={id}
 						updatePosition={updatePosition}
+						display={display}
 						onToggleOpen={onToggleOpen}
 						// onToggleOpen={(open) => {
 						// 	onToggleOpen?.(open);
