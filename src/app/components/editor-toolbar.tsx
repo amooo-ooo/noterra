@@ -270,7 +270,8 @@ const TOOLS = {
 			label="Text Align"
 			detect={(ed) =>
 				ed.getAttributes("paragraph").textAlign ??
-				ed.getAttributes("heading").textAlign ?? <AlignLeft />
+				ed.getAttributes("heading").textAlign ??
+				"left"
 			}
 			action={(value, ctx) => ctx.setTextAlign(value)}
 			className={`${styles["toolbar-select"]} ${styles.button}`}
@@ -290,14 +291,7 @@ const TOOLS = {
 	highlight: (
 		<TiptapSelect
 			label="Highlight Color"
-			detect={(ed) =>
-				ed.getAttributes("highlight").color ?? (
-					<span
-						className={styles["color-swatch"]}
-						style={{ backgroundColor: "transparent" }}
-					/>
-				)
-			}
+			detect={(ed) => ed.getAttributes("highlight").color ?? "transparent"}
 			action={(value, ctx) => ctx.setHighlight({ color: value })}
 			className={`${styles["highlight-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
 			display="grid"
