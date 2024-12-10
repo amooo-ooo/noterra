@@ -29,6 +29,13 @@ import {
 	AlignRight,
 	AlignJustify,
 	ListCheck,
+	Heading1Icon,
+	Heading2Icon,
+	Heading3Icon,
+	Heading4Icon,
+	Heading5Icon,
+	Heading6Icon,
+	PilcrowIcon,
 } from "lucide-react";
 
 import { Option } from "./select";
@@ -195,10 +202,33 @@ const TOOLS = {
 			}
 		>
 			{[
-				<Option label="Paragraph" value="paragraph" key="paragraph" />,
+				<Option
+					label={
+						<>
+							<PilcrowIcon size="1em" />
+							Paragraph
+						</>
+					}
+					value="paragraph"
+					key="paragraph"
+				/>,
 				...[1, 2, 3, 4, 5, 6].map((level) => (
 					<Option
-						label={`Heading ${level}`}
+						label={
+							<>
+								{
+									{
+										1: <Heading1Icon size="1em" />,
+										2: <Heading2Icon size="1em" />,
+										3: <Heading3Icon size="1em" />,
+										4: <Heading4Icon size="1em" />,
+										5: <Heading5Icon size="1em" />,
+										6: <Heading6Icon size="1em" />,
+									}[level]
+								}
+								{`Heading ${level}`}
+							</>
+						}
 						value={`heading.${level}`}
 						key={level}
 					/>

@@ -28,23 +28,36 @@
 
 	.toolbar-button,
 	.toolbar-select {
-		background-color: transparent;
+		--bg-color: transparent;
+		background-color: var(--bg-color);
 		border: none;
 		padding: var(--padding);
 		border-radius: 5px;
 		display: flex;
-		transition: box-shadow 250ms ease;
+		transition: background-color 250ms ease;
 		align-items: center;
 
 		/* TODO: colors */
 		&:is(:hover, :focus-visible, .active):not(:has([popover]:hover)) {
-			background-color: #80808020;
+			--bg-color: #80808020;
 		}
 
 		&:active:not(:has([popover]:active)),
 		&.active:hover:not(:has([popover]:hover)),
 		&:focus-visible {
-			background-color: #80808030;
+			--bg-color: #80808030;
+		}
+	}
+
+	.toolbar-select:not(.button)>span {
+		position: relative;
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			box-shadow: inset -20px 0 10px -10px var(--bg-color), inset -20px 0 10px -10px var(--bg-0);
+			transition: box-shadow 250ms ease;
 		}
 	}
 
