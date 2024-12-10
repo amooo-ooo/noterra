@@ -205,14 +205,14 @@ const TOOLS = {
 	indent: (
 		<TiptapButton
 			label="Indent"
-			action={(ctx) => ctx.addIndent()}
+			action={(ctx) => ctx.increaseIndent()}
 			icon={<FormatIndentIncrease />}
 		/>
 	),
 	outdent: (
 		<TiptapButton
 			label="Dedent"
-			action={(ctx) => ctx.addOutdent()}
+			action={(ctx) => ctx.decreaseIndent()}
 			icon={<FormatIndentDecrease />}
 		/>
 	),

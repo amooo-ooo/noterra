@@ -1,199 +1,62 @@
-// derived from https://github.com/ueberdosis/tiptap/issues/1036#issue-864043820
-
-import { Command, Extension, CommandProps, ChainedCommands } from '@tiptap/core'
-import { Node } from 'prosemirror-model'
-import { TextSelection, AllSelection, Transaction } from 'prosemirror-state'
-
-type IndentOptions = {
-  types: string[],
-  indentLevels: number[],
-  defaultIndentLevel: number,
-}
+import { Command, Extension, CommandProps, ChainedCommands } from '@tiptap/core';
 
 declare module '@tiptap/core' {
-  interface Commands {
+  interface Commands<ReturnType> {
     indent: {
-      /**
-       * Set the indent attribute
-       */
-      indent: () => Command,
-      /**
-       * Unset the indent attribute
-       */
-      outdent: () => Command,
-      addIndent: () => ChainedCommands
-      addOutdent: () => ChainedCommands
-    }
+      increaseIndentCommand: () => boolean;
+      decreaseIndentCommand: () => boolean;
+      increaseIndent: () => ChainedCommands;
+      decreaseIndent: () => ChainedCommands;
+    };
   }
 }
 
-export function clamp(val: number, min: number, max: number): number {
-  if (val < min) {
-    return min
-  }
-  if (val > max) {
-    return max
-  }
-  return val
-}
-
-export enum IndentProps {
-  min = 0,
-  max = 40,
-  more = 4,
-  less = -4
-}
-
-export function isBulletListNode(node: Node): boolean {
-  return node.type.name === 'bullet_list'
-}
-
-export function isOrderedListNode(node: Node): boolean {
-  return node.type.name === 'order_list'
-}
-
-export function isTodoListNode(node: Node): boolean {
-  return node.type.name === 'todo_list'
-}
-
-export function isListNode(node: Node): boolean {
-  return isBulletListNode(node) ||
-    isOrderedListNode(node) ||
-    isTodoListNode(node)
-}
-
-function setNodeIndentMarkup(tr: Transaction, pos: number, delta: number): Transaction {
-  if (!tr.doc) return tr
-
-  const node = tr.doc.nodeAt(pos)
-  if (!node) return tr
-
-  const minIndent = IndentProps.min
-  const maxIndent = IndentProps.max
-
-  const indent = clamp(
-    (node.attrs.indent || 0) + delta,
-    minIndent,
-    maxIndent,
-  )
-
-  if (indent === node.attrs.indent) return tr
-
-  const nodeAttrs = {
-    ...node.attrs,
-    indent,
-  }
-
-  return tr.setNodeMarkup(pos, node.type, nodeAttrs, node.marks)
-}
-
-function updateIndentLevel(tr: Transaction, delta: number): Transaction {
-  const { doc, selection } = tr
-
-  if (!doc || !selection) return tr
-
-  if (!(selection instanceof TextSelection || selection instanceof AllSelection)) {
-    return tr
-  }
-
-  const { from, to } = selection
-
-  doc.nodesBetween(from, to, (node, pos) => {
-    const nodeType = node.type
-
-    if (nodeType.name === 'paragraph' || nodeType.name === 'heading') {
-      tr = setNodeIndentMarkup(tr, pos, delta)
-      return false
-    } if (isListNode(node)) {
-      return false
-    }
-    return true
-  })
-
-  return tr
+export interface IndentOptions {
+  types: string[];
 }
 
 export const Indent = Extension.create<IndentOptions>({
   name: 'indent',
 
-  defaultOptions: {
-    types: ['heading', 'paragraph'],
-    indentLevels: [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
-    defaultIndentLevel: 0,
-  },
-
-  addGlobalAttributes() {
-    return [
-      {
-        types: this.options.types,
-        attributes: {
-          indent: {
-            default: this.options.defaultIndentLevel,
-            renderHTML: attributes => ({
-              style: `text-indent: ${attributes.indent}ch;`
-            }),
-            parseHTML: element => ({
-              indent: parseInt(element.style.marginLeft) || this.options.defaultIndentLevel,
-            }),
-          },
-        },
-      },
-    ]
+  addOptions() {
+    return {
+      types: ['heading', 'paragraph'],
+    };
   },
 
   addCommands() {
+    const adjustIndent =
+      (adjustment: (text: string) => string): Command =>
+        ({ tr, state, dispatch }: CommandProps) => {
+          const { selection, schema, doc } = state;
+          const { from, to } = selection;
+          let modified = false;
+
+          doc.nodesBetween(from, to, (node, pos) => {
+            if (this.options.types.includes(node.type.name)) {
+              const originalText = node.textContent ?? '';
+              const newText = adjustment(originalText);
+
+              if (newText !== originalText) {
+                tr.replaceRangeWith(pos, pos + node.nodeSize, schema.text(newText));
+                modified = true;
+              }
+            }
+          });
+
+          if (modified && dispatch) {
+            tr.setMeta('addToHistory', true);
+            dispatch(tr);
+          }
+
+          return modified;
+        };
+
     return {
-      indent: () => ({ tr, state, dispatch }) => {
-        const { selection } = state
-        tr = tr.setSelection(selection)
-        tr = updateIndentLevel(tr, IndentProps.more)
-
-        if (tr.docChanged) {
-          // eslint-disable-next-line no-unused-expressions
-          dispatch && dispatch(tr)
-          return true
-        }
-
-        return false
-      },
-      outdent: () => ({ tr, state, dispatch }) => {
-        const { selection } = state
-        tr = tr.setSelection(selection)
-        tr = updateIndentLevel(tr, IndentProps.less)
-
-        if (tr.docChanged) {
-          // eslint-disable-next-line no-unused-expressions
-          dispatch && dispatch(tr)
-          return true
-        }
-        return false
-      },
-      addIndent: () => ({ commands }: CommandProps) => {
-        return commands.indent();
-      },
-      addOutdent: () => ({ commands }: CommandProps) => {
-        return commands.outdent();
-      },
-    }
-  },
-
-  addKeyboardShortcuts() {
-    return {
-      Tab: () => this.editor.commands.indent(),
-      'Shift-Tab': () => this.editor.commands.outdent(),
-
-      // outdent on backspace
-      Backspace: () => {
-        const { selection } = this.editor.state;
-        if (!selection.empty || selection.$from.parentOffset > 0) return false;
-
-        const node = selection.$from.parent;
-        if (node.attrs?.indent > 0) {
-          return this.editor.commands.outdent();
-        }
-
-        return false;
-      },
+      increaseIndentCommand: () => adjustIndent(text => `\t${text}`),
+      decreaseIndentCommand: () => adjustIndent(text => text.startsWith('\t') ? text.slice(1) : text),
+      increaseIndent: () => ({ commands }: CommandProps) => commands.increaseIndentCommand(),
+      decreaseIndent: () => ({ commands }: CommandProps) => commands.decreaseIndentCommand(),
     };
-  }
-})
+  },
+});
