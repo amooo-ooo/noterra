@@ -303,7 +303,7 @@ const TOOLS = {
 							className={styles["color-swatch"]}
 							style={{
 								background:
-									"conic-gradient(from 0deg, #777 0% 25%, #999 25% 50%, #777 50% 75%, #999 75% 100%)",
+									"repeating-conic-gradient(from 0deg, var(--bg-2) 0% 25%, var(--bg--1) 25% 50%)",
 								backgroundSize: "8px 8px",
 								backgroundPosition: "center",
 							}}
