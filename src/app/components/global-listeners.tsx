@@ -8,14 +8,15 @@ export const WindowSize = React.createContext<readonly [number, number]>(null!);
 export function WindowSizeProvider({
 	children,
 }: React.PropsWithChildren<object>) {
-	const [windowSize, setWindowSize] = React.useState([
-		window.innerWidth,
-		window.innerHeight,
-	] as const);
+	const [windowSize, setWindowSize] = React.useState(
+		typeof window !== "undefined"
+			? ([window.innerWidth, window.innerHeight] as const)
+			: ([0, 0] as const),
+	);
 
 	React.useEffect(() =>
 		window.addEventListener("resize", () =>
-			setWindowSize([window.innerWidth, window.innerHeight]),
+			setWindowSize([window.innerWidth, window.innerHeight] as const),
 		),
 	);
 	return (
@@ -28,7 +29,7 @@ export function ActiveElementProvider({
 	children,
 }: React.PropsWithChildren<object>) {
 	const [activeElement, setActiveElement] = React.useState(
-		document.activeElement,
+		(typeof document !== "undefined" && document.activeElement) || null,
 	);
 
 	React.useEffect(() =>
@@ -52,8 +53,11 @@ export const ThemeContext = React.createContext<{
 }>(null!);
 
 export function ThemeProvider({ children }: React.PropsWithChildren<object>) {
-	const [dark, setDark] = React.useState(
-		() => window.matchMedia("(prefers-color-scheme: dark)").matches,
+	const [dark, setDark] = React.useState(false);
+
+	React.useEffect(
+		() => setDark(window.matchMedia("(prefers-color-scheme: dark)").matches),
+		[],
 	);
 
 	React.useEffect(() => {
