@@ -59,4 +59,11 @@ export const Indent = Extension.create<IndentOptions>({
       decreaseIndent: () => ({ commands }: CommandProps) => commands.decreaseIndentCommand(),
     };
   },
+
+  addKeyboardShortcuts() {
+    return {
+      Tab: () => this.editor.commands.increaseIndentCommand(),
+      'Shift+Tab': () => this.editor.commands.decreaseIndentCommand(),
+    };
+  },
 });
