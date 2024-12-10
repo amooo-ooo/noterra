@@ -112,4 +112,9 @@
         border-top: 1px solid var(--bg-2);
         margin: 2rem 0;
     }
+
+    mark[data-color] {
+        border-radius: 0.2ch;
+        box-shadow: 0 0 0.2ch 0.2ch var(--tiptap-highlight-color);
+    }
 }

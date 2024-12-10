@@ -26,7 +26,7 @@ import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
-import Heading from '@tiptap/extension-heading'
+import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
@@ -34,8 +34,8 @@ import styles from "@/app/styles/tiptap.module.css";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
-import Highlight from "@tiptap/extension-highlight";
 import { Indent } from "./indent";
+import { BetterHighlight } from "./better-highlight";
 
 export interface EditorData {
 	id: string;
@@ -48,7 +48,7 @@ export interface EditorData {
 
 export const EditorContext = React.createContext(null as unknown as EditorData);
 
-export const HANDLES_CHARS = 'consume-input-events';
+export const HANDLES_CHARS = "consume-input-events";
 
 export function Editor({
 	data,
@@ -102,17 +102,17 @@ export function Editor({
 			TextStyle,
 			Heading,
 			TextAlign.configure({
-				types: ['heading', 'paragraph'],
+				types: ["heading", "paragraph"],
 			}),
 			TaskItem.configure({
 				nested: true,
 			}),
 			TaskList,
 			Color,
-			Highlight.configure({
-				multicolor: true
+			BetterHighlight.configure({
+				multicolor: true,
 			}),
-			Indent
+			Indent,
 		],
 		content: data.initialContent,
 		immediatelyRender: false,
@@ -127,7 +127,7 @@ export function Editor({
 			"textarea",
 			"[contenteditable]",
 			"select",
-			`.${HANDLES_CHARS}`
+			`.${HANDLES_CHARS}`,
 		].join(", ");
 		const SPECIAL_WHITELIST = {
 			ArrowLeft: true,
@@ -165,9 +165,12 @@ export function Editor({
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
-			<div className={className} ref={(el) => {
-				data.scrollingElement = el ?? undefined;
-			}}>
+			<div
+				className={className}
+				ref={(el) => {
+					data.scrollingElement = el ?? undefined;
+				}}
+			>
 				<EditorToolbar className={toolbarClass} />
 				<EditorContent
 					editor={editor}
