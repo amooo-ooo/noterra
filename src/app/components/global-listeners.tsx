@@ -61,6 +61,7 @@ export function ThemeProvider({ children }: React.PropsWithChildren<object>) {
 		// as this causes some inconsistent effects
 		document.body.classList.add(styles["avoid-transition"]);
 		document.body.style.colorScheme = dark ? "dark" : "light";
+		document.body.classList.toggle("dark-mode", dark);
 		requestAnimationFrame(() =>
 			document.body.classList.remove(styles["avoid-transition"]),
 		);

@@ -308,7 +308,11 @@ const TOOLS = {
 		<TiptapSelect
 			label="Highlight Color"
 			detect={(ed) => ed.getAttributes("highlight").color ?? "transparent"}
-			action={(value, ctx) => ctx.setHighlight({ color: value })}
+			action={(value, ctx) =>
+				value === "transparent"
+					? ctx.unsetHighlight()
+					: ctx.setHighlight({ color: value })
+			}
 			className={`${styles["highlight-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
 			display={{ type: "grid", width: 8 }}
 		>

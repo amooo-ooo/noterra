@@ -1,120 +1,126 @@
 .tiptap {
 
-    ul,
-    ol {
-        /* do we need so much padding *and* margin? */
-        padding: 0 1rem;
-        margin: 1.25rem 1rem 1.25rem 0.4rem;
+	ul,
+	ol {
+		/* do we need so much padding *and* margin? */
+		padding: 0 1rem;
+		margin: 1.25rem 1rem 1.25rem 0.4rem;
 
-        li p {
-            /* TODO: is switch to em here intentional? */
-            /* also should we not prefer em in most cases over rem */
-            margin-block: 0.25em;
-        }
-    }
+		li p {
+			/* TODO: is switch to em here intentional? */
+			/* also should we not prefer em in most cases over rem */
+			margin-block: 0.25em;
+		}
+	}
 
-    /* Task list specific styles */
-    ul[data-type="taskList"] {
-        list-style: none;
-        margin-left: 0;
-        padding: 0;
+	/* Task list specific styles */
+	ul[data-type="taskList"] {
+		list-style: none;
+		margin-left: 0;
+		padding: 0;
 
-        li {
-            align-items: flex-start;
-            display: flex;
+		li {
+			align-items: flex-start;
+			display: flex;
 
-            >label {
-                margin-top: .25em;
-                margin-right: 0.5rem;
-                user-select: none;
-                align-content: center;
-            }
+			>label {
+				margin-top: .25em;
+				margin-right: 0.5rem;
+				user-select: none;
+				align-content: center;
+			}
 
-            >div {
-                flex: 1 1 auto;
-            }
-        }
+			>div {
+				flex: 1 1 auto;
+			}
+		}
 
-        input[type="checkbox"] {
-            cursor: pointer;
-        }
+		input[type="checkbox"] {
+			cursor: pointer;
+		}
 
-        ul[data-type="taskList"] {
-            margin: 0;
-        }
-    }
+		ul[data-type="taskList"] {
+			margin: 0;
+		}
+	}
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        line-height: 1.1;
-        margin-top: 2.5rem;
-        text-wrap: pretty;
-    }
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		line-height: 1.1;
+		margin-top: 2.5rem;
+		text-wrap: pretty;
+	}
 
-    h1,
-    h2 {
-        margin-top: 3.5rem;
-        margin-bottom: 1.5rem;
-    }
+	h1,
+	h2 {
+		margin-top: 3.5rem;
+		margin-bottom: 1.5rem;
+	}
 
-    h1 {
-        font-size: 1.4rem;
-    }
+	h1 {
+		font-size: 1.4rem;
+	}
 
-    h2 {
-        font-size: 1.2rem;
-    }
+	h2 {
+		font-size: 1.2rem;
+	}
 
-    h3 {
-        font-size: 1.1rem;
-    }
+	h3 {
+		font-size: 1.1rem;
+	}
 
-    h4,
-    h5,
-    h6 {
-        font-size: 1rem;
-    }
+	h4,
+	h5,
+	h6 {
+		font-size: 1rem;
+	}
 
-    &>code, :not(pre)>code {
-        background-color: var(--purple-light);
-        border-radius: 0.4rem;
-        color: var(--black);
-        font-size: 0.85rem;
-        padding: 0.25em 0.3em;
-        /* surely we want these fonts here too? */
-        font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
-    }
+	&>code, :not(pre)>code {
+		background-color: var(--purple-light);
+		border-radius: 0.4rem;
+		color: var(--black);
+		font-size: 0.85rem;
+		padding: 0.25em 0.3em;
+		/* surely we want these fonts here too? */
+		font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
+	}
 
-    pre {
-        /* dead? using monaco. */
-        background: var(--black);
-        border-radius: 0.5rem;
-        color: var(--white);
-        /* dont ask for uncommon fonts unless we provide them */
-        font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
-        margin: 1.5rem 0;
-        padding: 0.75rem 1rem;
-    }
+	pre {
+		/* dead? using monaco. */
+		background: var(--black);
+		border-radius: 0.5rem;
+		color: var(--white);
+		/* dont ask for uncommon fonts unless we provide them */
+		font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
+		margin: 1.5rem 0;
+		padding: 0.75rem 1rem;
+	}
 
-    blockquote {
-        border-left: 3px solid var(--bg-1);
-        border-radius: 3px;
-        margin: 1.5rem 0;
-        padding-left: 1rem;
-    }
+	blockquote {
+		border-left: 3px solid var(--bg-1);
+		border-radius: 3px;
+		margin: 1.5rem 0;
+		padding-left: 1rem;
+	}
 
-    hr {
-        border: none;
-        border-top: 1px solid var(--bg-2);
-        margin: 2rem 0;
-    }
+	hr {
+		border: none;
+		border-top: 1px solid var(--bg-2);
+		margin: 2rem 0;
+	}
 
-    mark[data-color] {
-        border-radius: 0.2ch;
-        box-shadow: 0 0 0.2ch 0.2ch var(--tiptap-highlight-color);
-    }
+	mark[data-color] {
+		border-radius: 0.2ch;
+		box-shadow: 0 0 0.2ch 0.1ch var(--tiptap-highlight-color);
+	}
+
+	/* body[class*=dark-mode] & {
+		span[style^=color] {
+			filter: invert(1) hue-rotate(180deg);
+		}
+	} */
 }
