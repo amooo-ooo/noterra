@@ -8,6 +8,8 @@ declare module "@tiptap/core" {
 			outdent: () => ReturnType;
 			increaseIndent: () => ReturnType;
 			decreaseIndent: () => ReturnType;
+			tab: () => ReturnType;
+			untab: () => ReturnType;
 		};
 	}
 }
@@ -27,7 +29,7 @@ export const Indent = Extension.create<IndentOptions>({
 
 	addCommands() {
 		const adjustIndent =
-			(dedent: boolean) =>
+			(dedent: boolean, keyboard = false) =>
 			({ tr, state, dispatch }: CommandProps) => {
 				const { selection, doc } = state;
 				const { from, to, anchor, head } = selection;
@@ -38,14 +40,25 @@ export const Indent = Extension.create<IndentOptions>({
 				doc.nodesBetween(from, to, (node, pos) => {
 					if (this.options.types.includes(node.type.name)) {
 						if (dedent) {
-							if (node.textContent.startsWith("\t"))
+							if (
+								keyboard &&
+								selection.empty &&
+								node.textContent[
+									(selection.$head.textOffset || node.textContent.length) - 1
+								] === "\t"
+							)
+								tr.delete(head - 1 + modified * dir, head + modified * dir);
+							else if (node.textContent.startsWith("\t"))
 								tr.replaceWith(
 									pos + 1 + modified * dir,
 									pos + 2 + modified * dir,
 									[],
 								);
 							else return;
-						} else tr.insertText("\t", pos + 1 + modified * dir);
+						} else {
+							if (keyboard && selection.empty) tr.insertText("\t");
+							else tr.insertText("\t", pos + 1 + modified * dir);
+						}
 						modified++;
 					}
 				});
@@ -81,13 +94,15 @@ export const Indent = Extension.create<IndentOptions>({
 				() =>
 				({ commands }: CommandProps) =>
 					commands.outdent(),
+			tab: () => adjustIndent(false, true),
+			untab: () => adjustIndent(true, true),
 		};
 	},
 
 	addKeyboardShortcuts() {
 		return {
-			Tab: () => this.editor.commands.indent(),
-			"Shift-Tab": () => this.editor.commands.outdent(),
+			Tab: () => this.editor.commands.tab(),
+			"Shift-Tab": () => this.editor.commands.untab(),
 		};
 	},
 });
