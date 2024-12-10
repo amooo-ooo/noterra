@@ -304,6 +304,8 @@ const TOOLS = {
 							style={{
 								background:
 									"conic-gradient(from 0deg, #777 0% 25%, #999 25% 50%, #777 50% 75%, #999 75% 100%)",
+								backgroundSize: "8px 8px",
+								backgroundPosition: "center",
 							}}
 						/>
 					}
