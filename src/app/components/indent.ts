@@ -1,4 +1,4 @@
-// modified from https://github.com/ueberdosis/tiptap/issues/1036#issue-864043820
+// derived from https://github.com/ueberdosis/tiptap/issues/1036#issue-864043820
 
 import { Command, Extension, CommandProps, ChainedCommands } from '@tiptap/core'
 import { Node } from 'prosemirror-model'
@@ -39,10 +39,9 @@ export function clamp(val: number, min: number, max: number): number {
 
 export enum IndentProps {
   min = 0,
-  max = 210,
-
-  more = 30,
-  less = -30
+  max = 40,
+  more = 4,
+  less = -4
 }
 
 export function isBulletListNode(node: Node): boolean {
@@ -119,7 +118,7 @@ export const Indent = Extension.create<IndentOptions>({
 
   defaultOptions: {
     types: ['heading', 'paragraph'],
-    indentLevels: [0, 30, 60, 90, 120, 150, 180, 210],
+    indentLevels: [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40],
     defaultIndentLevel: 0,
   },
 
@@ -131,7 +130,7 @@ export const Indent = Extension.create<IndentOptions>({
           indent: {
             default: this.options.defaultIndentLevel,
             renderHTML: attributes => ({
-              style: `margin-left: ${attributes.indent}px!important;`
+              style: `text-indent: ${attributes.indent}ch;`
             }),
             parseHTML: element => ({
               indent: parseInt(element.style.marginLeft) || this.options.defaultIndentLevel,
@@ -187,14 +186,14 @@ export const Indent = Extension.create<IndentOptions>({
       Backspace: () => {
         const { selection } = this.editor.state;
         if (!selection.empty || selection.$from.parentOffset > 0) return false;
-        
+
         const node = selection.$from.parent;
         if (node.attrs?.indent > 0) {
           return this.editor.commands.outdent();
         }
 
-        return false; 
+        return false;
       },
     };
-  }  
+  }
 })
