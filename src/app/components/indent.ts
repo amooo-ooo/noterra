@@ -1,6 +1,6 @@
 // modified from https://github.com/ueberdosis/tiptap/issues/1036#issue-864043820
 
-import { Command, Extension } from '@tiptap/core'
+import { Command, Extension, CommandProps, ChainedCommands } from '@tiptap/core'
 import { Node } from 'prosemirror-model'
 import { TextSelection, AllSelection, Transaction } from 'prosemirror-state'
 
@@ -21,6 +21,8 @@ declare module '@tiptap/core' {
        * Unset the indent attribute
        */
       outdent: () => Command,
+      addIndent: () => ChainedCommands
+      addOutdent: () => ChainedCommands
     }
   }
 }
@@ -165,8 +167,13 @@ export const Indent = Extension.create<IndentOptions>({
           dispatch && dispatch(tr)
           return true
         }
-
         return false
+      },
+      addIndent: () => ({ commands }: CommandProps) => {
+        return commands.indent();
+      },
+      addOutdent: () => ({ commands }: CommandProps) => {
+        return commands.outdent();
       },
     }
   },

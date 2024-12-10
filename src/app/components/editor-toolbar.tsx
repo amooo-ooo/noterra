@@ -12,6 +12,8 @@ import {
 	FormatUnderline,
 	FormatStrikethrough,
 	FormatQuote,
+	FormatIndentIncrease,
+	FormatIndentDecrease,
 } from "./icons";
 
 import {
@@ -198,6 +200,20 @@ const TOOLS = {
 			label="Horizontal Rule"
 			action={(ctx) => ctx.setHorizontalRule()}
 			icon={<Minus />}
+		/>
+	),
+	indent: (
+		<TiptapButton
+			label="Indent"
+			action={(ctx) => ctx.addIndent()}
+			icon={<FormatIndentIncrease />}
+		/>
+	),
+	outdent: (
+		<TiptapButton
+			label="Dedent"
+			action={(ctx) => ctx.addOutdent()}
+			icon={<FormatIndentDecrease />}
 		/>
 	),
 	undo: (
@@ -428,6 +444,8 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"bulletList",
 			"orderedlist",
 			"tasklist",
+			"outdent",
+			"indent",
 			"horizontalRule",
 		],
 		["fontSize"],
