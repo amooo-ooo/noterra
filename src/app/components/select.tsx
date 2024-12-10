@@ -193,7 +193,7 @@ function SelectPopover({
 		let node = (document.activeElement as HTMLInputElement | null)
 			?.previousElementSibling;
 		while (node) {
-			if (node.matches('input[type="radio"]:not([disabled])') && !--i) {
+			if (node.matches('input[type="radio"]:not(:disabled)') && !--i) {
 				(node as HTMLInputElement).focus();
 				node.nextElementSibling?.scrollIntoView({ block: "nearest" });
 				break;
@@ -203,7 +203,7 @@ function SelectPopover({
 		if (!node) {
 			const node =
 				ref.current?.querySelector<HTMLInputElement>(
-					'input[type="radio"]:not([disabled]):last-of-type',
+					'input[type="radio"]:not(:disabled):last-of-type',
 				) ?? null;
 			node?.focus();
 			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
@@ -215,7 +215,7 @@ function SelectPopover({
 		let node = (document.activeElement as HTMLInputElement | null)
 			?.nextElementSibling;
 		while (node) {
-			if (node.matches('input[type="radio"]:not([disabled])') && !--i) {
+			if (node.matches('input[type="radio"]:not(:disabled)') && !--i) {
 				(node as HTMLInputElement).focus();
 				node.nextElementSibling?.scrollIntoView({ block: "nearest" });
 				break;
@@ -225,7 +225,7 @@ function SelectPopover({
 		if (!node) {
 			const node =
 				ref.current?.querySelector<HTMLInputElement>(
-					'input[type="radio"]:not([disabled])',
+					'input[type="radio"]:not(:disabled)',
 				) ?? null;
 			node?.focus();
 			node?.nextElementSibling?.scrollIntoView({ block: "nearest" });
@@ -269,9 +269,7 @@ function SelectPopover({
 							`${state.id}_${safe_id(state.value ?? "")}`,
 						);
 						if (!el || el.hasAttribute("disabled"))
-							el = root.querySelector<HTMLInputElement>(
-								"input:not([disabled])",
-							);
+							el = root.querySelector<HTMLInputElement>("input:not(:disabled)");
 						el?.focus();
 					}, 0);
 				}

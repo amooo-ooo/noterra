@@ -38,13 +38,13 @@
 		align-items: center;
 
 		/* TODO: colors */
-		&:is(:hover, :focus-visible, .active):not(:has([popover]:hover)) {
+		&:is(:hover, :focus-visible, .active):not(:disabled, :has([popover]:hover)) {
 			--bg-color: #80808020;
 		}
 
-		&:active:not(:has([popover]:active)),
-		&.active:hover:not(:has([popover]:hover)),
-		&:focus-visible {
+		&:active:not(:disabled:has([popover]:active)),
+		&.active:hover:not(:disabled, :has([popover]:hover)),
+		&:focus-visible:not(:disabled) {
 			--bg-color: #80808030;
 		}
 	}
