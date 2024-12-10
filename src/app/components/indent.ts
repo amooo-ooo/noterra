@@ -27,11 +27,11 @@ export const Indent = Extension.create<IndentOptions>({
 
   addCommands() {
     const adjustIndent =
-      (adjustment: (text: string) => string): Command =>
+      (adjustment: (text: string) => string, cursorOffset: number): Command =>
         ({ tr, state, dispatch }: CommandProps) => {
           const { selection, schema, doc } = state;
-          const { from, to } = selection;
-          const { anchor, head } = selection;
+          const { from, to, anchor, head } = selection;
+
           let modified = false;
 
           doc.nodesBetween(from, to, (node, pos) => {
@@ -47,7 +47,7 @@ export const Indent = Extension.create<IndentOptions>({
           });
 
           if (modified && dispatch) {
-            tr.setSelection(TextSelection.create(tr.doc, anchor + 1, head + 1));
+            tr.setSelection(TextSelection.create(tr.doc, anchor + cursorOffset, head + cursorOffset));
             dispatch(tr);
           }
 
@@ -55,8 +55,8 @@ export const Indent = Extension.create<IndentOptions>({
         };
 
     return {
-      increaseIndentCommand: () => adjustIndent((text) => `\t${text}`),
-      decreaseIndentCommand: () => adjustIndent((text) => (text.startsWith('\t') ? text.slice(1) : text)),
+      increaseIndentCommand: () => adjustIndent((text) => `\t${text}`, 1),
+      decreaseIndentCommand: () => adjustIndent((text) => (text.startsWith('\t') ? text.slice(1) : text), -1),
       increaseIndent: () => ({ commands }: CommandProps) => commands.increaseIndentCommand(),
       decreaseIndent: () => ({ commands }: CommandProps) => commands.decreaseIndentCommand(),
     };
