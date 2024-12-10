@@ -16,6 +16,7 @@
 	--fg-2: light-dark(#2b2b2b, #e8e8e8);
 	--fg-3: light-dark(#393939, #d4d4d4);
 	--fg-4: light-dark(#5c5c5c, #b3b3b3);
+	--fg-disabled: light-dark(#666, #aaa);
 }
 
 html,
@@ -41,6 +42,10 @@ body {
 button, .inherit-button-scaling {
 	/* standardize */
 	font-size: 0.9em;
+}
+
+button:disabled, input:disabled {
+	color: var(--fg-disabled);
 }
 
 a {

@@ -78,7 +78,7 @@
 	}
 
 	&.disabled {
-		color: #808080;
+		color: var(--fg-disabled);
 	}
 
 	&:hover,
