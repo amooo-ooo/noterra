@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 
 import { Option } from "./select";
+import { ThemeContext } from "./global-listeners";
 
 const COLORS = [
 	"#000000",
@@ -66,6 +67,34 @@ const COLORS = [
 	"#905ccc",
 	"#f137a6",
 ] as const;
+
+export function TextColorSelect() {
+	const { dark } = React.useContext(ThemeContext);
+	return (
+		<TiptapSelect
+			label="Text Color"
+			detect={(ed) =>
+				ed.getAttributes("textStyle").color ?? (dark ? "#ffffff" : "#000000")
+			}
+			action={(value, ctx) => ctx.setColor(value)}
+			className={`${styles["text-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
+			display="grid"
+		>
+			{COLORS.map((color) => (
+				<Option
+					label={
+						<span
+							className={styles["color-swatch"]}
+							style={{ backgroundColor: color }}
+						/>
+					}
+					value={color}
+					key={`${color}-default`}
+				/>
+			))}
+		</TiptapSelect>
+	);
+}
 
 const TOOLS = {
 	bold: (
@@ -257,35 +286,7 @@ const TOOLS = {
 			))}
 		</TiptapSelect>
 	),
-	textColor: (
-		<TiptapSelect
-			label="Text Color"
-			detect={(ed) =>
-				ed.getAttributes("textStyle").color ?? (
-					<span
-						className={styles["color-swatch"]}
-						style={{ backgroundColor: "var(--fg-0)" }}
-					/>
-				)
-			}
-			action={(value, ctx) => ctx.setColor(value)}
-			className={`${styles["text-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
-			display="grid"
-		>
-			{COLORS.map((color) => (
-				<Option
-					label={
-						<span
-							className={styles["color-swatch"]}
-							style={{ backgroundColor: color }}
-						/>
-					}
-					value={color}
-					key={`textColor-${color}-default`}
-				/>
-			))}
-		</TiptapSelect>
-	),
+	textColor: <TextColorSelect />,
 	highlight: (
 		<TiptapSelect
 			label="Highlight Color"
@@ -301,18 +302,33 @@ const TOOLS = {
 			className={`${styles["highlight-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
 			display="grid"
 		>
-			{COLORS.map((color) => (
+			{[
 				<Option
 					label={
 						<span
 							className={styles["color-swatch"]}
-							style={{ backgroundColor: color }}
+							style={{
+								background:
+									"conic-gradient(from 0deg, #777 0% 25%, #999 25% 50%, #777 50% 75%, #999 75% 100%)",
+							}}
 						/>
 					}
-					value={color}
-					key={`highlight-${color}-default`}
-				/>
-			))}
+					value="transparent"
+					key="transparent-default"
+				/>,
+				...COLORS.map((color) => (
+					<Option
+						label={
+							<span
+								className={styles["color-swatch"]}
+								style={{ backgroundColor: color }}
+							/>
+						}
+						value={color}
+						key={`${color}-default`}
+					/>
+				)),
+			]}
 		</TiptapSelect>
 	),
 	/// ...
