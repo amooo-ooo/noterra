@@ -31,21 +31,21 @@
     "@tiptap/react": "^2.10.3",
     "@tiptap/starter-kit": "^2.10.3",
     "lucide-react": "^0.468.0",
-    "material-symbols": "^0.27.1",
-    "monaco-editor": "^0.52.0",
-    "next": "^15.0.3",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "material-symbols": "^0.27.2",
+    "monaco-editor": "^0.52.2",
+    "next": "^15.1.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-sortablejs": "^6.1.4",
-    "sortablejs": "^1.15.3"
+    "sortablejs": "^1.15.6"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "typescript": "^5.7.2",
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.2",
     "@types/sortablejs": "^1.15.8",
-    "eslint": "^8",
-    "eslint-config-next": "15.0.3"
+    "eslint": "^9.16.0",
+    "eslint-config-next": "15.1.0"
   }
 }
