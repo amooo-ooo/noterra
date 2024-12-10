@@ -138,7 +138,7 @@ declare global {
 }
 
 type FontMap = {
-	[key: string]: { loaded: boolean; faces: FontData[] } | undefined;
+	[key: string]: { loaded: boolean; faces: FontData[] };
 };
 
 async function loadFont(faces: FontData[]) {
