@@ -210,7 +210,7 @@ const TOOLS = {
 	fontFamily: <FontFamilySelect />,
 	heading: (
 		<TiptapSelect
-			label="heading"
+			label="Text Style"
 			detect={(ed) =>
 				ed.getAttributes("heading").level
 					? `heading.${ed.getAttributes("heading").level}`

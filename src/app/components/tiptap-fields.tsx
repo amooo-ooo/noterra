@@ -235,7 +235,7 @@ export function FontFamilySelect() {
 	const [localFonts, setLocalFonts] = React.useState<FontMap>();
 	return (
 		<TiptapSelect
-			label="fontFamily"
+			label="Font"
 			detect={(ed) => ed.getAttributes("textStyle").fontFamily ?? "Inter"}
 			action={{
 				async perform(value, ctx) {
