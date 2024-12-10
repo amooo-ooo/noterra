@@ -69,6 +69,7 @@
 		border: var(--border-width) solid var(--border-color);
 		padding: 4px 8px;
 		width: 10em;
+		font-family: var(--font-inter-sans);
 
 		>[popover] {
 			background-color: color-mix(in srgb, var(--bg-0) 75%, transparent 25%);
