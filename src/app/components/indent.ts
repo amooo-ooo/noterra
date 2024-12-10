@@ -1,4 +1,5 @@
 import { Command, Extension, CommandProps, ChainedCommands } from '@tiptap/core';
+import { TextSelection } from 'prosemirror-state';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -30,6 +31,7 @@ export const Indent = Extension.create<IndentOptions>({
         ({ tr, state, dispatch }: CommandProps) => {
           const { selection, schema, doc } = state;
           const { from, to } = selection;
+          const { anchor, head } = selection;
           let modified = false;
 
           doc.nodesBetween(from, to, (node, pos) => {
@@ -37,15 +39,15 @@ export const Indent = Extension.create<IndentOptions>({
               const originalText = node.textContent ?? '';
               const newText = adjustment(originalText);
 
-              if (newText !== originalText) {
-                tr.replaceRangeWith(pos, pos + node.nodeSize, schema.text(newText));
-                modified = true;
-              }
+              if (newText === originalText || newText === '') return;
+
+              tr.replaceWith(pos + 1, pos + node.nodeSize - 1, schema.text(newText));
+              modified = true;
             }
           });
 
           if (modified && dispatch) {
-            tr.setMeta('addToHistory', true);
+            tr.setSelection(TextSelection.create(tr.doc, anchor + 1, head + 1));
             dispatch(tr);
           }
 
@@ -53,8 +55,8 @@ export const Indent = Extension.create<IndentOptions>({
         };
 
     return {
-      increaseIndentCommand: () => adjustIndent(text => `\t${text}`),
-      decreaseIndentCommand: () => adjustIndent(text => text.startsWith('\t') ? text.slice(1) : text),
+      increaseIndentCommand: () => adjustIndent((text) => `\t${text}`),
+      decreaseIndentCommand: () => adjustIndent((text) => (text.startsWith('\t') ? text.slice(1) : text)),
       increaseIndent: () => ({ commands }: CommandProps) => commands.increaseIndentCommand(),
       decreaseIndent: () => ({ commands }: CommandProps) => commands.decreaseIndentCommand(),
     };
