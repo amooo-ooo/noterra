@@ -35,6 +35,7 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
 import Highlight from "@tiptap/extension-highlight";
+import { Indent } from "./indent";
 
 export interface EditorData {
 	id: string;
@@ -110,7 +111,8 @@ export function Editor({
 			Color,
 			Highlight.configure({
 				multicolor: true
-			})
+			}),
+			Indent
 		],
 		content: data.initialContent,
 		immediatelyRender: false,
