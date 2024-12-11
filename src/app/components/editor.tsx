@@ -126,6 +126,7 @@ export function Editor({
 			"input:not([type])",
 			'input[type="text"]',
 			'input[type="search"]',
+			'input[type="number"]',
 			"textarea",
 			"[contenteditable]",
 			"select",

@@ -40,8 +40,9 @@ import {
 	PilcrowIcon,
 } from "lucide-react";
 
-import { Option } from "./select";
+import { Datalist, Option } from "./select";
 import { ThemeContext } from "./global-listeners";
+import { EditorContext } from "./editor";
 
 const COLORS = [
 	"#000000",
@@ -70,7 +71,7 @@ const COLORS = [
 	"#f137a6",
 ] as const;
 
-export function TextColorSelect() {
+function TextColorSelect() {
 	const { dark } = React.useContext(ThemeContext);
 	return (
 		<TiptapSelect
@@ -95,6 +96,50 @@ export function TextColorSelect() {
 				/>
 			))}
 		</TiptapSelect>
+	);
+}
+
+function getElement(node?: Node) {
+	let n: Node | null = node ?? null;
+	while (n && n.nodeType !== Node.ELEMENT_NODE) n = n.parentNode;
+	return n as Element | null;
+}
+
+function FontSizeSelect() {
+	const { editor } = React.useContext(EditorContext);
+
+	const currentSize =
+		(editor?.getAttributes("textStyle").fontSize as number | undefined) ??
+		Number.parseFloat(
+			getComputedStyle(
+				getElement(editor?.$pos(editor.state.selection.head)?.element) ??
+					editor?.$doc.element ??
+					document.body,
+			).fontSize,
+		);
+
+	return (
+		<Datalist
+			title="Font Size"
+			type="number"
+			onChange={(value) =>
+				editor
+					?.chain()
+					.focus()
+					.setFontSize(Number.parseFloat(value || currentSize.toString()))
+					.run()
+			}
+			value={currentSize.toString()}
+		>
+			{[6, 8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 40, 48, 56, 64].map((sz) => (
+				<Option
+					key={sz}
+					value={`${sz}`}
+					label={`${sz}px`}
+					disabled={currentSize === sz}
+				/>
+			))}
+		</Datalist>
 	);
 }
 
@@ -222,7 +267,7 @@ const TOOLS = {
 	redo: (
 		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo2 />} />
 	),
-	fontSize: <input type="number" />,
+	fontSize: <FontSizeSelect />,
 	fontFamily: <FontFamilySelect />,
 	heading: (
 		<TiptapSelect

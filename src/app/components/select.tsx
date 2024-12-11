@@ -124,39 +124,43 @@ enum DeltaMode {
 	DOM_DELTA_PAGE = 0x02,
 }
 
-function SelectPopover({
-	id,
-	children,
-	beforeContent,
-	updatePosition,
-	onToggleOpen,
-	display = "vertical",
-}: {
-	id: string;
-	children?: React.ReactNode;
-	beforeContent?: React.ReactNode;
-	updatePosition?: MutableRef<() => void>;
-	onToggleOpen?: (open: boolean) => void;
-	display?:
-		| "vertical"
-		| "horizontal"
-		| {
-				type: "grid";
-				width: number;
-		  };
-}) {
+const SelectPopover = React.forwardRef<
+	HTMLDivElement,
+	{
+		id: string;
+		children?: React.ReactNode;
+		beforeContent?: React.ReactNode;
+		anchorEl: React.RefObject<HTMLElement | null>;
+		updatePosition?: MutableRef<() => void>;
+		onToggleOpen?: (open: boolean) => void;
+		display?:
+			| "vertical"
+			| "horizontal"
+			| {
+					type: "grid";
+					width: number;
+			  };
+	}
+>(function SelectPopover(
+	{
+		id,
+		children,
+		beforeContent,
+		anchorEl,
+		updatePosition,
+		onToggleOpen,
+		display = "vertical",
+	},
+	popoverRef: React.Ref<HTMLDivElement>,
+) {
 	const state = React.useContext(SelectState);
 	const ref = React.useRef<HTMLDivElement | null>(null);
 
 	const [rect, setRect] = React.useState<DOMRect | null>(null);
 	const updatePos = React.useCallback(() => {
 		if (!ref.current?.parentElement?.matches(":popover-open")) return;
-		setRect(
-			ref.current
-				.closest(`.${styles["select-button"]}`)
-				?.getBoundingClientRect() ?? null,
-		);
-	}, []);
+		setRect(anchorEl.current?.getBoundingClientRect() ?? null);
+	}, [anchorEl]);
 
 	const [winWidth, winHeight] = React.useContext(WindowSize);
 
@@ -234,11 +238,20 @@ function SelectPopover({
 
 	const activeEl = React.useContext(ActiveElement);
 	React.useEffect(() => {
-		if (
-			!ref.current?.closest(`.${styles["select-button"]}`)?.contains(activeEl)
-		)
-			ref.current?.closest<HTMLElement>("[popover]")?.hidePopover();
-	}, [activeEl]);
+		const popover = ref.current?.closest<HTMLElement>("[popover]");
+		if (!anchorEl.current?.contains(activeEl) && !popover?.contains(activeEl))
+			popover?.hidePopover();
+	}, [activeEl, anchorEl]);
+
+	React.useEffect(() => {
+		const observer = new IntersectionObserver((es) => {
+			for (const evt of es) {
+				if (!evt.isIntersecting)
+					ref.current?.closest<HTMLElement>("[popover]")?.hidePopover();
+			}
+		});
+		if (anchorEl.current) observer.observe(anchorEl.current);
+	}, [anchorEl]);
 
 	return (
 		<div
@@ -246,16 +259,7 @@ function SelectPopover({
 			popover="auto"
 			className={`${styles["popout-container"]} ${HANDLES_CHARS}`}
 			style={style}
-			ref={(el) => {
-				if (!el) return;
-				const observer = new IntersectionObserver((es) => {
-					for (const evt of es) {
-						if (!evt.isIntersecting)
-							ref.current?.closest<HTMLElement>("[popover]")?.hidePopover();
-					}
-				});
-				observer.observe(el?.closest(`.${styles["select-button"]}`) ?? el);
-			}}
+			ref={popoverRef}
 			onToggle={(e) => {
 				const open = e.currentTarget.matches(":popover-open");
 				onToggleOpen?.(open);
@@ -347,7 +351,7 @@ function SelectPopover({
 			</div>
 		</div>
 	);
-}
+});
 
 function setEquals<T>(a: T[], b: T[]) {
 	return !new Set(a).symmetricDifference(new Set(b)).size;
@@ -372,151 +376,310 @@ export type SelectProps = {
 	disabled?: boolean;
 };
 
-export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
-	function Select(
-		{
-			value,
-			onChange,
-			children,
-			updatePosition,
-			className,
-			onToggleOpen,
-			display = "vertical",
-			...props
-		},
-		ref,
-	) {
-		const id = React.useId();
-		const [searchingValue, setSearchingValue] = React.useState("");
-		// biome-ignore lint/correctness/useExhaustiveDependencies: very intentional
-		const map = React.useMemo<React.ContextType<typeof SelectState>["map"]>(
-			() => ({}),
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			[searchingValue],
-		);
-		const searchField = React.useRef<HTMLInputElement | null>(null);
-		// const [open, setOpen] = React.useState(false);
+export function Select({
+	value,
+	onChange,
+	children,
+	updatePosition,
+	className,
+	onToggleOpen,
+	display = "vertical",
+	...props
+}: SelectProps) {
+	const id = React.useId();
+	const [searchingValue, setSearchingValue] = React.useState("");
+	// biome-ignore lint/correctness/useExhaustiveDependencies: very intentional
+	const map = React.useMemo<React.ContextType<typeof SelectState>["map"]>(
+		() => ({}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[searchingValue],
+	);
+	const searchField = React.useRef<HTMLInputElement | null>(null);
+	// const [open, setOpen] = React.useState(false);
 
-		const childs = React.useMemo(
-			() => (Array.isArray(children) ? children : children ? [children] : []),
-			[children],
-		);
+	const childs = React.useMemo(
+		() => (Array.isArray(children) ? children : children ? [children] : []),
+		[children],
+	);
 
-		const { label, style } = React.useMemo<Partial<OptionProps>>(
-			() => childs.find((child) => child.props.value === value)?.props ?? {},
-			[childs, value],
-		);
+	const { label, style } = React.useMemo<Partial<OptionProps>>(
+		() => childs.find((child) => child.props.value === value)?.props ?? {},
+		[childs, value],
+	);
 
-		const options = React.useMemo(
-			() =>
-				childs
-					.map((el) => {
-						if (!el) return;
-						const props = el.props;
-						const oldProps = map[props.value]?.props;
-						if (
-							oldProps &&
-							oldProps.label === props.label &&
-							oldProps.value === props.value &&
-							(oldProps.valueAliases === props.valueAliases ||
-								setEquals(
-									oldProps.valueAliases ?? [],
-									props.valueAliases ?? [],
-								))
-						)
-							return [el, map[props.value].matches.score] as const;
-						const labelString =
-							typeof props.label === "string"
-								? props.label
-								: Array.isArray(props.label)
-									? props.label.find((x) => typeof x === "string")
-									: undefined;
-						const matches = match(searchingValue, [
-							...(labelString ? [labelString] : []),
-							props.value,
-							...(props.valueAliases ?? []),
-						]);
-						if (!matches) return;
-						if (matches.in === (props.label ?? props.value)) matches.score++;
-						map[props.value] = { matches, props };
-						return [el, matches.score] as const;
-					})
-					.filter((x) => !!x)
-					.sort((a, b) => b[1] - a[1])
-					.map((x) => x[0]),
-			[childs, searchingValue, map],
-		);
+	const options = React.useMemo(
+		() =>
+			childs
+				.map((el) => {
+					if (!el) return;
+					const props = el.props;
+					const oldProps = map[props.value]?.props;
+					if (
+						oldProps &&
+						oldProps.label === props.label &&
+						oldProps.value === props.value &&
+						(oldProps.valueAliases === props.valueAliases ||
+							setEquals(oldProps.valueAliases ?? [], props.valueAliases ?? []))
+					)
+						return [el, map[props.value].matches.score] as const;
+					const labelString =
+						typeof props.label === "string"
+							? props.label
+							: Array.isArray(props.label)
+								? props.label.find((x) => typeof x === "string")
+								: undefined;
+					const matches = match(searchingValue, [
+						...(labelString ? [labelString] : []),
+						props.value,
+						...(props.valueAliases ?? []),
+					]);
+					if (!matches) return;
+					if (matches.in === (props.label ?? props.value)) matches.score++;
+					map[props.value] = { matches, props };
+					return [el, matches.score] as const;
+				})
+				.filter((x) => !!x)
+				.sort((a, b) => b[1] - a[1])
+				.map((x) => x[0]),
+		[childs, searchingValue, map],
+	);
 
-		return (
-			<SelectState.Provider
-				value={{
-					id,
-					value,
-					onChange,
-					searchingValue,
-					setSearchingValue,
-					map,
-					searchField,
+	const anchor = React.useRef<HTMLButtonElement | null>(null);
+
+	return (
+		<SelectState.Provider
+			value={{
+				id,
+				value,
+				onChange,
+				searchingValue,
+				setSearchingValue,
+				map,
+				searchField,
+			}}
+		>
+			<button
+				type="button"
+				popoverTarget={id}
+				popoverTargetAction="toggle"
+				style={props.style}
+				className={`${styles["select-button"]} ${
+					display === "horizontal"
+						? styles.horizontal
+						: display === "vertical"
+							? ""
+							: styles.grid
+				} ${className}`}
+				ref={anchor}
+				{...props}
+			>
+				<span style={style} className={styles["select-value-container"]}>
+					{label ?? value ?? "unset"}
+				</span>
+				<SelectPopover
+					id={id}
+					updatePosition={updatePosition}
+					display={display}
+					onToggleOpen={onToggleOpen}
+					anchorEl={anchor}
+					// onToggleOpen={(open) => {
+					// 	onToggleOpen?.(open);
+					// 	setOpen(open);
+					// }}
+					beforeContent={
+						<input
+							type="search"
+							ref={searchField}
+							value={searchingValue}
+							onChange={(e) => setSearchingValue(e.currentTarget.value)}
+							onFocus={(e) =>
+								e.currentTarget.parentElement?.scrollTo({ top: 0 })
+							}
+							style={{
+								// https://www.a11yproject.com/posts/how-to-hide-content/
+								contain: "strict",
+								clipPath: "inset(50%)",
+								position: "absolute",
+								overflow: "hidden",
+								width: 1,
+								height: 1,
+							}}
+						/>
+					}
+				>
+					{options.length ? (
+						options
+					) : (
+						<span className={styles["no-results"]}>
+							No results matching &lsquo;{searchingValue}&rsquo;
+						</span>
+					)}
+				</SelectPopover>
+			</button>
+		</SelectState.Provider>
+	);
+}
+
+export type DatalistProps = {
+	value?: string;
+	onChange?: (value: string) => void;
+	onToggleOpen?: (open: boolean) => void;
+	children?: SelectChild | SelectChild[];
+	updatePosition?: MutableRef<() => void>;
+	display?:
+		| "vertical"
+		| "horizontal"
+		| {
+				type: "grid";
+				width: number;
+		  };
+	style?: React.CSSProperties;
+	className?: string;
+	title?: string;
+	type?: HTMLInputElement["type"];
+	onFocus?: React.HTMLProps<HTMLInputElement>["onFocus"];
+	onBlur?: React.HTMLProps<HTMLInputElement>["onBlur"];
+	disabled?: boolean;
+};
+
+export function Datalist({
+	value,
+	onChange,
+	children,
+	updatePosition,
+	className,
+	onToggleOpen,
+	display = "vertical",
+	...props
+}: DatalistProps) {
+	const id = React.useId();
+	const searchField = React.useRef<HTMLInputElement | null>(null);
+
+	const childs = React.useMemo(
+		() => (Array.isArray(children) ? children : children ? [children] : []),
+		[children],
+	);
+
+	const { style } = React.useMemo<Partial<OptionProps>>(
+		() => childs.find((child) => child.props.value === value)?.props ?? {},
+		[childs, value],
+	);
+
+	const popoverRef = React.useRef<HTMLDivElement | null>(null);
+	const [tempValue, setTempValue] = React.useState("");
+	const [open, setOpen] = React.useState(false);
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: very intentional
+	const map = React.useMemo<React.ContextType<typeof SelectState>["map"]>(
+		() => ({}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[tempValue],
+	);
+
+	const options = React.useMemo(
+		() =>
+			childs
+				.map((el) => {
+					if (!el) return;
+					const props = el.props;
+					const oldProps = map[props.value]?.props;
+					if (
+						oldProps &&
+						oldProps.label === props.label &&
+						oldProps.value === props.value &&
+						(oldProps.valueAliases === props.valueAliases ||
+							setEquals(oldProps.valueAliases ?? [], props.valueAliases ?? []))
+					)
+						return [el, map[props.value].matches.score] as const;
+					const labelString =
+						typeof props.label === "string"
+							? props.label
+							: Array.isArray(props.label)
+								? props.label.find((x) => typeof x === "string")
+								: undefined;
+					const matches = match(tempValue, [
+						...(labelString ? [labelString] : []),
+						props.value,
+						...(props.valueAliases ?? []),
+					]);
+					if (!matches) return;
+					if (matches.in === (props.label ?? props.value)) matches.score++;
+					map[props.value] = { matches, props };
+					return [el, matches.score] as const;
+				})
+				.filter((x) => !!x)
+				.sort((a, b) => b[1] - a[1])
+				.map((x) => x[0]),
+		[childs, tempValue, map],
+	);
+
+	return (
+		<SelectState.Provider
+			value={{
+				id,
+				value,
+				onChange,
+				searchingValue: tempValue,
+				setSearchingValue: setTempValue,
+				map,
+				searchField,
+			}}
+		>
+			{/* <button
+				type="button"
+				popoverTarget={id}
+				popoverTargetAction="toggle"
+				style={props.style}
+				className={`${styles["select-button"]} ${
+					display === "horizontal"
+						? styles.horizontal
+						: display === "vertical"
+							? ""
+							: styles.grid
+				} ${className}`}
+				ref={ref}
+				{...props}
+			></button> */}
+			<input
+				ref={searchField}
+				value={open ? tempValue : value}
+				onChange={(e) => {
+					setTempValue(e.currentTarget.value);
+				}}
+				{...props}
+				onFocus={(e) => {
+					setTempValue("");
+					setTimeout(() => popoverRef.current?.showPopover());
+					props.onFocus?.(e);
+				}}
+				onKeyUp={(e) => {
+					if (e.key === "Enter") {
+						onChange?.(tempValue);
+						popoverRef.current?.hidePopover();
+					}
+				}}
+				style={{ ...props.style, ...style }}
+			/>
+			<SelectPopover
+				id={id}
+				updatePosition={updatePosition}
+				display={display}
+				// onToggleOpen={onToggleOpen}
+				anchorEl={searchField}
+				ref={popoverRef}
+				onToggleOpen={(open) => {
+					onToggleOpen?.(open);
+					setOpen(open);
 				}}
 			>
-				<button
-					type="button"
-					popoverTarget={id}
-					popoverTargetAction="toggle"
-					style={props.style}
-					className={`${styles["select-button"]} ${
-						display === "horizontal"
-							? styles.horizontal
-							: display === "vertical"
-								? ""
-								: styles.grid
-					} ${className}`}
-					ref={ref}
-					{...props}
-				>
-					<span style={style} className={styles["select-value-container"]}>
-						{label ?? value ?? "unset"}
+				{options.length ? (
+					options
+				) : (
+					<span className={styles["no-results"]}>
+						No results matching &lsquo;{tempValue}&rsquo;
 					</span>
-					<SelectPopover
-						id={id}
-						updatePosition={updatePosition}
-						display={display}
-						onToggleOpen={onToggleOpen}
-						// onToggleOpen={(open) => {
-						// 	onToggleOpen?.(open);
-						// 	setOpen(open);
-						// }}
-						beforeContent={
-							<input
-								type="search"
-								ref={searchField}
-								value={searchingValue}
-								onChange={(e) => setSearchingValue(e.currentTarget.value)}
-								onFocus={(e) =>
-									e.currentTarget.parentElement?.scrollTo({ top: 0 })
-								}
-								style={{
-									// https://www.a11yproject.com/posts/how-to-hide-content/
-									contain: "strict",
-									clipPath: "inset(50%)",
-									position: "absolute",
-									overflow: "hidden",
-									width: 1,
-									height: 1,
-								}}
-							/>
-						}
-					>
-						{options.length ? (
-							options
-						) : (
-							<span className={styles["no-results"]}>
-								No results matching &lsquo;{searchingValue}&rsquo;
-							</span>
-						)}
-					</SelectPopover>
-				</button>
-			</SelectState.Provider>
-		);
-	},
-);
+				)}
+			</SelectPopover>
+		</SelectState.Provider>
+	);
+}
