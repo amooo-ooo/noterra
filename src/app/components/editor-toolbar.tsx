@@ -364,21 +364,35 @@ export type ToolbarConfig = {
 	nextGroupId: number;
 };
 
+type ToolbarAction =
+	| {
+			type: "rearrange";
+			order: (
+				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+				| ToolbarItemTypes
+			)[];
+	  }
+	| {
+			type: "rearrange-child";
+			childId: ToolbarGroup["id"];
+			order: ToolbarItemTypes[];
+	  }
+	| {
+			type: "rearrange";
+			order: (
+				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+				| ToolbarItemTypes
+			)[];
+	  }
+	| {
+			type: "rearrange-child";
+			childId: ToolbarGroup["id"];
+			order: ToolbarItemTypes[];
+	  };
+
 function toolbarDispatch(
 	state: ToolbarConfig,
-	action:
-		| {
-				type: "rearrange";
-				order: (
-					| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-					| ToolbarItemTypes
-				)[];
-		  }
-		| {
-				type: "rearrange-child";
-				childId: ToolbarGroup["id"];
-				order: ToolbarItemTypes[];
-		  },
+	action: ToolbarAction,
 ): ToolbarConfig {
 	switch (action.type) {
 		case "rearrange": {
@@ -418,9 +432,7 @@ function toolbarDispatch(
 
 const ToolbarConfigContext = React.createContext<{
 	arrangement: React.ReducerState<typeof toolbarDispatch>;
-	updateArrangement: React.Dispatch<
-		React.ReducerAction<typeof toolbarDispatch>
-	>;
+	updateArrangement: React.Dispatch<ToolbarAction>;
 	// biome-ignore lint/style/noNonNullAssertion: intentionally error if accessed
 }>(null!);
 
