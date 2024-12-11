@@ -17,6 +17,11 @@
 	--fg-3: light-dark(#393939, #d4d4d4);
 	--fg-4: light-dark(#5c5c5c, #b3b3b3);
 	--fg-disabled: light-dark(#666, #aaa);
+
+	* {
+		min-width: 0;
+		min-height: 0;
+	}
 }
 
 html,

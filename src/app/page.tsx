@@ -1,4 +1,4 @@
-import styles from "./page.module.css";
+import styles from "./page.module.scss";
 import { TabManager } from "./components/tab-manager";
 import { ToolbarConfigProvider } from "./components/editor-toolbar";
 import { EditorSelectionHandler } from "./components/monaco-editor";

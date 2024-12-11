@@ -3,7 +3,7 @@
 import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
-import styles from "@/app/styles/tab-strip.module.css";
+import styles from "@/app/styles/tab-strip.module.scss";
 import { Upload, Plus, X } from "lucide-react";
 
 

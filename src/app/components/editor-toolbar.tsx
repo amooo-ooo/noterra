@@ -4,7 +4,7 @@ import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import { unreachable } from "./util";
 import { FontFamilySelect, TiptapButton, TiptapSelect } from "./tiptap-fields";
-import styles from "@/app/styles/editor-toolbar.module.css";
+import styles from "@/app/styles/editor-toolbar.module.scss";
 
 import {
 	FormatBold,

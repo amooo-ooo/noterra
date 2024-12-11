@@ -10,7 +10,7 @@ import "./monaco-node-extension";
 import type { editor as MonacoEditorNS } from "monaco-editor";
 import React from "react";
 import { EditorContext } from "./editor";
-import styles from "@/app/styles/monaco-editor.module.css";
+import styles from "@/app/styles/monaco-editor.module.scss";
 import { Option, Select } from "./select";
 
 type RangeListener = [Node, (selection: Selection) => void];

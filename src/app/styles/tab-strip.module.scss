@@ -121,7 +121,10 @@
 			padding-right: calc(var(--padding-right) + var(--border-width));
 		}
 
-		.close-icon, .add-tab, .upload-file, .expander~button {
+		.close-icon,
+		.add-tab,
+		.upload-file,
+		.expander~button {
 			flex: 0 0;
 			flex-basis: content;
 			padding: 1px;
@@ -129,14 +132,13 @@
 			border-radius: calc(var(--radius) - (var(--button-padding) + var(--margin)) / 2);
 			color: var(--fg-4);
 			aspect-ratio: 1;
-
+			transition: background-color var(--small-transition),
+			color var(--small-transition);
+			
 			svg {
 				padding: 2px;
 			}
 
-			transition:
-				background-color var(--small-transition),
-				color var(--small-transition);
 
 			&:active {
 				background-color: var(--active-color);
@@ -152,7 +154,9 @@
 			}
 		}
 
-		.add-tab, .upload-file, .expander~button {
+		.add-tab,
+		.upload-file,
+		.expander~button {
 			background: transparent;
 			border: none;
 		}

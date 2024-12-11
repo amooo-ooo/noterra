@@ -30,7 +30,7 @@ import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
 
 import { MonacoCodeBlockExtention } from "./monaco-node-extension";
-import styles from "@/app/styles/tiptap.module.css";
+import styles from "@/app/styles/tiptap.module.scss";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";

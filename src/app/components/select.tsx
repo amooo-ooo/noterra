@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "@/app/styles/select.module.css";
+import styles from "@/app/styles/select.module.scss";
 import { ActiveElement, WindowSize } from "./global-listeners";
 import { HANDLES_CHARS } from "./editor";
 

@@ -2,7 +2,7 @@ import type { ChainedCommands, Editor } from "@tiptap/react";
 import { EditorContext } from "./editor";
 import React from "react";
 import { Option, Select, type SelectProps } from "./select";
-import styles from "@/app/styles/editor-toolbar.module.css";
+import styles from "@/app/styles/editor-toolbar.module.scss";
 import { anyPass } from "./util";
 
 export function TiptapButton({

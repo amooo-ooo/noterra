@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import styles from "@/app/styles/global-listeners.module.css";
+import styles from "@/app/styles/global-listeners.module.scss";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 export const WindowSize = React.createContext<readonly [number, number]>(null!);
