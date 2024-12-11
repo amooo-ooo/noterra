@@ -5,27 +5,26 @@ import { Editor, type EditorData } from "./editor";
 import { TabStrip } from "./tab-strip";
 import { ThemeButton } from "./theme-button";
 
-function tabReducer<T>(
-	state: T[],
-	action:
-		| {
-				type: "remove";
-				predicate: (value: T) => boolean;
-		  }
-		| {
-				type: "append";
-				initialValue: T;
-		  }
-		| {
-				type: "rename";
-				index: number;
-				value: T;
-		  }
-		| {
-				type: "reorder";
-				value: T[];
-		  },
-) {
+type TabReducerAction<T> =
+	| {
+			type: "remove";
+			predicate: (value: T) => boolean;
+	  }
+	| {
+			type: "append";
+			initialValue: T;
+	  }
+	| {
+			type: "rename";
+			index: number;
+			value: T;
+	  }
+	| {
+			type: "reorder";
+			value: T[];
+	  };
+
+function tabReducer<T>(state: T[], action: TabReducerAction<T>) {
 	switch (action.type) {
 		case "append":
 			return state.concat(action.initialValue);
@@ -46,9 +45,7 @@ export interface Tab {
 	state: EditorData;
 }
 
-export type TabListDispatcher = React.Dispatch<
-	React.ReducerAction<typeof tabReducer<Tab>>
->;
+export type TabListDispatcher = React.Dispatch<TabReducerAction<Tab>>;
 
 export function TabManager({
 	tabstripClass,
