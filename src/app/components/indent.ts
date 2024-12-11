@@ -40,7 +40,6 @@ export const Indent = Extension.create<IndentOptions>({
 				doc.nodesBetween(from, to, (node, pos) => {
 					if (this.options.types.includes(node.type.name)) {
 						if (dedent) {
-							console.log(pos, head);
 							if (
 								keyboard &&
 								selection.empty &&

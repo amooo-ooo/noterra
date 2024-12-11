@@ -3,7 +3,6 @@ import Highlight from "@tiptap/extension-highlight";
 export const BetterHighlight = Highlight.extend({
 	addAttributes() {
 		const val = this.parent?.();
-		console.log("as");
 		return {
 			...val,
 			color: {
