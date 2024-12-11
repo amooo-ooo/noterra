@@ -273,6 +273,8 @@ const SelectPopover = React.forwardRef<
 							`${state.id}_${safe_id(state.value ?? "")}`,
 						);
 						if (!el || el.hasAttribute("disabled"))
+							el = state.searchField?.current ?? null;
+						if (!el || el.hasAttribute("disabled"))
 							el = root.querySelector<HTMLInputElement>("input:not(:disabled)");
 						el?.focus();
 					}, 0);
@@ -533,6 +535,8 @@ export type DatalistProps = {
 				type: "grid";
 				width: number;
 		  };
+	preNodes?: React.ReactNode;
+	postNodes?: React.ReactNode;
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
@@ -547,13 +551,16 @@ export function Datalist({
 	onChange,
 	children,
 	updatePosition,
-	className,
 	onToggleOpen,
+	preNodes,
+	postNodes,
 	display = "vertical",
+	className,
 	...props
 }: DatalistProps) {
 	const id = React.useId();
 	const searchField = React.useRef<HTMLInputElement | null>(null);
+	const anchor = React.useRef<HTMLSpanElement | null>(null);
 
 	const childs = React.useMemo(
 		() => (Array.isArray(children) ? children : children ? [children] : []),
@@ -640,32 +647,36 @@ export function Datalist({
 				ref={ref}
 				{...props}
 			></button> */}
-			<input
-				ref={searchField}
-				value={open ? tempValue : value}
-				onChange={(e) => {
-					setTempValue(e.currentTarget.value);
-				}}
-				{...props}
-				onFocus={(e) => {
-					setTempValue("");
-					setTimeout(() => popoverRef.current?.showPopover());
-					props.onFocus?.(e);
-				}}
-				onKeyUp={(e) => {
-					if (e.key === "Enter") {
-						onChange?.(tempValue);
-						popoverRef.current?.hidePopover();
-					}
-				}}
-				style={{ ...props.style, ...style }}
-			/>
+			<span ref={anchor} style={props.style} className={className}>
+				{preNodes}
+				<input
+					ref={searchField}
+					value={open ? tempValue : value}
+					onChange={(e) => {
+						setTempValue(e.currentTarget.value);
+					}}
+					{...props}
+					onFocus={(e) => {
+						setTempValue("");
+						setTimeout(() => popoverRef.current?.showPopover());
+						props.onFocus?.(e);
+					}}
+					onKeyUp={(e) => {
+						if (e.key === "Enter") {
+							onChange?.(tempValue);
+							popoverRef.current?.hidePopover();
+						}
+					}}
+					style={style}
+				/>
+				{postNodes}
+			</span>
 			<SelectPopover
 				id={id}
 				updatePosition={updatePosition}
 				display={display}
 				// onToggleOpen={onToggleOpen}
-				anchorEl={searchField}
+				anchorEl={anchor}
 				ref={popoverRef}
 				onToggleOpen={(open) => {
 					onToggleOpen?.(open);

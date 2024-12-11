@@ -122,4 +122,41 @@
 		height: 100%;
 		aspect-ratio: 1;
 	}
+
+	.number-select {
+		padding: 0;
+		display: flex;
+		align-items: stretch;
+		height: 100%;
+		max-width: 12ch;
+
+		input {
+			background-color: transparent;
+			color: inherit;
+			border: none;
+			flex: 1 1;
+			font-size: 1em;
+			padding: var(--padding) calc(var(--padding) + 0.5ch);
+
+			&::-webkit-inner-spin-button {
+				display: none;
+			}
+		}
+
+		button {
+			border-radius: 0;
+			width: auto;
+			height: 100%;
+			aspect-ratio: 1;
+			align-items: center;
+			justify-content: center;
+
+			&:first-child {
+				border-right: var(--border-width) solid var(--border-color);
+			}
+			&:last-child {
+				border-left: var(--border-width) solid var(--border-color);
+			}
+		}
+	}
 }

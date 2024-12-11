@@ -38,6 +38,8 @@ import {
 	Heading5Icon,
 	Heading6Icon,
 	PilcrowIcon,
+	PlusIcon,
+	MinusIcon,
 } from "lucide-react";
 
 import { Datalist, Option } from "./select";
@@ -130,6 +132,38 @@ function FontSizeSelect() {
 					.run()
 			}
 			value={currentSize.toString()}
+			className={`${styles["toolbar-select"]} ${styles["number-select"]}`}
+			preNodes={
+				<button
+					type="button"
+					disabled={currentSize <= 1}
+					onClick={() =>
+						editor
+							?.chain()
+							.focus()
+							.setFontSize(currentSize - 1)
+							.run()
+					}
+					className={styles["toolbar-button"]}
+				>
+					<MinusIcon size="1.5em" />
+				</button>
+			}
+			postNodes={
+				<button
+					type="button"
+					onClick={() =>
+						editor
+							?.chain()
+							.focus()
+							.setFontSize(currentSize + 1)
+							.run()
+					}
+					className={styles["toolbar-button"]}
+				>
+					<PlusIcon size="1.5em" />
+				</button>
+			}
 		>
 			{[6, 8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 40, 48, 56, 64].map((sz) => (
 				<Option
