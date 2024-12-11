@@ -40,15 +40,17 @@ export const Indent = Extension.create<IndentOptions>({
 				doc.nodesBetween(from, to, (node, pos) => {
 					if (this.options.types.includes(node.type.name)) {
 						if (dedent) {
+							console.log(pos, head);
 							if (
 								keyboard &&
 								selection.empty &&
+								pos + 1 < head &&
 								node.textContent[
 									(selection.$head.textOffset || node.textContent.length) - 1
 								] === "\t"
 							)
 								tr.delete(head - 1 + modified * dir, head + modified * dir);
-							else if (node.textContent.startsWith("\t"))
+							else if (node.textContent.startsWith("\t") && pos + 1 < head)
 								tr.replaceWith(
 									pos + 1 + modified * dir,
 									pos + 2 + modified * dir,
