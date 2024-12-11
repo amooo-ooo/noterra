@@ -14,10 +14,12 @@ export function WindowSizeProvider({
 			: ([0, 0] as const),
 	);
 
-	React.useEffect(() =>
-		window.addEventListener("resize", () =>
-			setWindowSize([window.innerWidth, window.innerHeight] as const),
-		),
+	React.useEffect(
+		() =>
+			window.addEventListener("resize", () =>
+				setWindowSize([window.innerWidth, window.innerHeight] as const),
+			),
+		[],
 	);
 	return (
 		<WindowSize.Provider value={windowSize}>{children}</WindowSize.Provider>
