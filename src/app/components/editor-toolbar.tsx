@@ -12,8 +12,6 @@ import {
 	FormatUnderline,
 	FormatStrikethrough,
 	FormatQuote,
-	FormatIndentIncrease,
-	FormatIndentDecrease,
 } from "./icons";
 
 import {
@@ -40,6 +38,8 @@ import {
 	PilcrowIcon,
 	PlusIcon,
 	MinusIcon,
+	IndentIcon,
+	IndentDecreaseIcon,
 	Square,
 	Table,
 } from "lucide-react";
@@ -117,8 +117,8 @@ function FontSizeSelect() {
 		Number.parseFloat(
 			getComputedStyle(
 				getElement(editor?.$pos(editor.state.selection.head)?.element) ??
-				editor?.$doc.element ??
-				document.body,
+					editor?.$doc.element ??
+					document.body,
 			).fontSize,
 		);
 
@@ -287,14 +287,14 @@ const TOOLS = {
 		<TiptapButton
 			label="Indent"
 			action={(ctx) => ctx.increaseIndent()}
-			icon={<FormatIndentIncrease />}
+			icon={<IndentIcon />}
 		/>
 	),
 	outdent: (
 		<TiptapButton
 			label="Dedent"
 			action={(ctx) => ctx.decreaseIndent()}
-			icon={<FormatIndentDecrease />}
+			icon={<IndentDecreaseIcon />}
 		/>
 	),
 	undo: (
@@ -308,10 +308,10 @@ const TOOLS = {
 		<TiptapSelect
 			label="Insert Table"
 			action={(value, ctx) => {
-				const [cols, rows] = value.split('x').map(Number);
+				const [cols, rows] = value.split("x").map(Number);
 				return ctx.insertTable({
 					rows,
-					cols
+					cols,
 				});
 			}}
 			// TODO: Holy shit, this is cooked.
@@ -330,7 +330,7 @@ const TOOLS = {
 						value={`${row}x${col}`}
 						key={`table-${row}-${col}`}
 						label={<Square style={{ fontWeight: 250 }} />}
-						style={{ padding: '2px' }}
+						style={{ padding: "2px" }}
 					/>
 				);
 			})}
@@ -348,14 +348,14 @@ const TOOLS = {
 			action={(value, ctx) =>
 				value.startsWith("heading")
 					? ctx.setHeading({
-						level: Number.parseInt(value.split(".")[1] ?? 1) as
-							| 1
-							| 2
-							| 3
-							| 4
-							| 5
-							| 6,
-					})
+							level: Number.parseInt(value.split(".")[1] ?? 1) as
+								| 1
+								| 2
+								| 3
+								| 4
+								| 5
+								| 6,
+						})
 					: ctx.setParagraph()
 			}
 		>
@@ -479,29 +479,29 @@ export type ToolbarConfig = {
 
 type ToolbarAction =
 	| {
-		type: "rearrange";
-		order: (
-			| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-			| ToolbarItemTypes
-		)[];
-	}
+			type: "rearrange";
+			order: (
+				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+				| ToolbarItemTypes
+			)[];
+	  }
 	| {
-		type: "rearrange-child";
-		childId: ToolbarGroup["id"];
-		order: ToolbarItemTypes[];
-	}
+			type: "rearrange-child";
+			childId: ToolbarGroup["id"];
+			order: ToolbarItemTypes[];
+	  }
 	| {
-		type: "rearrange";
-		order: (
-			| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-			| ToolbarItemTypes
-		)[];
-	}
+			type: "rearrange";
+			order: (
+				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+				| ToolbarItemTypes
+			)[];
+	  }
 	| {
-		type: "rearrange-child";
-		childId: ToolbarGroup["id"];
-		order: ToolbarItemTypes[];
-	};
+			type: "rearrange-child";
+			childId: ToolbarGroup["id"];
+			order: ToolbarItemTypes[];
+	  };
 
 function toolbarDispatch(
 	state: ToolbarConfig,

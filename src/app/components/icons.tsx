@@ -6,7 +6,7 @@ import type React from "react";
 export type IconProps = {
 	size?: React.CSSProperties["fontSize"];
 	iconStyle?: "outlined" | "rounded" | "sharp";
-	style?: React.CSSProperties
+	style?: React.CSSProperties;
 };
 
 type GeneralIconProps = IconProps & {
@@ -28,7 +28,7 @@ export const Icon = ({
 		style={{
 			display: "block",
 			fontSize: size,
-			...style
+			...style,
 		}}
 	>
 		{codePoint ?? label}
@@ -48,8 +48,8 @@ export const FormatItalic = createIcon("FormatItalic", "\ue23f");
 export const FormatUnderline = createIcon("FormatUnderline", "\ue249");
 export const FormatStrikethrough = createIcon("FormatStrikethrough", "\ue246");
 export const FormatQuote = createIcon("FormatQuote", "\ue244");
-export const FormatIndentIncrease = createIcon("FormatIndentIncrease", "\ue23e");
-export const FormatIndentDecrease = createIcon("FormatIndentDecrease", "\ue23d");
+// export const FormatIndentIncrease = createIcon("FormatIndentIncrease", "\ue23e");
+// export const FormatIndentDecrease = createIcon("FormatIndentDecrease", "\ue23d");
 
 // export const Link = createIcon("Link", "\ue157");
 // export const Remove = createIcon("Remove", "\ue15b");
