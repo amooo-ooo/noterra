@@ -49,7 +49,10 @@ export const Indent = Extension.create<IndentOptions>({
 								] === "\t"
 							)
 								tr.delete(head - 1 + modified * dir, head + modified * dir);
-							else if (node.textContent.startsWith("\t") && pos + 1 < head)
+							else if (
+								node.textContent.startsWith("\t") &&
+								(!selection.empty || pos + 1 < head)
+							)
 								tr.replaceWith(
 									pos + 1 + modified * dir,
 									pos + 2 + modified * dir,
