@@ -183,7 +183,7 @@ async function loadFont(faces: FontData[]) {
 						props.weight = props.weight ? `${props.weight} 900` : "900";
 						break;
 					case "italic":
-						props.style = "oblique";
+						props.style = "italic";
 						break;
 					case "oblique":
 						props.style = "oblique";
