@@ -89,7 +89,7 @@
 		margin-right: calc(var(--border-width) * -1);
 	}
 
-	&>.tab-border {
+	>.tab-border {
 		padding-inline: var(--padding-left) var(--padding-right);
 		padding-block: var(--padding-block);
 		border: var(--border-width) solid var(--border-color);
@@ -109,16 +109,6 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			font-size: var(--tab-name-font-size);
-		}
-
-		:first-of-type:not(.active-tab)>& {
-			border-left: none;
-			padding-left: calc(var(--padding-left) + var(--border-width));
-		}
-
-		:last-of-type:not(.active-tab)>& {
-			border-right: none;
-			padding-right: calc(var(--padding-right) + var(--border-width));
 		}
 
 		.close-icon,
@@ -163,51 +153,60 @@
 
 		.close-icon {
 			margin-right: calc(var(--button-padding) + var(--margin) - var(--padding-right));
-
 		}
+	}
 
-		:not(.active-tab)>& {
-			border-top: none;
-			padding-top: calc(var(--padding-block) + var(--border-width));
+	&:not(.active-tab)>.tab-border {
+		border-top: none;
+		padding-top: calc(var(--padding-block) + var(--border-width));
 
-			/* intentional pseudoelement to avoid exit transition */
-			&::before {
-				content: '';
-				pointer-events: none;
-				position: absolute;
-				inset: 0;
-				/* CANNOT USE border-radius: firefox bug */
-				/* border-radius: inherit; */
-				box-shadow: inset 0 calc(var(--shadow-shift-y) - var(--shadow-spread) - 9999px) var(--shadow-blur) -9999px var(--shadow-color);
-				/* but we still want for enter transition */
-				transition: box-shadow var(--transition);
-				clip-path: inset(0);
-			}
+		/* intentional pseudoelement to avoid exit transition */
+		&::before {
+			content: '';
+			pointer-events: none;
+			position: absolute;
+			inset: 0;
+			/* CANNOT USE border-radius: firefox bug */
+			/* border-radius: inherit; */
+			box-shadow: inset 0 calc(var(--shadow-shift-y) - var(--shadow-spread) - 9999px) var(--shadow-blur) -9999px var(--shadow-color);
+			/* but we still want for enter transition */
+			transition: box-shadow var(--transition);
+			clip-path: inset(0);
 		}
+	}
 
-		.active-tab>& {
-			border-bottom: none;
-			padding-bottom: calc(var(--padding-block) + var(--border-width));
-			border-top-left-radius: var(--radius);
-			border-top-right-radius: var(--radius);
-			clip-path: inset(0 round 0 0 calc(var(--radius) + var(--border-width)) calc(var(--radius) + var(--border-width)));
+	&:first-of-type:not(.active-tab)>.tab-border {
+		border-left: none;
+		padding-left: calc(var(--padding-left) + var(--border-width));
+	}
+
+	&:last-of-type:not(.active-tab)>.tab-border {
+		border-right: none;
+		padding-right: calc(var(--padding-right) + var(--border-width));
+	}
+
+	&.active-tab>.tab-border {
+		border-bottom: none;
+		padding-bottom: calc(var(--padding-block) + var(--border-width));
+		border-top-left-radius: var(--radius);
+		border-top-right-radius: var(--radius);
+		clip-path: inset(0 round 0 0 calc(var(--radius) + var(--border-width)) calc(var(--radius) + var(--border-width)));
+	}
+
+	&.active-tab+.tab>.tab-border,
+	:has(> &.active-tab:last-child)+.expanse>.tab-border {
+		border-bottom-left-radius: var(--radius);
+
+		&::before {
+			clip-path: inset(0 round 0 0 0 var(--radius));
 		}
+	}
 
-		.active-tab+.tab>&,
-		:has(>.active-tab:last-child)+.expanse>& {
-			border-bottom-left-radius: var(--radius);
+	:is(.tab, .expanse):has(+&.active-tab)>.tab-border {
+		border-bottom-right-radius: var(--radius);
 
-			&::before {
-				clip-path: inset(0 round 0 0 0 var(--radius));
-			}
-		}
-
-		:is(.tab, .expanse):has(+.active-tab)>& {
-			border-bottom-right-radius: var(--radius);
-
-			&::before {
-				clip-path: inset(0 round 0 0 var(--radius) 0);
-			}
+		&::before {
+			clip-path: inset(0 round 0 0 var(--radius) 0);
 		}
 	}
 }
