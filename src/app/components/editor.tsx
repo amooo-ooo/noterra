@@ -1,5 +1,3 @@
-
-
 import {
 	type Editor as TipTapEditor,
 	EditorContent,
@@ -30,20 +28,20 @@ import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
 import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
-import Table from '@tiptap/extension-table'
-import TableCell from '@tiptap/extension-table-cell'
-import TableHeader from '@tiptap/extension-table-header'
-import TableRow from '@tiptap/extension-table-row'
+import Table from "@tiptap/extension-table";
+import TableCell from "@tiptap/extension-table-cell";
+import TableHeader from "@tiptap/extension-table-header";
+import TableRow from "@tiptap/extension-table-row";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import { MonacoCodeBlockExtention } from "./monaco-node-extension";
+import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-extension";
 import styles from "@/app/styles/tiptap.module.scss";
-import { Indent } from "./indent";
-import { BetterHighlight } from "./better-highlight";
-import { FontSize } from "./font-size";
+import { Indent } from "@/app/editor-extensions/indent";
+import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
+import { FontSize } from "@/app/editor-extensions/font-size";
 
 export interface EditorData {
 	id: string;

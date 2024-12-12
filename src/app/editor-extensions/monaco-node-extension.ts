@@ -4,7 +4,7 @@ import {
 	ReactNodeViewRenderer,
 	type SingleCommands,
 } from "@tiptap/react";
-import { MonacoEditor } from "./monaco-editor";
+import { MonacoEditor } from "../components/monaco-editor";
 import type { EditorProps } from "@monaco-editor/react";
 
 declare module "@tiptap/extension-code-block" {
@@ -46,7 +46,7 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 					class: node.attrs.language
 						? this.options.languageClassPrefix + node.attrs.language
 						: null,
-					...(node.attrs.hasUsed ? {} : { 'data-should-focus': true })
+					...(node.attrs.hasUsed ? {} : { "data-should-focus": true }),
 				},
 				0,
 			],
@@ -75,9 +75,9 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 			hasUsed: {
 				default: false,
 				parseHTML: (el) => !el.dataset.shouldFocus,
-			}
-		}
-	}
+			},
+		};
+	},
 
 	// addPasteRules() {
 	// 	return [
