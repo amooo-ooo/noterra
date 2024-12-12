@@ -1,3 +1,5 @@
+
+
 import {
 	type Editor as TipTapEditor,
 	EditorContent,
@@ -28,12 +30,17 @@ import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
 import Heading from "@tiptap/extension-heading";
 import TextAlign from "@tiptap/extension-text-align";
-
-import { MonacoCodeBlockExtention } from "./monaco-node-extension";
-import styles from "@/app/styles/tiptap.module.scss";
+import Table from '@tiptap/extension-table'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
+import TableRow from '@tiptap/extension-table-row'
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
+import Gapcursor from "@tiptap/extension-gapcursor";
+
+import { MonacoCodeBlockExtention } from "./monaco-node-extension";
+import styles from "@/app/styles/tiptap.module.scss";
 import { Indent } from "./indent";
 import { BetterHighlight } from "./better-highlight";
 import { FontSize } from "./font-size";
@@ -66,6 +73,7 @@ export function Editor({
 }) {
 	const editor = useEditor({
 		extensions: [
+			Gapcursor,
 			Document,
 			Text,
 			ListItem,
@@ -115,6 +123,12 @@ export function Editor({
 			}),
 			Indent,
 			FontSize,
+			Table.configure({
+				resizable: true,
+			}),
+			TableRow,
+			TableHeader,
+			TableCell,
 		],
 		content: data.initialContent,
 		immediatelyRender: false,

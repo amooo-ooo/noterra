@@ -40,6 +40,8 @@ import {
 	PilcrowIcon,
 	PlusIcon,
 	MinusIcon,
+	Square,
+	Table,
 } from "lucide-react";
 
 import { Datalist, Option } from "./select";
@@ -115,8 +117,8 @@ function FontSizeSelect() {
 		Number.parseFloat(
 			getComputedStyle(
 				getElement(editor?.$pos(editor.state.selection.head)?.element) ??
-					editor?.$doc.element ??
-					document.body,
+				editor?.$doc.element ??
+				document.body,
 			).fontSize,
 		);
 
@@ -302,6 +304,38 @@ const TOOLS = {
 		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo2 />} />
 	),
 	fontSize: <FontSizeSelect />,
+	table: (
+		<TiptapSelect
+			label="Insert Table"
+			action={(value, ctx) => {
+				const [cols, rows] = value.split('x').map(Number);
+				return ctx.insertTable({
+					rows,
+					cols
+				});
+			}}
+			// TODO: Holy shit, this is cooked.
+			//       I don't think TiptapSelect is built for this.
+			//       Many problems, such as icons, detect, etc.
+			//       Probs will write another Select element.
+			detect={(ed) => ""}
+			className={`${styles["toolbar-select"]} ${styles.button}`}
+			display={{ type: "grid", width: 10 }}
+		>
+			{Array.from({ length: 10 * 8 }, (_, i) => {
+				const col = Math.floor(i / 10) + 1;
+				const row = (i % 10) + 1;
+				return (
+					<Option
+						value={`${row}x${col}`}
+						key={`table-${row}-${col}`}
+						label={<Square style={{ fontWeight: 250 }} />}
+						style={{ padding: '2px' }}
+					/>
+				);
+			})}
+		</TiptapSelect>
+	),
 	fontFamily: <FontFamilySelect />,
 	heading: (
 		<TiptapSelect
@@ -314,14 +348,14 @@ const TOOLS = {
 			action={(value, ctx) =>
 				value.startsWith("heading")
 					? ctx.setHeading({
-							level: Number.parseInt(value.split(".")[1] ?? 1) as
-								| 1
-								| 2
-								| 3
-								| 4
-								| 5
-								| 6,
-						})
+						level: Number.parseInt(value.split(".")[1] ?? 1) as
+							| 1
+							| 2
+							| 3
+							| 4
+							| 5
+							| 6,
+					})
 					: ctx.setParagraph()
 			}
 		>
@@ -445,29 +479,29 @@ export type ToolbarConfig = {
 
 type ToolbarAction =
 	| {
-			type: "rearrange";
-			order: (
-				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-				| ToolbarItemTypes
-			)[];
-	  }
+		type: "rearrange";
+		order: (
+			| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+			| ToolbarItemTypes
+		)[];
+	}
 	| {
-			type: "rearrange-child";
-			childId: ToolbarGroup["id"];
-			order: ToolbarItemTypes[];
-	  }
+		type: "rearrange-child";
+		childId: ToolbarGroup["id"];
+		order: ToolbarItemTypes[];
+	}
 	| {
-			type: "rearrange";
-			order: (
-				| (Pick<ToolbarGroup, "id"> & { isGroup: true })
-				| ToolbarItemTypes
-			)[];
-	  }
+		type: "rearrange";
+		order: (
+			| (Pick<ToolbarGroup, "id"> & { isGroup: true })
+			| ToolbarItemTypes
+		)[];
+	}
 	| {
-			type: "rearrange-child";
-			childId: ToolbarGroup["id"];
-			order: ToolbarItemTypes[];
-	  };
+		type: "rearrange-child";
+		childId: ToolbarGroup["id"];
+		order: ToolbarItemTypes[];
+	};
 
 function toolbarDispatch(
 	state: ToolbarConfig,
@@ -534,6 +568,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 		],
 		[
 			"codeblock",
+			"table",
 			"blockquote",
 			"textAlign",
 			"bulletList",
