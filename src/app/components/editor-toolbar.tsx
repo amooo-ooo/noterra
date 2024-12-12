@@ -44,7 +44,7 @@ import {
 	Table,
 } from "lucide-react";
 
-import { Datalist, Option } from "./select";
+import { Datalist, Option, Select } from "./select";
 import { ThemeContext } from "./global-listeners";
 import { EditorContext } from "./editor";
 
@@ -101,6 +101,40 @@ function TextColorSelect() {
 			))}
 		</TiptapSelect>
 	);
+}
+
+function TableSelect() {
+	const { editor } = React.useContext(EditorContext);
+
+	return (
+		<Select
+			icon={<Table/>}
+			title="Insert Table"
+			onChange={(value) => {
+				const [cols, rows] = value.split('x').map(Number)
+				editor
+					?.chain()
+					.focus()
+					.insertTable({ rows, cols })
+					.run()
+			}}
+			className={`${styles["toolbar-select"]} ${styles.button}`}
+			display={{ type: "grid", width: 10 }}
+		>
+			{Array.from({ length: 10 * 8 }, (_, i) => {
+				const col = Math.floor(i / 10) + 1;
+				const row = (i % 10) + 1;
+				return (
+					<Option
+						value={`${row}x${col}`}
+						key={`${row}-${col}`}
+						label={<Square style={{ fontWeight: 250 }} />}
+						style={{ padding: '2px' }}
+					/>
+				);
+			})}
+		</Select>
+	)
 }
 
 function getElement(node?: Node) {
@@ -304,38 +338,7 @@ const TOOLS = {
 		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo2 />} />
 	),
 	fontSize: <FontSizeSelect />,
-	table: (
-		<TiptapSelect
-			label="Insert Table"
-			action={(value, ctx) => {
-				const [cols, rows] = value.split("x").map(Number);
-				return ctx.insertTable({
-					rows,
-					cols,
-				});
-			}}
-			// TODO: Holy shit, this is cooked.
-			//       I don't think TiptapSelect is built for this.
-			//       Many problems, such as icons, detect, etc.
-			//       Probs will write another Select element.
-			detect={(ed) => ""}
-			className={`${styles["toolbar-select"]} ${styles.button}`}
-			display={{ type: "grid", width: 10 }}
-		>
-			{Array.from({ length: 10 * 8 }, (_, i) => {
-				const col = Math.floor(i / 10) + 1;
-				const row = (i % 10) + 1;
-				return (
-					<Option
-						value={`${row}x${col}`}
-						key={`table-${row}-${col}`}
-						label={<Square style={{ fontWeight: 250 }} />}
-						style={{ padding: "2px" }}
-					/>
-				);
-			})}
-		</TiptapSelect>
-	),
+	table: <TableSelect/>,
 	fontFamily: <FontFamilySelect />,
 	heading: (
 		<TiptapSelect

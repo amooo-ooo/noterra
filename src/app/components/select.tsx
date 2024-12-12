@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import styles from "@/app/styles/select.module.scss";
 import { ActiveElement, WindowSize } from "./global-listeners";
 import { HANDLES_CHARS } from "./editor";
@@ -375,6 +375,7 @@ export type SelectProps = {
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
+	icon?: ReactNode;
 	disabled?: boolean;
 };
 
@@ -385,6 +386,7 @@ export function Select({
 	updatePosition,
 	className,
 	onToggleOpen,
+	icon,
 	display = "vertical",
 	...props
 }: SelectProps) {
@@ -476,7 +478,7 @@ export function Select({
 				{...props}
 			>
 				<span style={style} className={styles["select-value-container"]}>
-					{label ?? value ?? "unset"}
+					{icon ?? label ?? value ?? "unset"}
 				</span>
 				<SelectPopover
 					id={id}
