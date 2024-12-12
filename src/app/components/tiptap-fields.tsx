@@ -47,7 +47,6 @@ export function TiptapButton({
 }
 
 export function TiptapSelect({
-	icon,
 	label,
 	action,
 	detect,
@@ -105,7 +104,6 @@ export function TiptapSelect({
 	return (
 		<Select
 			title={label}
-			icon={icon}
 			value={editor ? detect(editor) : ""}
 			{...props}
 			disabled={disabled || !hasUsable}

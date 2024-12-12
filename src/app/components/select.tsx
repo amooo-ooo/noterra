@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import styles from "@/app/styles/select.module.scss";
 import { ActiveElement, WindowSize } from "./global-listeners";
 import { HANDLES_CHARS } from "./editor";
@@ -375,7 +375,7 @@ export type SelectProps = {
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
-	icon?: ReactNode;
+	label?: React.ReactNode;
 	disabled?: boolean;
 };
 
@@ -386,7 +386,7 @@ export function Select({
 	updatePosition,
 	className,
 	onToggleOpen,
-	icon,
+	label: buttonLabel,
 	display = "vertical",
 	...props
 }: SelectProps) {
@@ -407,8 +407,11 @@ export function Select({
 	);
 
 	const { label, style } = React.useMemo<Partial<OptionProps>>(
-		() => childs.find((child) => child.props.value === value)?.props ?? {},
-		[childs, value],
+		() =>
+			buttonLabel
+				? {}
+				: (childs.find((child) => child.props.value === value)?.props ?? {}),
+		[childs, value, buttonLabel],
 	);
 
 	const options = React.useMemo(
@@ -478,7 +481,7 @@ export function Select({
 				{...props}
 			>
 				<span style={style} className={styles["select-value-container"]}>
-					{icon ?? label ?? value ?? "unset"}
+					{buttonLabel ?? label ?? value ?? "unset"}
 				</span>
 				<SelectPopover
 					id={id}

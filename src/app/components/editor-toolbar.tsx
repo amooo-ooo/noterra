@@ -108,15 +108,11 @@ function TableSelect() {
 
 	return (
 		<Select
-			icon={<Table/>}
+			label={<Table />}
 			title="Insert Table"
 			onChange={(value) => {
-				const [cols, rows] = value.split('x').map(Number)
-				editor
-					?.chain()
-					.focus()
-					.insertTable({ rows, cols })
-					.run()
+				const [cols, rows] = value.split("x").map(Number);
+				editor?.chain().focus().insertTable({ rows, cols }).run();
 			}}
 			className={`${styles["toolbar-select"]} ${styles.button}`}
 			display={{ type: "grid", width: 10 }}
@@ -129,12 +125,12 @@ function TableSelect() {
 						value={`${row}x${col}`}
 						key={`${row}-${col}`}
 						label={<Square style={{ fontWeight: 250 }} />}
-						style={{ padding: '2px' }}
+						style={{ padding: "2px" }}
 					/>
 				);
 			})}
 		</Select>
-	)
+	);
 }
 
 function getElement(node?: Node) {
@@ -338,7 +334,7 @@ const TOOLS = {
 		<TiptapButton label="Redo" action={(ctx) => ctx.redo()} icon={<Redo2 />} />
 	),
 	fontSize: <FontSizeSelect />,
-	table: <TableSelect/>,
+	table: <TableSelect />,
 	fontFamily: <FontFamilySelect />,
 	heading: (
 		<TiptapSelect
