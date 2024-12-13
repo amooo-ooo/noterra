@@ -187,4 +187,16 @@
 		cursor: ew-resize;
 		cursor: col-resize;
 	}
+
+	img {
+		max-width: 100%;
+	}
+
+	section {
+		padding: 50px;
+		margin-block: 10px;
+		background-color: var(--bg-1);
+		border: 1px solid var(--border-color);
+		box-shadow: 2px 4px 10px var(--shadow-color);
+	}
 }

@@ -17,7 +17,7 @@ declare module "@tiptap/core" {
 }
 
 export const Page = Node.create<PageOptions>({
-	name: "codeBlock",
+	name: "page",
 
 	addOptions() {
 		return {
@@ -26,16 +26,11 @@ export const Page = Node.create<PageOptions>({
 	},
 
 	content: "block+",
-	marks: "_",
 	group: "block",
 	defining: true,
 
 	parseHTML() {
-		return [
-			{
-				tag: "section",
-			},
-		];
+		return [{ tag: "section" }];
 	},
 
 	renderHTML({ HTMLAttributes }) {

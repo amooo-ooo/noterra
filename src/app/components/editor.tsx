@@ -42,6 +42,7 @@ import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-ex
 import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
+import { Page } from "@/app/editor-extensions/page";
 
 import "@/app/styles/tiptap.scss";
 
@@ -131,7 +132,8 @@ export function Editor({
 			TableCell,
 			Image.configure({
 				allowBase64: true,
-			})
+			}),
+			Page,
 		],
 		content: data.initialContent,
 		immediatelyRender: false,

@@ -60,10 +60,17 @@ async function handleEPub(zip: JSZip) {
 				const id = item.getAttribute("idref") as string;
 				const file =
 					zip.file(items[id].href) ?? raise(`Item '${id}' not found`);
-				return parser.parseFromString(
+				const dom = parser.parseFromString(
 					await file.async("string"),
 					"application/xhtml+xml",
 				);
+				for (const img of dom.querySelectorAll("img")) {
+					const file =
+						zip.file(`${dir(items[id].href)}/${img.getAttribute("src")}`) ??
+						raise(`Image '${img.getAttribute("src")}' not found`);
+					img.src = URL.createObjectURL(await file.async("blob"));
+				}
+				return dom;
 			}),
 		),
 	);
