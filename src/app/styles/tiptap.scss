@@ -168,11 +168,11 @@
 		}
 
 		.column-resize-handle {
-			background-color: var(--fg-4);
+			background-color: var(--border-color-2);
 			bottom: -2px;
 			pointer-events: none;
 			position: absolute;
-			right: -2px;
+			right: -1px; 
 			top: 0;
 			width: 4px;
 		}
