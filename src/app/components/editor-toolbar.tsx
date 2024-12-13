@@ -43,6 +43,7 @@ import {
 	Square,
 	Table,
 	Image,
+	WrapText,
 } from "lucide-react";
 
 import { Datalist, Option, Select } from "./select";
@@ -225,6 +226,13 @@ const TOOLS = {
 			action={(ctx) => ctx.toggleItalic()}
 			detect="italic"
 			icon={<FormatItalic />}
+		/>
+	),
+	hardBreak: (
+		<TiptapButton
+			label="Hard Break"
+			action={(ctx) => ctx.setHardBreak()}
+			icon={<WrapText/>}
 		/>
 	),
 	underline: (
@@ -587,6 +595,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"tasklist",
 			"outdent",
 			"indent",
+			"hardBreak",
 			"horizontalRule",
 		],
 		["fontSize"],
