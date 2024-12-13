@@ -22,7 +22,7 @@ export default function Home() {
 										contentRowClass={styles["content-row"]}
 										editorContainerClass={styles["editor-container"]}
 										toolbarClass={styles.toolbar}
-										statswidgetClass={styles.statswidget}
+										statsWidgetClass={styles.statsWidget}
 										editorClass={styles.editor}
 										contentRowContent={
 											<>

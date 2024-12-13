@@ -68,14 +68,14 @@ export function Editor({
 	skipRender = false,
 	className,
 	toolbarClass,
-	statswidgetClass,
+	statsWidgetClass,
 	editorClass = "",
 }: {
 	data: EditorData;
 	skipRender?: boolean;
 	className?: string;
 	toolbarClass?: string;
-	statswidgetClass?: string;
+	statsWidgetClass?: string;
 	editorClass?: string;
 }) {
 	const editor = useEditor({
@@ -210,7 +210,7 @@ export function Editor({
 						data.lastKeyPress = e.key;
 					}}
 				/>
-				<EditorStatsWidget className={statswidgetClass}/>
+				<EditorStatsWidget className={statsWidgetClass}/>
 			</div>
 		</EditorContext.Provider>
 	);
