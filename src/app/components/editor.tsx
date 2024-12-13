@@ -38,6 +38,7 @@ import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
 import Image from "@tiptap/extension-image";
 import HardBreak from "@tiptap/extension-hard-break";
+import ListKeymap from "@tiptap/extension-list-keymap";
 
 import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-extension";
 import { Indent } from "@/app/editor-extensions/indent";
@@ -46,7 +47,6 @@ import { FontSize } from "@/app/editor-extensions/font-size";
 import { Page } from "@/app/editor-extensions/page";
 
 import "@/app/styles/tiptap.scss";
-import ListKeymap from "@tiptap/extension-list-keymap";
 
 export interface EditorData {
 	id: string;
