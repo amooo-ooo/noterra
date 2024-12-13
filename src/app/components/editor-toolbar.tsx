@@ -125,7 +125,7 @@ function TableSelect() {
 					<Option
 						value={`${row}x${col}`}
 						key={`${row}-${col}`}
-						label={<Square style={{ fontWeight: 250 }} />}
+						label={<Square size={22} fontWeight={250} />}
 						style={{ padding: "2px" }}
 					/>
 				);
