@@ -22,6 +22,7 @@
     "@tiptap/extension-horizontal-rule": "^2.10.3",
     "@tiptap/extension-image": "^2.10.3",
     "@tiptap/extension-link": "^2.10.3",
+    "@tiptap/extension-list-keymap": "^2.10.3",
     "@tiptap/extension-ordered-list": "^2.10.3",
     "@tiptap/extension-subscript": "^2.10.3",
     "@tiptap/extension-superscript": "^2.10.3",

@@ -46,6 +46,7 @@ import { FontSize } from "@/app/editor-extensions/font-size";
 import { Page } from "@/app/editor-extensions/page";
 
 import "@/app/styles/tiptap.scss";
+import ListKeymap from "@tiptap/extension-list-keymap";
 
 export interface EditorData {
 	id: string;
@@ -123,6 +124,7 @@ export function Editor({
 			BetterHighlight.configure({
 				multicolor: true,
 			}),
+			ListKeymap,
 			Indent,
 			FontSize,
 			Table.configure({

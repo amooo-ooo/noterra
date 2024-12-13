@@ -1,5 +1,6 @@
 import { Extension, type CommandProps } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
+import { Node } from "@tiptap/pm/model";
 
 declare module "@tiptap/core" {
 	interface Commands<ReturnType> {
@@ -31,6 +32,14 @@ export const Indent = Extension.create<IndentOptions>({
 		const adjustIndent =
 			(dedent: boolean, keyboard = false) =>
 			({ tr, state, dispatch }: CommandProps) => {
+				if (
+					this.editor.isActive("bulletList") ||
+					this.editor.isActive("orderedList") ||
+					this.editor.isActive("todoList")
+				) {
+					return false;
+				}
+
 				const { selection, doc } = state;
 				const { from, to, anchor, head } = selection;
 				const dir = dedent ? -1 : 1;
