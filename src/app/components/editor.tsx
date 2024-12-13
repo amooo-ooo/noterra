@@ -5,6 +5,7 @@ import {
 } from "@tiptap/react";
 import React, { useEffect } from "react";
 import { EditorToolbar } from "./editor-toolbar";
+import { EditorStatsWidget } from "./editor-statswidget";
 
 import Text from "@tiptap/extension-text";
 import Document from "@tiptap/extension-document";
@@ -39,6 +40,7 @@ import Gapcursor from "@tiptap/extension-gapcursor";
 import Image from "@tiptap/extension-image";
 import HardBreak from "@tiptap/extension-hard-break";
 import ListKeymap from "@tiptap/extension-list-keymap";
+import CharacterCount from "@tiptap/extension-character-count";
 
 import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-extension";
 import { Indent } from "@/app/editor-extensions/indent";
@@ -66,12 +68,14 @@ export function Editor({
 	skipRender = false,
 	className,
 	toolbarClass,
+	statswidgetClass,
 	editorClass = "",
 }: {
 	data: EditorData;
 	skipRender?: boolean;
 	className?: string;
 	toolbarClass?: string;
+	statswidgetClass?: string;
 	editorClass?: string;
 }) {
 	const editor = useEditor({
@@ -138,6 +142,7 @@ export function Editor({
 				allowBase64: true,
 			}),
 			Page,
+			CharacterCount
 		],
 		content: data.initialContent,
 		immediatelyRender: false,
@@ -205,6 +210,7 @@ export function Editor({
 						data.lastKeyPress = e.key;
 					}}
 				/>
+				<EditorStatsWidget className={statswidgetClass}/>
 			</div>
 		</EditorContext.Provider>
 	);

@@ -53,6 +53,7 @@ export function TabManager({
 	contentRowClass,
 	editorContainerClass,
 	toolbarClass,
+	statswidgetClass,
 	editorClass,
 }: {
 	tabstripClass?: string;
@@ -60,6 +61,7 @@ export function TabManager({
 	contentRowContent?: React.ReactNode;
 	editorContainerClass?: string;
 	toolbarClass?: string;
+	statswidgetClass?: string;
 	editorClass?: string;
 }) {
 	const [tabs, modifyTabs] = React.useReducer(tabReducer<Tab>, []);
@@ -87,6 +89,7 @@ export function TabManager({
 							skipRender={tab.id !== currentTab}
 							className={editorContainerClass}
 							toolbarClass={toolbarClass}
+							statswidgetClass={statswidgetClass}
 							editorClass={editorClass}
 						/>
 					);

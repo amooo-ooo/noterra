@@ -12,6 +12,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@tiptap/extension-blockquote": "^2.10.3",
     "@tiptap/extension-bullet-list": "^2.10.3",
+    "@tiptap/extension-character-count": "^2.10.3",
     "@tiptap/extension-code-block": "^2.10.3",
     "@tiptap/extension-color": "^2.10.3",
     "@tiptap/extension-font-family": "^2.10.3",
