@@ -25,7 +25,6 @@
 		margin: 4px var(--gap) 4px calc(var(--gap) * 2);
 	}
 
-
 	.toolbar-button,
 	.toolbar-select {
 		--bg-color: transparent;
@@ -50,18 +49,20 @@
 	}
 
 	.toolbar-select:not(.button)>span {
-		position: relative;
+		background: linear-gradient(90deg, var(--fg-0) calc(100% - 10px), transparent);
+		background-clip: text;
+		color: transparent;
 
-		&::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			box-shadow: inset -20px 0 10px -10px var(--bg-color), inset -20px 0 10px -10px var(--bg-0);
-			transition: box-shadow 250ms ease;
+		svg {
+			color: var(--fg-0);
 		}
 	}
+	
+	.toolbar-select:disabled>span {
+		--fg-0: var(--fg-disabled);
+	}
 
-	.toolbar-button>span {
+	.toolbar-button > span {
 		font-weight: var(--icon-weight);
 	}
 
@@ -71,7 +72,7 @@
 		width: 10em;
 		font-family: var(--font-inter-sans);
 
-		>[popover] {
+		&>[popover], &+[popover] {
 			background-color: color-mix(in srgb, var(--bg-0) 75%, transparent 25%);
 			backdrop-filter: blur(10px);
 		}
