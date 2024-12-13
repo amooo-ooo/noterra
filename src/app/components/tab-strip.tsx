@@ -5,7 +5,7 @@ import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.scss";
 import { Upload, Plus, X } from "lucide-react";
-
+import { handleFile } from "./file-parser";
 
 export function TabStrip({
 	tabs,
@@ -138,13 +138,13 @@ export function TabStrip({
 							const file = e.currentTarget.files?.[0];
 							e.currentTarget.value = "";
 							if (!file) return;
-							const reader = new FileReader();
-							const contents = await new Promise<string>((res) => {
-								reader.onload = () => res(reader.result as string);
-								reader.readAsText(file);
-							});
+							// const reader = new FileReader();
+							// const contents = await new Promise<string>((res) => {
+							// 	reader.onload = () => res(reader.result as string);
+							// 	reader.readAsText(file);
+							// });
 							// TODO: parse contents, passed `contents` should be HTML
-							createFile(file.name, contents);
+							createFile(file.name, await handleFile(file));
 						}}
 					/>
 					<label
