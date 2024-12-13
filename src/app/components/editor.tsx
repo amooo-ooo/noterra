@@ -42,6 +42,7 @@ import styles from "@/app/styles/tiptap.module.scss";
 import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
+import Image from "@tiptap/extension-image";
 
 export interface EditorData {
 	id: string;
@@ -127,6 +128,9 @@ export function Editor({
 			TableRow,
 			TableHeader,
 			TableCell,
+			Image.configure({
+				allowBase64: true,
+			})
 		],
 		content: data.initialContent,
 		immediatelyRender: false,
