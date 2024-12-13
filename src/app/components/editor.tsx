@@ -37,6 +37,7 @@ import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
 import Image from "@tiptap/extension-image";
+import HardBreak from "@tiptap/extension-hard-break";
 
 import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-extension";
 import { Indent } from "@/app/editor-extensions/indent";
@@ -130,6 +131,7 @@ export function Editor({
 			TableRow,
 			TableHeader,
 			TableCell,
+			HardBreak,
 			Image.configure({
 				allowBase64: true,
 			}),
