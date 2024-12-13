@@ -154,8 +154,21 @@
 			&:first-child {
 				border-right: var(--border-width) solid var(--border-color);
 			}
+
 			&:last-child {
 				border-left: var(--border-width) solid var(--border-color);
+			}
+		}
+	}
+
+	.table {
+		label {
+			z-index: 1;
+
+			&:hover,
+  			input[type="radio"]:focus-visible+& {
+				z-index: 0;
+				box-shadow: -9999px -9999px 0 9999px var(--bg-2);
 			}
 		}
 	}
