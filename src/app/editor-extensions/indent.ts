@@ -1,6 +1,6 @@
-import { Extension, type CommandProps } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
+import type { Editor, CommandProps } from "@tiptap/core";
 import { TextSelection } from "@tiptap/pm/state";
-import { Node } from "@tiptap/pm/model";
 
 declare module "@tiptap/core" {
 	interface Commands<ReturnType> {
@@ -19,6 +19,14 @@ export interface IndentOptions {
 	types: string[];
 }
 
+export function isListItem(editor: Editor) {
+	return (
+		editor.isActive("bulletList") ||
+		editor.isActive("orderedList") ||
+		editor.isActive("todoList")
+	)
+}
+
 export const Indent = Extension.create<IndentOptions>({
 	name: "indent",
 
@@ -31,13 +39,16 @@ export const Indent = Extension.create<IndentOptions>({
 	addCommands() {
 		const adjustIndent =
 			(dedent: boolean, keyboard = false) =>
-			({ tr, state, dispatch }: CommandProps) => {
-				if (
-					this.editor.isActive("bulletList") ||
-					this.editor.isActive("orderedList") ||
-					this.editor.isActive("todoList")
-				) {
-					return false;
+			({ tr, state, dispatch, editor, commands }: CommandProps) => {
+				if (isListItem(editor)) {
+					if (keyboard) return false;
+					
+					if (dedent) {
+						commands.liftListItem("listItem")
+					} else {
+						commands.sinkListItem("listItem")
+					}
+					return true;
 				}
 
 				const { selection, doc } = state;
@@ -47,7 +58,7 @@ export const Indent = Extension.create<IndentOptions>({
 				let modified = 0;
 
 				doc.nodesBetween(from, to, (node, pos) => {
-					if (this.options.types.includes(node.type.name)) {
+				 if (this.options.types.includes(node.type.name)) {
 						if (dedent) {
 							if (
 								keyboard &&
@@ -71,8 +82,8 @@ export const Indent = Extension.create<IndentOptions>({
 						} else {
 							if (keyboard && selection.empty) tr.insertText("\t");
 							else tr.insertText("\t", pos + 1 + modified * dir);
+							modified++;
 						}
-						modified++;
 					}
 				});
 
