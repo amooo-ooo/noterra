@@ -42,6 +42,7 @@ import {
 	IndentDecreaseIcon,
 	Square,
 	Table,
+	Image,
 } from "lucide-react";
 
 import { Datalist, Option, Select } from "./select";
@@ -114,7 +115,7 @@ function TableSelect() {
 				const [cols, rows] = value.split("x").map(Number);
 				editor?.chain().focus().insertTable({ rows, cols }).run();
 			}}
-			className={`${styles["toolbar-select"]} ${styles.button}`}
+			className={`${styles["toolbar-select"]} ${styles.button} ${styles.table}`}
 			display={{ type: "grid", width: 10 }}
 		>
 			{Array.from({ length: 10 * 8 }, (_, i) => {
@@ -240,6 +241,16 @@ const TOOLS = {
 			action={(ctx) => ctx.toggleStrike()}
 			detect="strike"
 			icon={<FormatStrikethrough />}
+		/>
+	),
+	image: (
+		<TiptapButton
+			label="Add Image"
+			action={(ctx) => ctx.setImage({ 
+				src: "",
+				alt: "Image Alt Text"
+			})}
+			icon={<Image/>}
 		/>
 	),
 	code: (
@@ -567,6 +578,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 		],
 		[
 			"codeblock",
+			"image",
 			"table",
 			"blockquote",
 			"textAlign",
