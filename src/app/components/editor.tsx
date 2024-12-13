@@ -36,13 +36,14 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
+import Image from "@tiptap/extension-image";
 
 import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-extension";
-import styles from "@/app/styles/tiptap.module.scss";
 import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
-import Image from "@tiptap/extension-image";
+
+import "@/app/styles/tiptap.scss";
 
 export interface EditorData {
 	id: string;
@@ -193,7 +194,7 @@ export function Editor({
 				<EditorToolbar className={toolbarClass} />
 				<EditorContent
 					editor={editor}
-					className={`${styles.tiptap} ${editorClass}`}
+					className={`tiptap ${editorClass}`}
 					onKeyDownCapture={(e) => {
 						data.lastKeyPress = e.key;
 					}}
