@@ -82,8 +82,8 @@ export const Indent = Extension.create<IndentOptions>({
 						} else {
 							if (keyboard && selection.empty) tr.insertText("\t");
 							else tr.insertText("\t", pos + 1 + modified * dir);
-							modified++;
 						}
+						modified++;
 					}
 				});
 
