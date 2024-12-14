@@ -232,7 +232,7 @@ export function MonacoEditor({
 				anchorName: "--monaco", // contain overlay positions
 			}}
 		>
-			<div className={styles.container}>
+			<div className={`${styles.container} monaco-container`}>
 				<div // TODO: can we replace these with more tiptap-integrated detectors?? (probably)
 					className={styles["detector-hidden"]}
 					ref={(el) => {

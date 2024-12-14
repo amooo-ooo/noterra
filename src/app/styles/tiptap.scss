@@ -215,4 +215,8 @@
 		border: 1px solid var(--border-color);
 		box-shadow: 2px 4px 10px var(--shadow-color);
 	}
+
+	.monaco-container section {
+		all: revert;
+	}
 }
