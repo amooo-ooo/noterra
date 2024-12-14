@@ -23,7 +23,6 @@ import Superscript from "@tiptap/extension-superscript";
 import History from "@tiptap/extension-history";
 import Blockquote from "@tiptap/extension-blockquote";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
-import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
 import FontFamily from "@tiptap/extension-font-family";
 import TextStyle from "@tiptap/extension-text-style";
@@ -49,6 +48,7 @@ import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
 import { Page } from "@/app/editor-extensions/page";
 import { DesmosGraph } from "@/app/editor-extensions/desmos-extension";
+import { BetterLinks } from "@/app/editor-extensions/better-links";
 
 import "@/app/styles/tiptap.scss";
 import "katex/dist/katex.min.css";
@@ -103,7 +103,7 @@ export function Editor({
 			OrderedList,
 			History,
 			HorizontalRule,
-			Link,
+			BetterLinks,
 			Typography,
 			Blockquote,
 			MonacoCodeBlockExtention.configure({
@@ -215,7 +215,7 @@ export function Editor({
 						data.lastKeyPress = e.key;
 					}}
 				/>
-				<EditorStatsWidget className={statsWidgetClass}/>
+				<EditorStatsWidget className={statsWidgetClass} />
 			</div>
 		</EditorContext.Provider>
 	);
