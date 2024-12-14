@@ -316,7 +316,7 @@ const TOOLS = {
 			icon={<Subscript style={{ translate: "0 3px" }} />}
 		/>
 	),
-	orderedlist: (
+	orderedList: (
 		<TiptapButton
 			label="Ordered list"
 			action={(ctx) => ctx.toggleOrderedList()}
@@ -332,7 +332,7 @@ const TOOLS = {
 			icon={<List />}
 		/>
 	),
-	tasklist: (
+	taskList: (
 		<TiptapButton
 			label="Task List"
 			action={(ctx) => ctx.toggleTaskList()}
@@ -608,15 +608,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"blockquote",
 			"horizontalRule",
 		],
-		[
-			"textAlign",
-			"bulletList",
-			"orderedlist",
-			"tasklist",
-			"outdent",
-			"indent",
-			"hardBreak",
-		],
+		["textAlign", "bulletList", "orderedList", "taskList", "outdent", "indent"],
 	] satisfies (keyof typeof TOOLS)[][];
 	const [arrangement, updateArrangement] = React.useReducer(toolbarDispatch, {
 		nextGroupId: initGroups.length,
