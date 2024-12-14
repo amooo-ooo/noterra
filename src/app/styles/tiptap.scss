@@ -79,6 +79,16 @@
 		font-size: 1rem;
 	}
 
+	a {
+		text-decoration: underline;
+		color: light-dark(#1155cc, #99c3ff);
+  		cursor: pointer;
+
+		&:visited {
+			color: light-dark(#681da8, #c58af9);
+		}
+	}
+
 	&>code,
 	:not(pre)>code {
 		background-color: var(--purple-light);

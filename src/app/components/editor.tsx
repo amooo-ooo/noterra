@@ -142,7 +142,7 @@ export function Editor({
 				allowBase64: true,
 			}),
 			Page,
-			CharacterCount.extend()
+			CharacterCount.extend(),
 		],
 		content: data.initialContent,
 		immediatelyRender: false,
