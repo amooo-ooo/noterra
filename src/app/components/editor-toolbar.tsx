@@ -44,6 +44,7 @@ import {
 	Table,
 	Image,
 	WrapText,
+	ChartSpline,
 } from "lucide-react";
 
 import { Datalist, Option, Select } from "./select";
@@ -226,6 +227,18 @@ const TOOLS = {
 			action={(ctx) => ctx.toggleItalic()}
 			detect="italic"
 			icon={<FormatItalic />}
+		/>
+	),
+	desmosGraph: (
+		<TiptapButton
+			label="Insert Desmos Graph"
+			action={(ctx) =>
+				ctx.setDesmosGraph([
+					{ expression: "y=x^2" },
+					{ expression: "y=sin(x)", lineStyle: "dashed" },
+				])
+			}
+			icon={<ChartSpline />}
 		/>
 	),
 	hardBreak: (
@@ -588,6 +601,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 		],
 		[
 			"codeblock",
+			"desmosGraph",
 			"image",
 			"table",
 			"blockquote",
