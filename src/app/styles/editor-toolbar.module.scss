@@ -169,7 +169,8 @@
 			&:hover,
   			input[type="radio"]:focus-visible+& {
 				z-index: 0;
-				box-shadow: -9999px -9999px 0 9999px var(--bg-2);
+				box-shadow: -9999px -9999px 0 9999px var(--bg-1);
+				background-color: var(--bg-1);
 			}
 		}
 	}

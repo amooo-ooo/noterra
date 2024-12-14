@@ -42,13 +42,17 @@ import HardBreak from "@tiptap/extension-hard-break";
 import ListKeymap from "@tiptap/extension-list-keymap";
 import CharacterCount from "@tiptap/extension-character-count";
 
+
 import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-extension";
 import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
 import { Page } from "@/app/editor-extensions/page";
 
+import MathExtension from "@aarkue/tiptap-math-extension";
+
 import "@/app/styles/tiptap.scss";
+import "katex/dist/katex.min.css";
 
 export interface EditorData {
 	id: string;
@@ -143,6 +147,7 @@ export function Editor({
 			}),
 			Page,
 			CharacterCount.extend(),
+			MathExtension,
 		],
 		content: data.initialContent,
 		immediatelyRender: false,
