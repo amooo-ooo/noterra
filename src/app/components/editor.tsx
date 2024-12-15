@@ -60,6 +60,7 @@ export interface EditorData {
 	editor?: TipTapEditor;
 	lastKeyPress?: KeyboardEvent["key"];
 	scrollingElement?: HTMLElement;
+	scrollPos?: number;
 	locked?: boolean;
 }
 
@@ -205,13 +206,26 @@ export function Editor({
 		editor?.setEditable(!data.locked);
 	}, [editor, data.locked]);
 
+	const [scrollingElement, setScrollingElement] =
+		React.useState<HTMLElement | null>(null);
+	React.useEffect(() => {
+		data.scrollingElement = scrollingElement ?? undefined;
+		if (!scrollingElement) return;
+		const callback = () => {
+			data.scrollPos = scrollingElement.scrollTop;
+		};
+		scrollingElement.addEventListener("scroll", callback, { passive: true });
+		return () => scrollingElement.removeEventListener("scroll", callback);
+	}, [scrollingElement, data]);
+
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
 			<div
 				className={className}
 				ref={(el) => {
-					data.scrollingElement = el ?? undefined;
+					if (el && data.scrollPos) el.scrollTop = data.scrollPos;
+					setScrollingElement(el);
 				}}
 			>
 				{data.locked ? undefined : <EditorToolbar className={toolbarClass} />}
