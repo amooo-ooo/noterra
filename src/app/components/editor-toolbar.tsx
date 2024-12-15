@@ -254,7 +254,7 @@ const TOOLS = {
 			label="Underline"
 			action={(ctx) => ctx.toggleUnderline()}
 			detect="underline"
-			icon={<FormatUnderline style={{ translate: "0 0.1em" }} />}
+			icon={<FormatUnderline style={{ translate: "0 0.05em" }} />}
 		/>
 	),
 	strikethrough: (
