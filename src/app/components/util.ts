@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function unreachable(_value: never): never {
-	throw 'Unreachable';
+	throw "Unreachable";
 }
 
 export function anyPass<T>(arr: T[], predicate: (value: T) => boolean) {

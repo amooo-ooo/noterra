@@ -15,9 +15,9 @@ type TabReducerAction<T> =
 			initialValue: T;
 	  }
 	| {
-			type: "rename";
+			type: "mutate";
 			index: number;
-			value: T;
+			modify: (value: T) => T;
 	  }
 	| {
 			type: "reorder";
@@ -30,9 +30,9 @@ function tabReducer<T>(state: T[], action: TabReducerAction<T>) {
 			return state.concat(action.initialValue);
 		case "remove":
 			return state.filter((x) => !action.predicate(x));
-		case "rename": {
+		case "mutate": {
 			const newState = [...state];
-			newState[action.index] = action.value;
+			newState[action.index] = action.modify(newState[action.index]);
 			return newState;
 		}
 		case "reorder":

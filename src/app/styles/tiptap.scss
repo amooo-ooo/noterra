@@ -214,6 +214,15 @@
 		background-color: var(--bg-1);
 		border: 1px solid var(--border-color);
 		box-shadow: 2px 4px 10px var(--shadow-color);
+
+		&:has(img:only-child) {
+			padding: 0;
+
+			img {
+				width: 100%;
+				display: block;
+			}
+		}
 	}
 
 	.monaco-container section {

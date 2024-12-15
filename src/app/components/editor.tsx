@@ -60,6 +60,7 @@ export interface EditorData {
 	editor?: TipTapEditor;
 	lastKeyPress?: KeyboardEvent["key"];
 	scrollingElement?: HTMLElement;
+	locked?: boolean;
 }
 
 export const EditorContext = React.createContext(null as unknown as EditorData);
@@ -151,6 +152,7 @@ export function Editor({
 		],
 		content: data.initialContent,
 		immediatelyRender: false,
+		// editable: !data.locked, // may cause option desync when changed???
 	});
 	data.editor = editor ?? undefined;
 	useEffect(() => {
@@ -198,6 +200,11 @@ export function Editor({
 		document.addEventListener("keydown", callback);
 		return () => document.removeEventListener("keydown", callback);
 	}, [editor, skipRender]);
+
+	useEffect(() => {
+		editor?.setEditable(!data.locked);
+	}, [editor, data.locked]);
+
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
@@ -207,7 +214,7 @@ export function Editor({
 					data.scrollingElement = el ?? undefined;
 				}}
 			>
-				<EditorToolbar className={toolbarClass} />
+				{data.locked ? undefined : <EditorToolbar className={toolbarClass} />}
 				<EditorContent
 					editor={editor}
 					className={`tiptap ${editorClass}`}

@@ -4,8 +4,9 @@ import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import type { Tab, TabListDispatcher } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.scss";
-import { Upload, Plus, X } from "lucide-react";
+import { Upload, Plus, X, LockIcon } from "lucide-react";
 import { handleFile } from "./file-parser";
+import { ContextMenuArea } from "./context-menu-area";
 
 export function TabStrip({
 	tabs,
@@ -61,21 +62,60 @@ export function TabStrip({
 				animation={250}
 				style={{ display: "contents" }}
 			>
-				{...tabs.map((tab) => (
-					<button
-						type="button"
+				{...tabs.map((tab, index) => (
+					<ContextMenuArea
 						key={tab.id}
-						title={tab.state.name}
-						onClick={() => {
-							if (currentTab === tab.id) {
-								setRenamingTab(tab.id);
-							} else setCurrentTab(tab.id);
-						}}
-						onPointerUp={() => {
-							if (tab.id === currentTab) return;
-							tab.state.editor?.commands.focus();
-						}}
-						className={`${styles.tab} ${tab.id === currentTab ? styles["active-tab"] : ""}`}
+						menu={[
+							{
+								name: tab.state.locked ? "Unlock Editor" : "Lock Editor",
+								action: () =>
+									modifyTabs({
+										type: "mutate",
+										index,
+										modify: (tab) => ({
+											...tab,
+											state: {
+												...tab.state,
+												locked: !tab.state.locked,
+											},
+										}),
+									}),
+							},
+							{ name: "Close", action: () => close(tab) },
+						]}
+						wrapperNode={
+							<span
+								role="button"
+								tabIndex={0}
+								title={tab.state.name}
+								className={`${styles.tab} \
+									${tab.id === currentTab ? styles["active-tab"] : ""} \
+									${tab.state.locked ? styles["locked-tab"] : ""}`}
+								onClick={(e) => {
+									// to stop weird clickthrough behavior
+									if ((e.target as HTMLElement).closest?.("[popover]")) return;
+									e.stopPropagation();
+									if (currentTab === tab.id && !tab.state.locked) {
+										setRenamingTab(tab.id);
+									} else setCurrentTab(tab.id);
+								}}
+								onKeyDown={(e) => {
+									if (e.key === " ") e.preventDefault();
+								}}
+								onKeyUp={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.stopPropagation();
+										e.currentTarget.click();
+									}
+								}}
+								onPointerUp={(e) => {
+									if (tab.id === currentTab) return;
+									// to stop weird clickthrough behavior
+									if ((e.target as HTMLElement).closest?.("[popover]")) return;
+									tab.state.editor?.commands.focus();
+								}}
+							/>
+						}
 					>
 						<div className={styles["tab-border"]}>
 							{tab.id === renamingTab ? (
@@ -85,7 +125,15 @@ export function TabStrip({
 									onBlur={() => setRenamingTab(undefined)}
 									onKeyUp={(e) => {
 										if (e.key !== "Enter") return;
-										tab.state.name = e.currentTarget.value;
+										const newName = e.currentTarget.value;
+										modifyTabs({
+											type: "mutate",
+											index,
+											modify: (tab) => {
+												tab.state.name = newName;
+												return tab;
+											},
+										});
 										setRenamingTab(undefined);
 									}}
 									ref={(el) => el?.select()}
@@ -93,29 +141,21 @@ export function TabStrip({
 							) : (
 								<span className={styles.name}>{tab.state.name}</span>
 							)}
-							<span
-								// biome-ignore lint/a11y/useSemanticElements: nesting
-								role="button"
-								tabIndex={0}
+							{tab.state.locked ? (
+								<LockIcon size="1.2em" color="var(--fg-disabled)" />
+							) : undefined}
+							<button
+								type="button"
 								className={styles["close-icon"]}
-								onKeyDown={(e) => {
-									if (e.key === " ") e.preventDefault();
-								}}
-								onKeyUp={(e) => {
-									if (e.key === "Enter" || e.key === " ") {
-										e.stopPropagation();
-										close(tab);
-									}
-								}}
 								onClick={(e) => {
 									e.stopPropagation();
 									close(tab);
 								}}
 							>
 								<X size="1.5em" />
-							</span>
+							</button>
 						</div>
-					</button>
+					</ContextMenuArea>
 				))}
 			</ReactSortable>
 			<div className={styles.expanse}>

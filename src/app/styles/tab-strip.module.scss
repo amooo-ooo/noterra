@@ -100,15 +100,13 @@
 		clip-path: inset(0 round calc(var(--radius) + var(--border-width)) calc(var(--radius) + var(--border-width)) 0 0);
 		box-shadow: 0 calc(var(--radius) * 2 + var(--border-width) * 2) 0 calc(var(--border-width) * -1) var(--adjacent-background-color);
 		transition: box-shadow var(--transition);
+		text-align: left;
 
 		.name {
-			display: inline-block;
-			min-width: 0;
 			color: var(--fg-4);
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			font-size: var(--tab-name-font-size);
 		}
 
 		.close-icon,
@@ -144,6 +142,7 @@
 			}
 		}
 
+		.close-icon,
 		.add-tab,
 		.upload-file,
 		.expander~button {
@@ -215,11 +214,19 @@
 	flex: 1 1;
 }
 
-.tab-rename-field {
+.tab-rename-field, .name {
 	background-color: transparent;
 	border: none;
 	outline: none;
+	display: inline-block;
+	min-width: 0;
+	flex: 1 1;
+	font: inherit;
 	font-size: var(--tab-name-font-size);
+	
+	.locked-tab & {
+		font-style: italic;
+	}
 }
 
 .expanse {
