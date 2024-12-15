@@ -170,7 +170,7 @@
 
 		.selectedCell:after {
 			content: "";
-			background: color-mix(in srgb, var(--bg-2) 40%, transparent 60%);
+			background: color-mix(in srgb, Highlight 40%, transparent 60%);
 			position: absolute;
 			inset: 0;
 			z-index: 2;
