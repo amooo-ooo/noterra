@@ -1,10 +1,11 @@
 .tiptap {
+	font-size: 16px;
 
 	ul,
 	ol {
 		/* do we need so much padding *and* margin? */
-		padding: 0 1rem;
-		margin: 1.25rem 1rem 1.25rem 0.4rem;
+		padding: 0 1em;
+		margin: 1.25em 1em 1.25em 0.4em;
 
 		li p {
 			/* TODO: is switch to em here intentional? */
@@ -25,7 +26,7 @@
 
 			>label {
 				margin-top: .25em;
-				margin-right: 0.5rem;
+				margin-right: 0.5em;
 				user-select: none;
 				align-content: center;
 			}
@@ -45,9 +46,9 @@
 	}
 
 	p {
-		margin-block: 0.5em;
+		margin: .9em 0;
 	}
-
+	
 	h1,
 	h2,
 	h3,
@@ -55,38 +56,43 @@
 	h5,
 	h6 {
 		line-height: 1.1;
-		margin-top: 2.5rem;
 		text-wrap: pretty;
 	}
-
-	h1,
-	h2 {
-		margin-top: 3.5rem;
-		margin-bottom: 1.5rem;
-	}
-
+	
 	h1 {
-		font-size: 1.4rem;
+		font-size: 1.75em;
+		margin: .8em 0;
 	}
-
+	
 	h2 {
-		font-size: 1.2rem;
+		font-size: 1.625rem;
+		margin: .85em 0;
 	}
-
+	
 	h3 {
-		font-size: 1.1rem;
+		font-size: 1.5rem;
+		margin: .9em 0;
 	}
 
-	h4,
-	h5,
+	h4 {
+		font-size: 1.375em;
+		margin: .95em 0;
+	}
+
+	h5 {
+		font-size: 1.25em;
+		margin: 1em 0;
+	}
+
 	h6 {
-		font-size: 1rem;
+		font-size: 1.125em;
+		margin: 1.05em 0;
 	}
 
 	a {
+		cursor: pointer;
 		text-decoration: underline;
 		color: light-dark(#1155cc, #99c3ff);
-  		cursor: pointer;
 
 		&:visited {
 			color: light-dark(#681da8, #c58af9);
@@ -95,42 +101,30 @@
 
 	&>code,
 	:not(pre)>code {
-		background-color: var(--purple-light);
-		border-radius: 0.4rem;
-		color: var(--black);
-		font-size: 0.85rem;
-		padding: 0.25em 0.3em;
-		/* surely we want these fonts here too? */
-		font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
-	}
-
-	pre {
-		/* dead? using monaco. */
-		background: var(--black);
-		border-radius: 0.5rem;
-		color: var(--white);
-		/* dont ask for uncommon fonts unless we provide them */
-		font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
-		margin: 1.5rem 0;
-		padding: 0.75rem 1rem;
+		background-color: var(--bg-1);
+		border-radius: 0.4em;
+		color: var(--fg-0);
+		font-size: .9em;
+		padding: 0.15em 0.35em;
+		align-content: center;
 	}
 
 	blockquote {
-		border-left: 3px solid var(--bg-1);
+		border-left: 3px solid var(--border-color);
 		border-radius: 3px;
-		margin: 1.5rem 0;
-		padding-left: 1rem;
+		margin: 1.5em 0;
+		padding-left: 1em;
 	}
 
 	hr {
 		border: none;
 		border-top: 1px solid var(--bg-2);
-		margin: 2rem 0;
+		margin: 2em 0;
 	}
 
 	mark[data-color] {
 		border-radius: 0.2ch;
-		box-shadow: 0 0 0.2ch 0.1ch var(--tiptap-highlight-color);
+		box-shadow: 0 0 0.1ch 0.1ch var(--tiptap-highlight-color);
 	}
 
 	/* body[class*=dark-mode] & {
