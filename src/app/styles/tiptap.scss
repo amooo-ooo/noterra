@@ -141,7 +141,6 @@
 
 	/* Table-specific styling */
 	// pulled from https://tiptap.dev/docs/editor/extensions/nodes/table
-	// TODO: resize styling does not work.
 	table {
 		border-collapse: collapse;
 		margin: 0;
@@ -171,6 +170,7 @@
 
 		.selectedCell:after {
 			background: var(--bg-2);
+			opacity: .4;
 			content: "";
 			left: 0;
 			right: 0;
