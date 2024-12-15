@@ -206,12 +206,14 @@ export function MonacoEditor({
 				onChange={(value) => updateAttributes({ language: value })}
 				className={styles["language-selector"]}
 				updatePosition={(update) => {
-					requestAnimationFrame(update);
-					tiptapState.scrollingElement?.addEventListener("scroll", update, {
+					if (!update) return;
+					const cb = () => update();
+					requestAnimationFrame(cb);
+					tiptapState.scrollingElement?.addEventListener("scroll", cb, {
 						passive: true,
 					});
 					return () =>
-						tiptapState.scrollingElement?.removeEventListener("scroll", update);
+						tiptapState.scrollingElement?.removeEventListener("scroll", cb);
 				}}
 			>
 				{languageOptions}

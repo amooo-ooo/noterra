@@ -2,6 +2,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import React, { useEffect } from "react";
 import { EditorToolbar } from "./editor-toolbar";
 import { EditorStatsWidget } from "./editor-statswidget";
+import { Selection } from "@tiptap/pm/state";
 
 import Text from "@tiptap/extension-text";
 import Document from "@tiptap/extension-document";
@@ -32,7 +33,6 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import Image from "@tiptap/extension-image";
 import HardBreak from "@tiptap/extension-hard-break";
 import ListKeymap from "@tiptap/extension-list-keymap";
 import CharacterCount from "@tiptap/extension-character-count";
@@ -45,12 +45,12 @@ import { FontSize } from "@/app/editor-extensions/font-size";
 import { Page } from "@/app/editor-extensions/page";
 import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
+import { BlobImages } from "@/app/editor-extensions/blob-imgs";
 
 import type { TabData } from "./editor-files";
 
 import "@/app/styles/tiptap.scss";
 import "katex/dist/katex.min.css";
-import { Selection, Transaction } from "@tiptap/pm/state";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 export const EditorContext = React.createContext<TabData>(null!);
@@ -132,7 +132,7 @@ export function Editor({
 			TableHeader,
 			TableCell,
 			HardBreak,
-			Image.configure({
+			BlobImages.configure({
 				allowBase64: true,
 			}),
 			Page,

@@ -32,7 +32,6 @@ type TabReducerAction<T> =
 	  };
 
 function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
-	console.log(state, action);
 	// TODO: dont just do async race condition like
 	switch (action.type) {
 		case "append":

@@ -170,7 +170,14 @@ export function TabStrip({
 							const file = e.currentTarget.files?.[0];
 							e.currentTarget.value = "";
 							if (!file) return;
-							createFile(file.name, await handleFile(file));
+							const id = idGen();
+							const newFile = await handleFile(id, file);
+							newFile.save();
+							modifyTabs({
+								type: "append",
+								initialValue: new TabData(newFile),
+							});
+							setCurrentTab(id);
 						}}
 					/>
 					<label

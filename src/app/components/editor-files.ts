@@ -5,11 +5,18 @@ export abstract class File {
 	readonly id: string;
 	name: string;
 	content: string;
+	readonly attachments: Record<string, Blob>;
 
-	constructor(id: string, name?: string, content = "") {
+	constructor(
+		id: string,
+		name?: string,
+		content = "",
+		attachments: Record<string, Blob> = {},
+	) {
 		this.id = id;
 		this.name = name ?? id;
 		this.content = content;
+		this.attachments = attachments;
 	}
 
 	abstract save(): Promise<void>;
@@ -21,10 +28,11 @@ export class TabData {
 	editor?: TipTapEditor;
 	lastKeyPress?: KeyboardEvent["key"];
 	scrollingElement?: HTMLElement;
-	scrollPos?: number;
-	locked?: boolean;
+	scrollPos = 0;
+	locked = false;
 	tryIndex?: number;
 	initialSelection?: object | null;
+	boundURLs: Record<keyof File["attachments"], string> = {};
 
 	constructor(file: File) {
 		this.file = file;
@@ -50,6 +58,7 @@ export class TabData {
 		newObj.locked = this.locked;
 		newObj.tryIndex = this.tryIndex;
 		newObj.initialSelection = this.initialSelection;
+		newObj.boundURLs = this.boundURLs;
 		return newObj;
 	}
 
@@ -100,7 +109,9 @@ export class LocalFile extends File {
 				files.get(editor.value.fileId),
 			);
 			if (!file) continue; // TODO: raise error to user?
-			const tab = new TabData(new LocalFile(file.id, file.name, file.content));
+			const tab = new TabData(
+				new LocalFile(file.id, file.name, file.content, file.attachments),
+			);
 			tab.locked = editor.value.locked;
 			tab.scrollPos = editor.value.scrollPos;
 			tab.tryIndex = editor.value.index;
