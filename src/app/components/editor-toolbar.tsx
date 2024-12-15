@@ -234,8 +234,9 @@ const TOOLS = {
 			label="Insert Desmos Graph"
 			action={(ctx) =>
 				ctx.setDesmosGraph([
-					{ expression: "y=x^2" },
-					{ expression: "y=sin(x)", lineStyle: "dashed" },
+					{ latex: "y = x^2" },
+					{ latex: "y = \\sin(x)", lineStyle: "dashed" },
+					{ latex: "y = 2^x" }
 				])
 			}
 			icon={<ChartSpline />}
