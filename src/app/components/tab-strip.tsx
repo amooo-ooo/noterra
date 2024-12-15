@@ -88,7 +88,7 @@ export function TabStrip({
 								role="button"
 								tabIndex={0}
 								title={tab.state.name}
-								className={`${styles.tab} \
+								className={`inherit-button-scaling ${styles.tab} \
 									${tab.id === currentTab ? styles["active-tab"] : ""} \
 									${tab.state.locked ? styles["locked-tab"] : ""}`}
 								onClick={(e) => {

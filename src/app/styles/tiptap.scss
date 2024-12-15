@@ -158,7 +158,7 @@
 			vertical-align: top;
 
 			>* {
-				margin-bottom: 0;
+				margin: 0;
 			}
 		}
 
@@ -169,13 +169,12 @@
 		}
 
 		.selectedCell:after {
-			background: var(--bg-2);
-			opacity: .4;
 			content: "";
-			inset: 0;
-			pointer-events: none;
+			background: color-mix(in srgb, var(--bg-2) 40%, transparent 60%);
 			position: absolute;
+			inset: 0;
 			z-index: 2;
+			pointer-events: none;
 		}
 
 		.column-resize-handle {
