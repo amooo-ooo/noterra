@@ -1,8 +1,4 @@
-import {
-	type Editor as TipTapEditor,
-	EditorContent,
-	useEditor,
-} from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import React, { useEffect } from "react";
 import { EditorToolbar } from "./editor-toolbar";
 import { EditorStatsWidget } from "./editor-statswidget";
@@ -50,21 +46,14 @@ import { Page } from "@/app/editor-extensions/page";
 import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
 
+import type { TabData } from "./editor-files";
+
 import "@/app/styles/tiptap.scss";
 import "katex/dist/katex.min.css";
+import { Selection, Transaction } from "@tiptap/pm/state";
 
-export interface EditorData {
-	id: string;
-	name: string;
-	initialContent: string;
-	editor?: TipTapEditor;
-	lastKeyPress?: KeyboardEvent["key"];
-	scrollingElement?: HTMLElement;
-	scrollPos?: number;
-	locked?: boolean;
-}
-
-export const EditorContext = React.createContext(null as unknown as EditorData);
+// biome-ignore lint/style/noNonNullAssertion: <explanation>
+export const EditorContext = React.createContext<TabData>(null!);
 
 export const HANDLES_CHARS = "consume-input-events";
 
@@ -76,7 +65,7 @@ export function Editor({
 	statsWidgetClass,
 	editorClass = "",
 }: {
-	data: EditorData;
+	data: TabData;
 	skipRender?: boolean;
 	className?: string;
 	toolbarClass?: string;
@@ -151,7 +140,7 @@ export function Editor({
 			MathExtension,
 			DesmosGraphExtension,
 		],
-		content: data.initialContent,
+		content: data.file.content,
 		immediatelyRender: false,
 		// editable: !data.locked, // may cause option desync when changed???
 	});
@@ -205,6 +194,14 @@ export function Editor({
 	useEffect(() => {
 		editor?.setEditable(!data.locked);
 	}, [editor, data.locked]);
+	useEffect(() => {
+		if (editor && data.initialSelection)
+			editor.state.apply(
+				editor.state.tr.setSelection(
+					Selection.fromJSON(editor.state.doc, data.initialSelection),
+				),
+			);
+	}, [editor, data.initialSelection]);
 
 	const [scrollingElement, setScrollingElement] =
 		React.useState<HTMLElement | null>(null);
