@@ -84,7 +84,7 @@ export function TabStrip({
 							{ name: "Close", action: () => close(tab) },
 						]}
 						wrapperNode={
-							<span
+							<div
 								role="button"
 								tabIndex={0}
 								title={tab.state.name}
