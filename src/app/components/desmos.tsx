@@ -1,50 +1,45 @@
 "use client";
 
-import type DesmosType from "./_desmos"; // IMPORTANT: this is type-only, value inited lazily
-import React, { Suspense } from "react";
-import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
+import { type NodeViewProps, NodeViewWrapper } from "@tiptap/react";
+import Desmos from "desmos";
+import React from "react";
 import style from "@/app/styles/desmos-extension.module.scss";
+import type { DesmosOptions } from "@/app/editor-extensions/desmos-node-extension";
 
-function DesmosGraphImpl({
-	node,
-	extension,
-	Desmos,
-}: NodeViewProps & { Desmos: typeof DesmosType }) {
-	const [calculator, setCalculator] = React.useState<Desmos.Calculator | null>(
-		null,
-	);
+export type DesmosExpression = {
+	latex: string;
+	color?: string;
+	lineStyle?: "solid" | "dashed" | "dotted";
+};
+
+export function DesmosGraph({ node, extension }: NodeViewProps) {
+	const calculator = React.useRef<Desmos.Calculator | null>(null);
+	const options = extension.options as DesmosOptions;
 
 	React.useEffect(() => {
-		if (!calculator) return;
+		if (!calculator.current) return;
 
 		let colorIndex = 0;
 		const getNextColor = () => {
-			const color = extension.options.lineColors[colorIndex];
+			const color = options.lineColors[colorIndex];
 			colorIndex++;
-			colorIndex %= extension.options.lineColors.length;
+			colorIndex %= options.lineColors.length;
 			return color;
 		};
 
 		// calculator.setState(obj);
-		calculator.setExpressions(
-			(
-				node.attrs.expressions as {
-					latex: string;
-					lineStyle?: string;
-					color?: string;
-				}[]
-			).map((expr) => ({
+		calculator.current.setExpressions(
+			(node.attrs.expressions as DesmosExpression[]).map((expr) => ({
 				...expr,
-				lineStyle: expr.lineStyle ?? extension.options.defaultLineStyle,
+				lineStyle: {
+					solid: Desmos.Styles.SOLID,
+					dashed: Desmos.Styles.DASHED,
+					dotted: Desmos.Styles.DOTTED,
+				}[expr.lineStyle ?? options.defaultLineStyle],
 				color: expr.color || getNextColor(),
 			})),
 		);
-	}, [
-		node.attrs.expressions,
-		extension.options.defaultLineStyle,
-		extension.options.lineColors,
-		calculator,
-	]);
+	}, [node.attrs.expressions, options.defaultLineStyle, options.lineColors]);
 
 	React.useEffect(
 		() => {
@@ -61,37 +56,34 @@ function DesmosGraphImpl({
 	return (
 		<NodeViewWrapper>
 			<div
-				ref={(el) => setCalculator(el && Desmos.GraphingCalculator(el))}
+				ref={(el) => {
+					calculator.current = el && Desmos.GraphingCalculator(el);
+				}}
 				className={style.desmos}
 			/>
 		</NodeViewWrapper>
 	);
 }
 
-let _desmos: typeof DesmosType;
-async function DesmosLoader(props: NodeViewProps) {
-	// biome-ignore lint/suspicious/noAssignInExpressions: lazy default initializer
-	const Desmos = (_desmos ??= (await import("./_desmos")).default);
-	return <DesmosGraphImpl {...props} Desmos={Desmos} />;
-}
-
-export function DesmosGraph(props: NodeViewProps) {
-	return (
-		<Suspense
-			fallback={
-				<div
-					style={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						height: "100%",
-					}}
-				>
-					Loading Desmos...
-				</div>
-			}
-		>
-			<DesmosLoader {...props} />
-		</Suspense>
-	);
-}
+// export function DesmosGraph(props: NodeViewProps) {
+// 	return (
+// 		<NodeViewWrapper>
+// 			{/* <Suspense
+// 				fallback={
+// 					<div
+// 						style={{
+// 							display: "flex",
+// 							alignItems: "center",
+// 							justifyContent: "center",
+// 							height: "100%",
+// 						}}
+// 					>
+// 						Loading Desmos...
+// 					</div>
+// 				}
+// 			> */}
+// 			<DesmosGraphImpl {...props} />
+// 			{/* </Suspense> */}
+// 		</NodeViewWrapper>
+// 	);
+// }

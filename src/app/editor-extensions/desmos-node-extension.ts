@@ -1,65 +1,79 @@
 import { Node } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
-import { DesmosGraph } from "../components/desmos";
+import dynamic from "next/dynamic";
 
-export type DesmosExpression = {
-    latex: string;
-    color?: string;
-    lineStyle?: "solid" | "dashed" | "dotted";
-};
+// TYPE ONLY IMPORT
+import type { DesmosExpression } from "@/app/components/desmos";
+const DesmosGraph = dynamic(
+	async () => (await import("@/app/components/desmos")).DesmosGraph,
+	{
+		ssr: false,
+	},
+);
 
 declare module "@tiptap/core" {
-    interface Commands<ReturnType> {
-        desmosGraph: {
-            setDesmosGraph: (expressions: DesmosExpression[]) => ReturnType;
-        };
-    }
+	interface Commands<ReturnType> {
+		desmosGraph: {
+			setDesmosGraph: (expressions: DesmosExpression[]) => ReturnType;
+		};
+	}
 }
 
-export const DesmosGraphExtension = Node.create({
-    name: "desmosGraph",
+export interface DesmosOptions {
+	defaultLineStyle: NonNullable<DesmosExpression["lineStyle"]>;
+	lineColors: NonNullable<DesmosExpression["color"]>[];
+	HTMLAttributes: Record<string, unknown>;
+}
 
-    addOptions() {
-        return {
-            defaultLineStyle: "solid",
-            lineColors: [
-                "#6042a6",
-                "#000000",
-                "#c74440",
-                "#2d70b3",
-                "#388c46",
-                "#fa7e19",
-            ],
-            HTMLAttributes: {},
-        };
-    },
+export const DesmosGraphExtension = Node.create<DesmosOptions>({
+	name: "desmosGraph",
 
-    content: "text*",
-    group: "block",
-    inline: false,
-    selectable: true,
-    draggable: false,
+	addOptions() {
+		return {
+			defaultLineStyle: "solid",
+			lineColors: [
+				"#6042a6",
+				"#000000",
+				"#c74440",
+				"#2d70b3",
+				"#388c46",
+				"#fa7e19",
+			],
+			HTMLAttributes: {},
+		};
+	},
 
-    addAttributes() {
-        return {
-            expressions: { default: [] as DesmosExpression[] },
-        };  
-    },
+	content: "text*",
+	group: "block",
+	inline: false,
+	selectable: true,
+	draggable: false,
 
-    addNodeView() {
-        return ReactNodeViewRenderer(DesmosGraph);
-    },
+	addAttributes() {
+		return {
+			expressions: { default: [] as DesmosExpression[] },
+		};
+	},
 
-    addCommands() {
-        return {
-            setDesmosGraph:
-                (expressions: DesmosExpression[]) =>
-                    ({ commands }) => {
-                        return commands.insertContent({
-                            type: this.name,
-                            attrs: { expressions },
-                        });
-                    },
-        };
-    },
+	renderHTML() {
+		// TODO: render *something* persistant and usable
+		return "<desmos graph>";
+	},
+
+	addNodeView() {
+		return ReactNodeViewRenderer(DesmosGraph);
+	},
+
+	addCommands() {
+		return {
+			setDesmosGraph:
+				(expressions: DesmosExpression[]) =>
+				({ commands }) => {
+					return commands.insertContent({
+						type: this.name,
+						attrs: { expressions },
+					});
+				},
+		};
+	},
 });
