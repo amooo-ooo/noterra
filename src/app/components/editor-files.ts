@@ -109,18 +109,18 @@ export class TabData {
 
 	dirtyState() {
 		if (!this.#stateTimer) {
+			this.saveState();
 			this.#stateTimer = setTimeout(() => {
 				this.#stateTimer = null;
-				this.saveState();
 			}, 10e3);
 		}
 	}
 
 	dirtyFile() {
 		if (!this.#fileTimer) {
+			this.saveFile();
 			this.#fileTimer = setTimeout(() => {
 				this.#fileTimer = null;
-				this.saveFile();
 			}, 3e3);
 		}
 	}
