@@ -119,6 +119,7 @@ export function TabManager({
 			const tempTabs = tabs;
 			let cTab = currentTab;
 			for await (const tab of LocalFile.editors()) {
+				if (tempTabs.find((t) => t.id === tab.id)) continue; // TODO: O(n^2) D:
 				let index = Math.floor(tempTabs.length / 2);
 				let shift = index;
 				while (shift) {
