@@ -40,11 +40,11 @@
 		padding: 3px;
 		aspect-ratio: 1;
 
-		&:is(:hover, :focus-visible) {
+		&:is(:hover, :focus-visible):not(:disabled) {
 			background-color: #80808020;
 		}
 		
-		&:active {
+		&:active:not(:disabled) {
 			background-color: #80808040;
 		}
 	}
