@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Desmos from "desmos";
+import "desmos";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import style from "@/app/styles/desmos-extension.module.scss";
 
