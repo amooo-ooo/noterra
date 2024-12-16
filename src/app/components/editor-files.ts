@@ -112,7 +112,7 @@ export class TabData {
 			this.saveState();
 			this.#stateTimer = setTimeout(() => {
 				this.#stateTimer = null;
-			}, 10e3);
+			}, 30e3);
 		}
 	}
 
@@ -121,8 +121,18 @@ export class TabData {
 			this.saveFile();
 			this.#fileTimer = setTimeout(() => {
 				this.#fileTimer = null;
-			}, 3e3);
+			}, 10e3);
 		}
+	}
+
+	isDirty() {
+		return !!(this.#fileTimer || this.#stateTimer);
+	}
+
+	clearDirty() {
+		clearTimeout(this.#fileTimer ?? undefined);
+		clearTimeout(this.#stateTimer ?? undefined);
+		this.#fileTimer = this.#stateTimer = null;
 	}
 
 	async saveState() {

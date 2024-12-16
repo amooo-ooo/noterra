@@ -124,7 +124,8 @@ export function TabManager({
 	const [nextId, setNextId] = React.useState("0");
 
 	const [leftSidebar, setLeftSidebar] = React.useState<React.ReactNode>();
-	const [rightSidebar, setRightSidebar] = React.useState<React.ReactNode>();
+	const [rightSidebar /* setRightSidebar */] =
+		React.useState<React.ReactNode>();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	React.useEffect(() => {
@@ -158,6 +159,20 @@ export function TabManager({
 		})();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	React.useEffect(() => {
+		const cb = (e: BeforeUnloadEvent) => {
+			const unsavedTab = tabs.find((tab) => tab.isDirty());
+			if (unsavedTab) {
+				e.preventDefault();
+				setCurrentTab(unsavedTab.id);
+				unsavedTab.save();
+				unsavedTab.clearDirty();
+			}
+		};
+		window.addEventListener("beforeunload", cb);
+		return () => window.removeEventListener("beforeunload", cb);
+	}, [tabs]);
 
 	return (
 		<TabsContext.Provider
