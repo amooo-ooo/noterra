@@ -64,6 +64,7 @@ export function TabStrip({
 					<ContextMenuArea
 						key={tab.id}
 						menu={[
+							{ name: "Rename", action: () => setRenamingTab(tab.id) },
 							{
 								name: tab.locked ? "Unlock Editor" : "Lock Editor",
 								action: () =>
