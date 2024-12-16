@@ -4,7 +4,7 @@ import React from "react";
 import { Editor } from "./editor";
 import { TabStrip } from "./tab-strip";
 import { ThemeButton } from "./theme-button";
-import { type TabData, type File, LocalFile } from "./editor-files";
+import { type TabData, LocalFile } from "./editor-files";
 import { unreachable } from "./util";
 
 type TabReducerAction<T> =

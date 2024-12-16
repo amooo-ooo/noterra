@@ -1,14 +1,13 @@
 "use client";
 
 import React from "react";
-import "desmos";
+import Desmos from "desmos";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import style from "@/app/styles/desmos-extension.module.scss";
 
 export function DesmosGraph({
 	node,
 	extension,
-	updateAttributes,
 }: NodeViewProps) {
 	const [calculator, setCalculator] = React.useState<Desmos.Calculator | null>(
 		null,

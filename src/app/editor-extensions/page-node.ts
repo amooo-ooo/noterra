@@ -6,8 +6,8 @@ export interface PageOptions {
 	 * @default {}
 	 * @example { class: 'foo' }
 	 */
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	HTMLAttributes: Record<string, any>;
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation> 
+	HTMLAttributes: Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 // declare module "@tiptap/core" {
