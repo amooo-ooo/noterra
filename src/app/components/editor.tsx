@@ -42,7 +42,7 @@ import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-ex
 import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
-import { Page } from "@/app/editor-extensions/page";
+import { PageNode } from "@/app/editor-extensions/page";
 import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
 import { BlobImages } from "@/app/editor-extensions/blob-imgs";
@@ -135,7 +135,7 @@ export function Editor({
 			BlobImages.configure({
 				allowBase64: true,
 			}),
-			Page,
+			PageNode,
 			CharacterCount.extend(),
 			MathExtension,
 			DesmosGraphExtension,

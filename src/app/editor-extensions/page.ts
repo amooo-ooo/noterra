@@ -16,7 +16,7 @@ declare module "@tiptap/core" {
 	}
 }
 
-export const Page = Node.create<PageOptions>({
+export const PageNode = Node.create<PageOptions>({
 	name: "page",
 
 	addOptions() {
