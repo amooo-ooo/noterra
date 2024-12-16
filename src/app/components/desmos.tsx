@@ -1,14 +1,15 @@
 "use client";
 
-import React from "react";
-import "desmos";
+import type DesmosType from "./_desmos"; // IMPORTANT: this is type-only, value inited lazily
+import React, { Suspense } from "react";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import style from "@/app/styles/desmos-extension.module.scss";
 
-export function DesmosGraph({
+function DesmosGraphImpl({
 	node,
 	extension,
-}: NodeViewProps) {
+	Desmos,
+}: NodeViewProps & { Desmos: typeof DesmosType }) {
 	const [calculator, setCalculator] = React.useState<Desmos.Calculator | null>(
 		null,
 	);
@@ -45,12 +46,17 @@ export function DesmosGraph({
 		calculator,
 	]);
 
-	React.useEffect(() => {
-		// TODO: update attributes with new desmos state
-		// calculator?.observeEvent("change", () => {
-		// 	updateAttributes({ expressions: calculator.getExpressions() });
-		// });
-	});
+	React.useEffect(
+		() => {
+			// TODO: update attributes with new desmos state
+			// calculator?.observeEvent("change", () => {
+			// 	updateAttributes({ expressions: calculator.getExpressions() });
+			// });
+		},
+		[
+			/* calculator */
+		],
+	);
 
 	return (
 		<NodeViewWrapper>
@@ -59,5 +65,33 @@ export function DesmosGraph({
 				className={style.desmos}
 			/>
 		</NodeViewWrapper>
+	);
+}
+
+let _desmos: typeof DesmosType;
+async function DesmosLoader(props: NodeViewProps) {
+	// biome-ignore lint/suspicious/noAssignInExpressions: lazy default initializer
+	const Desmos = (_desmos ??= (await import("./_desmos")).default);
+	return <DesmosGraphImpl {...props} Desmos={Desmos} />;
+}
+
+export function DesmosGraph(props: NodeViewProps) {
+	return (
+		<Suspense
+			fallback={
+				<div
+					style={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						height: "100%",
+					}}
+				>
+					Loading Desmos...
+				</div>
+			}
+		>
+			<DesmosLoader {...props} />
+		</Suspense>
 	);
 }

@@ -42,9 +42,9 @@ import {
 	IndentDecreaseIcon,
 	Square,
 	Table,
-	Image,
 	WrapText,
 	ChartSpline,
+	ImageIcon,
 } from "lucide-react";
 
 import { Datalist, Option, Select } from "./select";
@@ -236,7 +236,7 @@ const TOOLS = {
 				ctx.setDesmosGraph([
 					{ latex: "y = x^2" },
 					{ latex: "y = \\sin(x)", lineStyle: "dashed" },
-					{ latex: "y = 2^x" }
+					{ latex: "y = 2^x" },
 				])
 			}
 			icon={<ChartSpline />}
@@ -274,7 +274,7 @@ const TOOLS = {
 					alt: "Image Alt Text",
 				})
 			}
-			icon={<Image />}
+			icon={<ImageIcon />}
 		/>
 	),
 	code: (

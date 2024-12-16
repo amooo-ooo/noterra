@@ -143,6 +143,7 @@ export function TabManager({
 				);
 			}
 		})();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
