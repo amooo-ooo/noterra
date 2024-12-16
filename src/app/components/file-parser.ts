@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+import { type File as FileData, LocalFile } from "./editor-files";
 
 async function readText(file: File) {
 	const reader = new FileReader();
@@ -16,7 +17,8 @@ function dir(path: string) {
 	return path.replace(/^(.*)[/\\][^/\\]*$/, "$1");
 }
 
-async function handleEPub(zip: JSZip) {
+async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
+	const result = new LocalFile(id, name);
 	const parser = new DOMParser();
 	const metaInfF =
 		zip.file("META-INF/container.xml") ?? raise("Could not find META-INF");
@@ -65,32 +67,38 @@ async function handleEPub(zip: JSZip) {
 					"application/xhtml+xml",
 				);
 				for (const img of dom.querySelectorAll("img")) {
-					const file =
-						zip.file(`${dir(items[id].href)}/${img.getAttribute("src")}`) ??
-						raise(`Image '${img.getAttribute("src")}' not found`);
-					img.src = URL.createObjectURL(await file.async("blob"));
+					const path = `${dir(items[id].href)}/${img.getAttribute("src")}`;
+					const file = zip.file(path) ?? raise(`Image at '${path}' not found`);
+					result.attachments[path] = await file.async("blob");
+					img.removeAttribute("src");
+					img.setAttribute("data-blob-src", path);
+					img.alt ||= path;
 				}
 				return dom;
 			}),
 		),
 	);
-	return spine
+	result.content = spine
 		.map((doc) => doc.querySelector("section")?.outerHTML ?? "")
 		.join("");
+	return result;
 }
 
-export async function handleFile(file: File): Promise<string> {
+export async function handleFile(
+	id: FileData["id"],
+	file: File,
+): Promise<LocalFile> {
 	switch (file.type) {
 		case "application/epub+zip": {
 			const zip = await JSZip.loadAsync(file);
-			return handleEPub(zip);
+			return handleEPub(id, file.name, zip);
 		}
 		case "text/html":
-			return readText(file);
+			return new LocalFile(id, file.name, await readText(file));
 		default: {
 			const sanitizer = document.createElement("span");
 			sanitizer.textContent = await readText(file);
-			return sanitizer.innerHTML;
+			return new LocalFile(id, file.name, sanitizer.innerHTML);
 		}
 	}
 }

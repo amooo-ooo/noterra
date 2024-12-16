@@ -1,11 +1,8 @@
-import {
-	type Editor as TipTapEditor,
-	EditorContent,
-	useEditor,
-} from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import React, { useEffect } from "react";
 import { EditorToolbar } from "./editor-toolbar";
 import { EditorStatsWidget } from "./editor-statswidget";
+import { Selection } from "@tiptap/pm/state";
 
 import Text from "@tiptap/extension-text";
 import Document from "@tiptap/extension-document";
@@ -36,7 +33,6 @@ import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import Image from "@tiptap/extension-image";
 import HardBreak from "@tiptap/extension-hard-break";
 import ListKeymap from "@tiptap/extension-list-keymap";
 import CharacterCount from "@tiptap/extension-character-count";
@@ -49,22 +45,15 @@ import { FontSize } from "@/app/editor-extensions/font-size";
 import { Page } from "@/app/editor-extensions/page";
 import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
+import { BlobImages } from "@/app/editor-extensions/blob-imgs";
+
+import type { TabData } from "./editor-files";
 
 import "@/app/styles/tiptap.scss";
 import "katex/dist/katex.min.css";
 
-export interface EditorData {
-	id: string;
-	name: string;
-	initialContent: string;
-	editor?: TipTapEditor;
-	lastKeyPress?: KeyboardEvent["key"];
-	scrollingElement?: HTMLElement;
-	scrollPos?: number;
-	locked?: boolean;
-}
-
-export const EditorContext = React.createContext(null as unknown as EditorData);
+// biome-ignore lint/style/noNonNullAssertion: <explanation>
+export const EditorContext = React.createContext<TabData>(null!);
 
 export const HANDLES_CHARS = "consume-input-events";
 
@@ -76,7 +65,7 @@ export function Editor({
 	statsWidgetClass,
 	editorClass = "",
 }: {
-	data: EditorData;
+	data: TabData;
 	skipRender?: boolean;
 	className?: string;
 	toolbarClass?: string;
@@ -143,7 +132,7 @@ export function Editor({
 			TableHeader,
 			TableCell,
 			HardBreak,
-			Image.configure({
+			BlobImages.configure({
 				allowBase64: true,
 			}),
 			Page,
@@ -151,7 +140,7 @@ export function Editor({
 			MathExtension,
 			DesmosGraphExtension,
 		],
-		content: data.initialContent,
+		content: data.file.content,
 		immediatelyRender: false,
 		// editable: !data.locked, // may cause option desync when changed???
 	});
@@ -205,6 +194,14 @@ export function Editor({
 	useEffect(() => {
 		editor?.setEditable(!data.locked);
 	}, [editor, data.locked]);
+	useEffect(() => {
+		if (editor && data.initialSelection)
+			editor.state.apply(
+				editor.state.tr.setSelection(
+					Selection.fromJSON(editor.state.doc, data.initialSelection),
+				),
+			);
+	}, [editor, data.initialSelection]);
 
 	const [scrollingElement, setScrollingElement] =
 		React.useState<HTMLElement | null>(null);
@@ -213,10 +210,20 @@ export function Editor({
 		if (!scrollingElement) return;
 		const callback = () => {
 			data.scrollPos = scrollingElement.scrollTop;
+			data.dirtyState();
 		};
 		scrollingElement.addEventListener("scroll", callback, { passive: true });
 		return () => scrollingElement.removeEventListener("scroll", callback);
 	}, [scrollingElement, data]);
+
+	React.useEffect(() => {
+		editor?.on("selectionUpdate", () => {
+			data.dirtyState();
+		});
+		editor?.on("update", () => {
+			data.dirtyFile();
+		});
+	}, [editor, data]);
 
 	if (skipRender) return <></>;
 	return (
