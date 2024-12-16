@@ -36,7 +36,7 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 	switch (action.type) {
 		case "append":
 			action.initialValue.index = state.length;
-			action.initialValue.save();
+			action.initialValue.saveState();
 			return state.concat(action.initialValue);
 		case "insert":
 			(async () => {
@@ -60,7 +60,7 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 				for (let i = 0; i < state.length; i++) {
 					if (action.predicate(state[i])) {
 						editors.delete(state[i].id);
-						state[i];
+						state[i].saveFile();
 						offset++;
 					} else if (offset) {
 						state[i].index = i - offset;
@@ -72,7 +72,7 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 		case "mutate": {
 			const newState = [...state];
 			newState[action.index] = action.modify(newState[action.index]);
-			newState[action.index].save();
+			newState[action.index].saveState();
 			return newState;
 		}
 		case "reorder":
@@ -129,9 +129,9 @@ export function TabManager({
 				modifyTabs({
 					type: "insert",
 					index,
-					initialValue: tab,
+					initialValue: tab as TabData,
 				});
-				tempTabs.splice(index, 0, tab);
+				tempTabs.splice(index, 0, tab as TabData);
 				if (!cTab) {
 					cTab = tab.id;
 					setCurrentTab(cTab);

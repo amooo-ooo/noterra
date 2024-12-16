@@ -17,7 +17,7 @@ export function TiptapButton({
 	detect?: string | ((editor: Editor) => boolean);
 	icon?: React.ReactNode;
 } & Omit<React.HTMLProps<HTMLButtonElement>, "action" | "disabled">) {
-	const editor = React.useContext(EditorContext).editor;
+	const { editor } = React.useContext(EditorContext);
 	const isActive =
 		typeof detect === "function"
 			? editor && detect(editor)
@@ -64,7 +64,7 @@ export function TiptapSelect({
 		  };
 	detect: (editor: Editor) => string;
 } & SelectProps) {
-	const editor = React.useContext(EditorContext).editor;
+	const { editor } = React.useContext(EditorContext);
 	const [openState, setOpenState] = React.useState(false);
 
 	const actionDetect = typeof action === "function" ? action : action?.detect;

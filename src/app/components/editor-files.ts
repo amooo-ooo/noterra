@@ -34,7 +34,8 @@ export class TabData {
 	tryIndex?: number;
 	initialSelection?: object | null;
 	boundURLs: Record<keyof File["attachments"], string> = {};
-	dirty?: boolean;
+	#stateTimer: ReturnType<typeof setTimeout> | null = null;
+	#fileTimer: ReturnType<typeof setTimeout> | null = null;
 
 	constructor(file: File) {
 		this.file = file;
@@ -70,12 +71,36 @@ export class TabData {
 		return newObj;
 	}
 
-	async save() {
-		if (!this.dirty) return;
+	dirtyState() {
+		if (!this.#stateTimer) {
+			this.#stateTimer = setTimeout(() => {
+				this.#stateTimer = null;
+				this.saveState();
+			}, 10e3);
+		}
+	}
+
+	dirtyFile() {
+		if (!this.#fileTimer) {
+			this.#fileTimer = setTimeout(() => {
+				this.#fileTimer = null;
+				this.saveFile();
+			}, 3e3);
+		}
+	}
+
+	async saveState() {
 		const editors = await LocalFile.db.openStore("editors", "readwrite");
 		editors.put(this.serialize());
+	}
+
+	async saveFile() {
 		this.file.content = this.editor?.getHTML() ?? this.file.content;
-		return this.file.save();
+		await this.file.save();
+	}
+
+	async save() {
+		await Promise.all([this.saveFile(), this.saveState()]);
 	}
 }
 

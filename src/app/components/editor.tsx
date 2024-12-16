@@ -210,16 +210,20 @@ export function Editor({
 		if (!scrollingElement) return;
 		const callback = () => {
 			data.scrollPos = scrollingElement.scrollTop;
+			data.dirtyState();
 		};
 		scrollingElement.addEventListener("scroll", callback, { passive: true });
 		return () => scrollingElement.removeEventListener("scroll", callback);
 	}, [scrollingElement, data]);
 
 	React.useEffect(() => {
-		if (skipRender) return;
-		const timer = setInterval(() => data.save(), 30e3);
-		return () => clearInterval(timer);
-	});
+		editor?.on("selectionUpdate", () => {
+			data.dirtyState();
+		});
+		editor?.on("update", () => {
+			data.dirtyFile();
+		});
+	}, [editor, data]);
 
 	if (skipRender) return <></>;
 	return (
