@@ -215,6 +215,12 @@ export function Editor({
 		return () => scrollingElement.removeEventListener("scroll", callback);
 	}, [scrollingElement, data]);
 
+	React.useEffect(() => {
+		if (skipRender) return;
+		const timer = setInterval(() => data.save(), 30e3);
+		return () => clearInterval(timer);
+	});
+
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>

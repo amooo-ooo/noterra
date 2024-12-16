@@ -35,17 +35,17 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 	// TODO: dont just do async race condition like
 	switch (action.type) {
 		case "append":
-			(async () => {
-				const editors = await LocalFile.db.openStore("editors", "readwrite");
-				editors.add(action.initialValue.serialize(state.length));
-			})();
+			action.initialValue.index = state.length;
+			action.initialValue.save();
 			return state.concat(action.initialValue);
 		case "insert":
 			(async () => {
 				const editors = await LocalFile.db.openStore("editors", "readwrite");
-				editors.add(action.initialValue.serialize(action.index));
+				action.initialValue.index = action.index;
+				editors.add(action.initialValue.serialize());
 				for (let i = action.index; i < state.length; i++) {
-					editors.put(state[i].serialize(i + 1));
+					state[i].index = i + 1;
+					editors.put(state[i].serialize());
 				}
 			})();
 			return [
@@ -60,10 +60,11 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 				for (let i = 0; i < state.length; i++) {
 					if (action.predicate(state[i])) {
 						editors.delete(state[i].id);
-						state[i].file.save();
+						state[i];
 						offset++;
 					} else if (offset) {
-						editors.put(state[i].serialize(i - offset));
+						state[i].index = i - offset;
+						editors.put(state[i].serialize());
 					}
 				}
 			})();
@@ -71,10 +72,7 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 		case "mutate": {
 			const newState = [...state];
 			newState[action.index] = action.modify(newState[action.index]);
-			(async () => {
-				const editors = await LocalFile.db.openStore("editors", "readwrite");
-				editors.put(newState[action.index].serialize(action.index));
-			})();
+			newState[action.index].save();
 			return newState;
 		}
 		case "reorder":
@@ -82,7 +80,8 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 				const editors = await LocalFile.db.openStore("editors", "readwrite");
 				editors.clear();
 				for (let i = 0; i < action.value.length; i++) {
-					editors.put(action.value[i].serialize(i));
+					action.value[i].index = i;
+					editors.put(action.value[i].serialize());
 				}
 			})();
 			return action.value;
@@ -118,6 +117,7 @@ export function TabManager({
 	React.useEffect(() => {
 		(async () => {
 			const tempTabs = tabs;
+			let cTab = currentTab;
 			for await (const tab of LocalFile.editors()) {
 				let index = Math.floor(tempTabs.length / 2);
 				let shift = index;
@@ -132,6 +132,10 @@ export function TabManager({
 					initialValue: tab,
 				});
 				tempTabs.splice(index, 0, tab);
+				if (!cTab) {
+					cTab = tab.id;
+					setCurrentTab(cTab);
+				}
 				// TODO: replace with better id system
 				setNextId(
 					`${Math.max(Number.parseInt(nextId), Number.parseInt(`0${tab.file.id}`) + 1)}`,
@@ -143,7 +147,11 @@ export function TabManager({
 	return (
 		<>
 			<TabStrip
-				{...{ tabs, modifyTabs, currentTab, setCurrentTab }}
+				{...{ tabs, modifyTabs, currentTab }}
+				setCurrentTab={(id) => {
+					tabs.find((tab) => tab.id === currentTab)?.save();
+					setCurrentTab(id);
+				}}
 				idGen={() => {
 					const id = nextId;
 					setNextId(`${Number.parseInt(id) + 1}`);

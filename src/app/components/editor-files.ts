@@ -30,18 +30,20 @@ export class TabData {
 	scrollingElement?: HTMLElement;
 	scrollPos = 0;
 	locked = false;
+	index?: number;
 	tryIndex?: number;
 	initialSelection?: object | null;
 	boundURLs: Record<keyof File["attachments"], string> = {};
+	dirty?: boolean;
 
 	constructor(file: File) {
 		this.file = file;
 		this.id = file.id;
 	}
 
-	serialize(index: number): SerialEditor {
+	serialize(): SerialEditor {
 		return {
-			index,
+			index: this.index ?? 0,
 			fileId: this.file.id,
 			scrollPos: this.scrollPos ?? 0,
 			selection: this.editor?.state.selection.toJSON() ?? null,
@@ -66,6 +68,14 @@ export class TabData {
 		const newObj = this.clone();
 		newObj.locked = !newObj.locked;
 		return newObj;
+	}
+
+	async save() {
+		if (!this.dirty) return;
+		const editors = await LocalFile.db.openStore("editors", "readwrite");
+		editors.put(this.serialize());
+		this.file.content = this.editor?.getHTML() ?? this.file.content;
+		return this.file.save();
 	}
 }
 

@@ -89,7 +89,9 @@ export function TabStrip({
 									e.stopPropagation();
 									if (currentTab === tab.id && !tab.locked) {
 										setRenamingTab(tab.id);
-									} else setCurrentTab(tab.id);
+									} else {
+										setCurrentTab(tab.id);
+									}
 								}}
 								onKeyDown={(e) => {
 									if (e.key === " ") e.preventDefault();
