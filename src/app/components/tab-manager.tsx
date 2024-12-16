@@ -6,6 +6,9 @@ import { TabStrip } from "./tab-strip";
 import { ThemeButton } from "./theme-button";
 import { type TabData, LocalFile } from "./editor-files";
 import { unreachable } from "./util";
+import { FilesSidebar } from "./files-sidebar";
+import { Option, Select } from "./select";
+import { EllipsisVerticalIcon, FilesIcon } from "lucide-react";
 
 type TabReducerAction<T> =
 	| {
@@ -61,6 +64,7 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 					if (action.predicate(state[i])) {
 						editors.delete(state[i].id);
 						state[i].saveFile();
+						state[i].file.setOpenFlag(false);
 						offset++;
 					} else if (offset) {
 						state[i].index = i - offset;
@@ -92,9 +96,16 @@ function tabReducer(state: TabData[], action: TabReducerAction<TabData>) {
 
 export type TabListDispatcher = React.Dispatch<TabReducerAction<TabData>>;
 
+export const TabsContext = React.createContext<{
+	tabs: TabData[];
+	modifyTabs: TabListDispatcher;
+	currentTab: TabData["id"] | undefined;
+	setCurrentTab: (tab: TabData["id"] | undefined) => void;
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
+}>(null!);
+
 export function TabManager({
 	tabstripClass,
-	contentRowContent,
 	contentRowClass,
 	editorContainerClass,
 	toolbarClass,
@@ -103,7 +114,6 @@ export function TabManager({
 }: {
 	tabstripClass?: string;
 	contentRowClass?: string;
-	contentRowContent?: React.ReactNode;
 	editorContainerClass?: string;
 	toolbarClass?: string;
 	statsWidgetClass?: string;
@@ -112,6 +122,9 @@ export function TabManager({
 	const [tabs, modifyTabs] = React.useReducer(tabReducer, []);
 	const [currentTab, setCurrentTab] = React.useState<TabData["id"]>();
 	const [nextId, setNextId] = React.useState("0");
+
+	const [leftSidebar, setLeftSidebar] = React.useState<React.ReactNode>();
+	const [rightSidebar, setRightSidebar] = React.useState<React.ReactNode>();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	React.useEffect(() => {
@@ -147,23 +160,59 @@ export function TabManager({
 	}, []);
 
 	return (
-		<>
-			<TabStrip
-				{...{ tabs, modifyTabs, currentTab }}
-				setCurrentTab={(id) => {
+		<TabsContext.Provider
+			value={{
+				tabs,
+				modifyTabs,
+				currentTab,
+				setCurrentTab: (id) => {
 					tabs.find((tab) => tab.id === currentTab)?.save();
 					setCurrentTab(id);
-				}}
+				},
+			}}
+		>
+			<TabStrip
 				idGen={() => {
 					const id = nextId;
 					setNextId(`${Number.parseInt(id) + 1}`);
 					return id;
 				}}
 				className={tabstripClass}
-				atStripEnd={<ThemeButton size="1.5em" />}
+				atStripEnd={
+					<>
+						<ThemeButton size="1.5em" />
+						<Select
+							label={<EllipsisVerticalIcon size="1.5em" />}
+							onChange={(action) => {
+								switch (action) {
+									case "files":
+										setLeftSidebar(
+											<FilesSidebar
+												onClose={() => setLeftSidebar(undefined)}
+											/>,
+										);
+										break;
+								}
+							}}
+						>
+							<Option
+								value="files"
+								label={
+									<>
+										<FilesIcon />
+										View all files
+									</>
+								}
+								disabled={
+									(leftSidebar as React.ReactElement)?.type === FilesSidebar
+								}
+							/>
+						</Select>
+					</>
+				}
 			/>
 			<div className={contentRowClass}>
-				{contentRowContent}
+				{leftSidebar}
 				{...tabs.map((tab) => {
 					return (
 						<Editor
@@ -177,7 +226,8 @@ export function TabManager({
 						/>
 					);
 				})}
+				{rightSidebar}
 			</div>
-		</>
+		</TabsContext.Provider>
 	);
 }

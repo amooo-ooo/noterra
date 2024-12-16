@@ -24,12 +24,6 @@ export default function Home() {
 										toolbarClass={styles.toolbar}
 										statsWidgetClass={styles.statsWidget}
 										editorClass={styles.editor}
-										contentRowContent={
-											<>
-												<div className={styles.sidebar} />
-												<div className={`${styles.sidebar} ${styles.right}`} />
-											</>
-										}
 									/>
 								</ToolbarConfigProvider>
 							</EditorSelectionHandler>

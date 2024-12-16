@@ -1,0 +1,51 @@
+.sidebar {
+	min-width: 300px;
+	max-width: 20%;
+	border-inline: 1px solid var(--border-color);
+	padding: 10px;
+	display: flex;
+	flex-flow: column;
+	row-gap: 10px;
+
+	.file {
+		display: flex;
+		align-items: center;
+		column-gap: 1ch;
+
+		.file-name {
+			flex: 1 1;
+			flex-basis: 0;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: stretch;
+		
+		.title {
+			font-weight: bold;
+			border-bottom: 1px solid currentColor;
+			align-content: center;
+		}
+	}
+
+	.close-button, .file button {
+		background-color: transparent;
+		border: none;
+		border-radius: 5px;
+		padding: 3px;
+		aspect-ratio: 1;
+
+		&:is(:hover, :focus-visible) {
+			background-color: #80808020;
+		}
+		
+		&:active {
+			background-color: #80808040;
+		}
+	}
+}

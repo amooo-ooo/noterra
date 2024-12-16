@@ -47,7 +47,7 @@
 	top: 12px;
 	bottom: unset;
 	flex-shrink: 0;
-	background-color: color-mix(in srgb, var(--bg-0) 50%, transparent 50%);
+	background-color: color-mix(in srgb, var(--bg-0) 75%, transparent 25%);
 	margin-inline: 12px;
 	box-shadow: 1px 2px 10px -2px var(--shadow-color);
 	z-index: 2;
@@ -72,12 +72,6 @@
 		padding: 50px;
 		outline: none;
 		min-height: fit-content;
-	}
-}
-
-.sidebar {
-	.right {
-		order: 1;
 	}
 }
 

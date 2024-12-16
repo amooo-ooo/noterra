@@ -1,7 +1,16 @@
 import { DatabaseHandler } from "./database";
 import type { Editor as TipTapEditor } from "@tiptap/react";
 
+type FileEvents = Record<"save" | "delete", ((file: File) => void)[]>;
+type ItemOf<T> = T extends Iterable<infer R> ? R : never;
+
 export abstract class File {
+	static #listeners: FileEvents = {
+		save: [],
+		delete: [],
+	};
+
+	#open = false;
 	readonly id: string;
 	name: string;
 	content: string;
@@ -19,7 +28,33 @@ export abstract class File {
 		this.attachments = attachments;
 	}
 
+	setOpenFlag(value: boolean) {
+		this.#open = value;
+	}
+
+	isOpen() {
+		return this.#open;
+	}
+
+	static on<E extends keyof FileEvents>(
+		event: E,
+		callback: ItemOf<FileEvents[E]>,
+	) {
+		File.#listeners[event].push(callback);
+		return {
+			dispose: () => File.#listeners[event].filter((x) => x !== callback),
+		};
+	}
+
 	abstract save(): Promise<void>;
+
+	abstract delete(): Promise<void>;
+
+	protected dispatch(event: keyof FileEvents) {
+		for (const callback of File.#listeners[event]) {
+			callback(this);
+		}
+	}
 }
 
 export class TabData {
@@ -39,6 +74,7 @@ export class TabData {
 
 	constructor(file: File) {
 		this.file = file;
+		file.setOpenFlag(true);
 		this.id = file.id;
 	}
 
@@ -130,6 +166,13 @@ export class LocalFile extends File {
 	async save() {
 		const store = await LocalFile.db.openStore("files", "readwrite");
 		store.put({ ...this });
+		this.dispatch("save");
+	}
+
+	async delete() {
+		const store = await LocalFile.db.openStore("files", "readwrite");
+		store.delete(this.id);
+		this.dispatch("delete");
 	}
 
 	static async *editors() {
@@ -154,6 +197,17 @@ export class LocalFile extends File {
 			yield tab as Omit<TabData, "tryIndex"> & {
 				tryIndex: NonNullable<TabData["tryIndex"]>;
 			};
+		}
+	}
+
+	static async *files() {
+		for await (const file of LocalFile.db.iterStore("files", "readonly")) {
+			yield new LocalFile(
+				file.value.id,
+				file.value.name,
+				file.value.content,
+				file.value.attachments,
+			);
 		}
 	}
 }

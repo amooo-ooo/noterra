@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ReactSortable } from "react-sortablejs";
-import type { TabListDispatcher } from "./tab-manager";
+import { TabsContext } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.scss";
 import { Upload, Plus, X, LockIcon } from "lucide-react";
 import { handleFile } from "./file-parser";
@@ -10,22 +10,17 @@ import { ContextMenuArea } from "./context-menu-area";
 import { LocalFile, TabData } from "./editor-files";
 
 export function TabStrip({
-	tabs,
-	modifyTabs,
-	currentTab,
-	setCurrentTab,
 	idGen,
 	className = "",
 	atStripEnd,
 }: {
-	tabs: TabData[];
-	modifyTabs: TabListDispatcher;
-	currentTab: TabData["id"] | undefined;
-	setCurrentTab: React.Dispatch<TabData["id"] | undefined>;
 	idGen: () => TabData["id"];
 	className?: string;
 	atStripEnd?: React.ReactNode;
 }) {
+	const { tabs, modifyTabs, currentTab, setCurrentTab } =
+		React.useContext(TabsContext);
+
 	const close = (tab: TabData) => {
 		if (tab.id === currentTab) {
 			let idx = tabs.findIndex((x) => x.id === tab.id) - 1;
