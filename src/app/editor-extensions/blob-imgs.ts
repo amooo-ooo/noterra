@@ -10,6 +10,7 @@ export const BlobImages = Image.extend({
 			isBlob: {
 				default: false,
 				parseHTML: (el) => !!el.dataset.blobSrc,
+				rendered: false,
 				// renderHTML: (attrs) =>
 				// 	attrs.isBlob ? { "data-blob-src": attrs.src } : { src: attrs.src },
 			},
