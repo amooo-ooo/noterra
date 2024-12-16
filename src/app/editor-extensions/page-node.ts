@@ -10,11 +10,11 @@ export interface PageOptions {
 	HTMLAttributes: Record<string, any>;
 }
 
-declare module "@tiptap/core" {
-	interface Commands<ReturnType> {
-		// page: {};
-	}
-}
+// declare module "@tiptap/core" {
+// 	interface Commands<ReturnType> {
+// 		page: {};
+// 	}
+// }
 
 export const PageNode = Node.create<PageOptions>({
 	name: "page",

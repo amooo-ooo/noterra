@@ -1,42 +1,64 @@
+"use client";
+
 import React from "react";
-import Desmos from "desmos";
+import "desmos";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import style from "@/app/styles/desmos-extension.module.scss";
 
-export function DesmosGraph({ node, extension }: NodeViewProps) {
-	const containerRef = React.useRef<HTMLDivElement>(null);
-	const calculatorRef = React.useRef<Desmos.GraphingCalculator | null>(null);
-
-	let colorIndex = 0;
-
-	const getNextColor = () => {
-		const color = extension.options.lineColors[colorIndex];
-		colorIndex = (colorIndex + 1) % extension.options.lineColors.length;
-		return color;
-	};
+export function DesmosGraph({
+	node,
+	extension,
+	updateAttributes,
+}: NodeViewProps) {
+	const [calculator, setCalculator] = React.useState<Desmos.Calculator | null>(
+		null,
+	);
 
 	React.useEffect(() => {
-		if (!containerRef.current) return;
+		if (!calculator) return;
 
-		calculatorRef.current = Desmos.GraphingCalculator(containerRef.current);
-
-		for (const { latex, lineStyle, color } of node.attrs.expressions) {
-			calculatorRef.current.setExpression({
-				latex: latex,
-				lineStyle: lineStyle ?? extension.options.defaultLineStyle,
-				color: color || getNextColor(),
-			});
-		}
-
-		return () => {
-			calculatorRef.current?.destroy();
-			calculatorRef.current = null;
+		let colorIndex = 0;
+		const getNextColor = () => {
+			const color = extension.options.lineColors[colorIndex];
+			colorIndex++;
+			colorIndex %= extension.options.lineColors.length;
+			return color;
 		};
-	}, [node.attrs.expressions]);
+
+		// calculator.setState(obj);
+		calculator.setExpressions(
+			(
+				node.attrs.expressions as {
+					latex: string;
+					lineStyle?: string;
+					color?: string;
+				}[]
+			).map((expr) => ({
+				...expr,
+				lineStyle: expr.lineStyle ?? extension.options.defaultLineStyle,
+				color: expr.color || getNextColor(),
+			})),
+		);
+	}, [
+		node.attrs.expressions,
+		extension.options.defaultLineStyle,
+		extension.options.lineColors,
+		calculator,
+	]);
+
+	React.useEffect(() => {
+		// TODO: update attributes with new desmos state
+		// calculator?.observeEvent("change", () => {
+		// 	updateAttributes({ expressions: calculator.getExpressions() });
+		// });
+	});
 
 	return (
 		<NodeViewWrapper>
-			<div ref={containerRef} className={style.desmos} contentEditable="false"/>
+			<div
+				ref={(el) => setCalculator(el && Desmos.GraphingCalculator(el))}
+				className={style.desmos}
+			/>
 		</NodeViewWrapper>
 	);
 }
