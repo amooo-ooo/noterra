@@ -43,7 +43,7 @@ import {
 	Square,
 	Table,
 	WrapText,
-	ChartSpline,
+	// ChartSpline,
 	ImageIcon,
 } from "lucide-react";
 
@@ -229,19 +229,19 @@ const TOOLS = {
 			icon={<FormatItalic />}
 		/>
 	),
-	desmosGraph: (
-		<TiptapButton
-			label="Insert Desmos Graph"
-			action={(ctx) =>
-				ctx.setDesmosGraph([
-					{ latex: "y = x^2" },
-					{ latex: "y = \\sin(x)", lineStyle: "dashed" },
-					{ latex: "y = 2^x" },
-				])
-			}
-			icon={<ChartSpline />}
-		/>
-	),
+	// desmosGraph: (
+	// 	<TiptapButton
+	// 		label="Insert Desmos Graph"
+	// 		action={(ctx) =>
+	// 			ctx.setDesmosGraph([
+	// 				{ latex: "y = x^2" },
+	// 				{ latex: "y = \\sin(x)", lineStyle: "dashed" },
+	// 				{ latex: "y = 2^x" },
+	// 			])
+	// 		}
+	// 		icon={<ChartSpline />}
+	// 	/>
+	// ),
 	hardBreak: (
 		<TiptapButton
 			label="Hard Break"
@@ -603,7 +603,7 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 		[
 			"code",
 			"codeblock",
-			"desmosGraph",
+			// "desmosGraph",
 			"image",
 			"table",
 			"blockquote",
