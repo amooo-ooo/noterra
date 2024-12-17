@@ -65,8 +65,5 @@
     "eslint": "^9.16.0",
     "eslint-config-next": "15.1.0",
     "typescript": "^5.7.2"
-  },
-  "patchedDependencies": {
-    "@types/desmos@1.6.3": "patches/@types%2Fdesmos@1.6.3.patch"
   }
 }
