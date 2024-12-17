@@ -43,7 +43,7 @@ import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
 import { PageNode } from "@/app/editor-extensions/page-node";
-import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
+// import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
 import { BlobImages } from "@/app/editor-extensions/blob-imgs";
 
@@ -138,7 +138,7 @@ export function Editor({
 			PageNode,
 			CharacterCount.extend(),
 			MathExtension,
-			DesmosGraphExtension,
+			// DesmosGraphExtension,
 		],
 		content: data.file.content,
 		immediatelyRender: false,
