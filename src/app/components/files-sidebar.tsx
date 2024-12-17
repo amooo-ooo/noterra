@@ -60,12 +60,14 @@ export function FilesSidebar({
 	}, []);
 
 	const [isClosing, setIsClosing] = React.useState(false);
-	const handleClose = () => {
-		setIsClosing(true);
-		setTimeout(() => {
-			onClose?.();
-		}, animationDuration);
-	};
+	React.useEffect(() => {
+		if (isClosing) {
+			const timer = setTimeout(() => {
+				onClose?.();
+			}, animationDuration);
+			return () => clearTimeout(timer); 
+		}
+	}, [isClosing, animationDuration, onClose]);
 
 	return (
 		<div
@@ -75,7 +77,7 @@ export function FilesSidebar({
 				<span className={styles.title}>Files</span>
 				<button
 					type="button"
-					onClick={handleClose}
+					onClick={() => setIsClosing(true)}
 					className={styles["close-button"]}
 				>
 					<X size="1.5em" />
