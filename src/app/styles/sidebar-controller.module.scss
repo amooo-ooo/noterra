@@ -1,0 +1,58 @@
+@keyframes flex-grow {
+	from { flex: 0 0; }
+	to { flex: 1 1; }
+}
+
+@keyframes flex-shrink {
+	from { flex: 1 1; }
+	to { flex: 0 0; }
+}
+
+@keyframes to-width {
+	from { flex-basis: 0px; }
+	to { flex-basis: calc(var(--width) * 1px); }
+}
+
+@keyframes from-width {
+	from { flex-basis: calc(var(--width) * 1px); }
+	to { flex-basis: 0px; }
+}
+
+.sidebar {
+	--width: 300;
+	flex: 0 0 0px;
+	display: flex;
+	flex-flow: row;
+	overflow: hidden;
+
+	&.open {
+		animation: to-width 250ms ease forwards;
+	}
+	&:not(.open) {
+		animation: from-width 250ms ease forwards;
+	}
+	
+	>.sidebar-page {
+		&:first-child {
+			animation: flex-shrink 250ms ease forwards;
+		}
+		&:last-child {
+			animation: flex-grow 250ms ease forwards;
+		}
+		&:empty {
+			flex: 0 0;
+			animation: none;
+		}
+	}
+}
+
+.resize-controller {
+	position: relative;
+	z-index: 1;
+	width: 11px;
+	padding-inline: 5px;
+	margin-inline: -5px;
+	background-color: var(--border-color);
+	background-clip: content-box;
+	cursor: ew-resize;
+}

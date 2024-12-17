@@ -9,6 +9,7 @@ import { unreachable } from "./util";
 import { FilesSidebar } from "./files-sidebar";
 import { Option, Select } from "./select";
 import { EllipsisVerticalIcon, FilesIcon } from "lucide-react";
+import { SidebarController, usePages } from "./sidebar-controller";
 
 type TabReducerAction<T> =
 	| {
@@ -123,9 +124,8 @@ export function TabManager({
 	const [currentTab, setCurrentTab] = React.useState<TabData["id"]>();
 	const [nextId, setNextId] = React.useState("0");
 
-	const [leftSidebar, setLeftSidebar] = React.useState<React.ReactNode>();
-	const [rightSidebar /* setRightSidebar */] =
-		React.useState<React.ReactNode>();
+	const [leftSidebar, setLeftSidebar] = usePages();
+	const [rightSidebar /* setRightSidebar */] = usePages();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	React.useEffect(() => {
@@ -219,7 +219,8 @@ export function TabManager({
 									</>
 								}
 								disabled={
-									(leftSidebar as React.ReactElement)?.type === FilesSidebar
+									(leftSidebar.children[1] as React.ReactElement)?.type ===
+									FilesSidebar
 								}
 							/>
 						</Select>
@@ -227,7 +228,7 @@ export function TabManager({
 				}
 			/>
 			<div className={contentRowClass}>
-				{leftSidebar}
+				<SidebarController pages={leftSidebar} />
 				{...tabs.map((tab) => {
 					return (
 						<Editor
@@ -241,7 +242,7 @@ export function TabManager({
 						/>
 					);
 				})}
-				{rightSidebar}
+				<SidebarController pages={rightSidebar} right />
 			</div>
 		</TabsContext.Provider>
 	);

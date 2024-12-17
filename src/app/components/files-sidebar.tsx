@@ -32,7 +32,6 @@ function fileStore(
 
 export function FilesSidebar({
 	onClose,
-	animationDuration = 280,
 }: {
 	onClose?(): void;
 	animationDuration?: number;
@@ -59,25 +58,13 @@ export function FilesSidebar({
 		};
 	}, []);
 
-	const [isClosing, setIsClosing] = React.useState(false);
-	React.useEffect(() => {
-		if (isClosing) {
-			const timer = setTimeout(() => {
-				onClose?.();
-			}, animationDuration);
-			return () => clearTimeout(timer); 
-		}
-	}, [isClosing, animationDuration, onClose]);
-
 	return (
-		<div
-			className={`${styles.sidebar} ${isClosing ? styles["sidebar-close"] : styles["sidebar-open"]}`}
-		>
+		<div className={`${styles.sidebar}`}>
 			<div className={styles.header}>
 				<span className={styles.title}>Files</span>
 				<button
 					type="button"
-					onClick={() => setIsClosing(true)}
+					onClick={onClose}
 					className={styles["close-button"]}
 				>
 					<X size="1.5em" />
