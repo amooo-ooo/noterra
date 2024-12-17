@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Noterra
+![](https://img.shields.io/github/last-commit/amooo-ooo/noterra/main) ![](https://img.shields.io/github/commit-activity/w/amooo-ooo/noterra) ![](https://img.shields.io/github/check-runs/amooo-ooo/noterra/main?logo=cloudflare) ![](https://img.shields.io/github/stars/amooo-ooo/noterra) 
 
-## Getting Started
+Noterra is an open-source editor and writing toolkit for students, developers and researchers alike. It's built on [React](https://react.dev/), [Tiptap](https://tiptap.dev/) and [Bun](https://bun.sh/).
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+- WYSIWYG Editor
+- Private local storage via [IndexedDB API](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)
+- Import Files (EPUB, HTML, etc)
+- Specialised Nodes (Monaco Code Block, LaTex Support, etc)
+
+With more features in development.
+
+## Installation
+Noterra is currently in early development, and no formal installation options are available yet. However, you may access the project and view real-time, development progress on [noterra.pages.dev](https://noterra.pages.dev/). Alternatively, the project can be run locally using the following commands:
+
+```shell
+git clone https://github.com/amooo-ooo/noterra.git
+cd noterra
+bun install
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then, open [http://localhost:3000](http://localhost:3000) with your browser. 
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contributing
+We appreciate your support! At this early stage of development, contributions are welcome through bug reports, fixes or feature requests. 
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License 
+Distributed under the GNU GPL-3.0 License. See [LICENSE](./LICENSE) for more information.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
