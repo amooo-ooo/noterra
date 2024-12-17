@@ -1,11 +1,31 @@
+@keyframes open {
+	from { width: 0% }
+	to { width: 24% }
+}
+
+@keyframes close {
+	from { width: 24% }
+	to { width: 0% }
+}
+
 .sidebar {
-	min-width: 300px;
-	max-width: 20%;
 	border-inline: 1px solid var(--border-color);
 	padding: 10px;
 	display: flex;
 	flex-flow: column;
 	row-gap: 10px;
+	overflow: hidden;
+	
+	// TODO: animation variables are bugged (global.scss).
+	&.sidebar-open {
+		animation: open 300ms cubic-bezier(0.45, 0.05, 0.55, 0.95);
+		width: 24%;
+	}
+	
+	&.sidebar-close {
+		animation: close 300ms cubic-bezier(0.45, 0.05, 0.55, 0.95);
+		width: 0%;
+	}
 
 	.file {
 		display: flex;

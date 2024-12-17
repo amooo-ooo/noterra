@@ -1,24 +1,36 @@
 :root {
 	color-scheme: light dark;
 	font-feature-settings: 'liga'1, 'calt'1;
-
+	
+	/* Colors */
 	--bg--1: light-dark(#ffffff, #181818);
 	--bg-0: light-dark(#f9f9f9, #1f1f1f);
 	--bg-1: light-dark(#ededed, #262626);
 	--bg-2: light-dark(#d4d4d4, #2b2b2b);
-
+	
 	--border-color: light-dark(#d4d4d4, #393939);
 	--border-color-2: light-dark(#e0e0e0, #474747);
+	
 	/* note shadow color should *always* be darker than theme color */
 	--shadow-color: light-dark(#ccccccdd, #000000dd);
-
+	
 	--fg-0: light-dark(#1f1f1f, #f9f9f9);
 	--fg-1: light-dark(#262626, #ededed);
 	--fg-2: light-dark(#2b2b2b, #e8e8e8);
 	--fg-3: light-dark(#393939, #d4d4d4);
 	--fg-4: light-dark(#5c5c5c, #b3b3b3);
 	--fg-disabled: light-dark(#666, #aaa);
-
+	
+	//  Animations (TODO: bugged: values are not applied to animations.)
+	// --anim-duration-superfast: 70ms;
+	// --anim-duration-fast: 140ms;
+	// --anim-duration-moderate: 300ms;
+	// --anim-duration-slow: 560ms;
+	// --anim-motion-smooth: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+	// --anim-motion-delay: cubic-bezier(0.65, 0.05, 0.36, 1);
+	// --anim-motion-jumpy: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+	// --anim-motion-swing: cubic-bezier(0, 0.55, 0.45, 1);
+	
 	* {
 		min-width: 0;
 		min-height: 0;
