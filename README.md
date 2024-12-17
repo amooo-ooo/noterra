@@ -1,7 +1,7 @@
 # Noterra
 ![](https://img.shields.io/github/last-commit/amooo-ooo/noterra/main) ![](https://img.shields.io/github/commit-activity/w/amooo-ooo/noterra) ![](https://img.shields.io/github/check-runs/amooo-ooo/noterra/main?logo=cloudflare) ![](https://img.shields.io/github/stars/amooo-ooo/noterra) 
 
-Noterra is an open-source editor and writing toolkit for students, developers and researchers alike. It's built on [React](https://react.dev/), [Tiptap](https://tiptap.dev/) and [Bun](https://bun.sh/).
+Noterra is an open-source editor and writing toolkit for students, developers and researchers alike. It's built on [React](https://react.dev/), [Tiptap.js](https://tiptap.dev/) and [Next.js](https://nextjs.org/).
 
 ## Features
 
