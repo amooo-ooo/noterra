@@ -63,7 +63,10 @@ export function SidebarController({
 					"--width": width,
 					...(pages.children[1]
 						? {}
-						: { borderInline: "1px solid var(--border-color)" }),
+						: {
+								[right ? "borderLeft" : "borderRight"]:
+									"1px solid var(--border-color)",
+							}),
 				}}
 			>
 				{pages.children.map((child, i) => (

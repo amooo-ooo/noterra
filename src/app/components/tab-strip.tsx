@@ -132,7 +132,7 @@ export function TabStrip({
 								<span className={styles.name}>{tab.file.name}</span>
 							)}
 							{tab.locked ? (
-								<LockIcon size="1.2em" color="var(--fg-disabled)" />
+								<LockIcon size="1em" color="var(--fg-disabled)" />
 							) : undefined}
 							<button
 								type="button"
@@ -141,6 +141,7 @@ export function TabStrip({
 									e.stopPropagation();
 									close(tab);
 								}}
+								style={{ font: "inherit" }}
 							>
 								<X size="1.5em" />
 							</button>

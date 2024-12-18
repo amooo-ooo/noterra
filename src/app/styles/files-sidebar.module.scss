@@ -9,6 +9,15 @@
 		display: flex;
 		align-items: center;
 		column-gap: 1ch;
+		padding: 5px;
+		border-radius: 10px;
+
+		&:hover {
+			background-color: #80808020;
+		}
+		&:active {
+			background-color: #80808040;
+		}
 
 		.file-name {
 			flex: 1 1;
@@ -25,9 +34,11 @@
 		align-items: stretch;
 		
 		.title {
+			display: flex;
+			column-gap: 0.5ch;
 			font-weight: bold;
 			border-bottom: 1px solid currentColor;
-			align-content: center;
+			align-items: center;
 		}
 	}
 

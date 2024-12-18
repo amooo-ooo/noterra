@@ -96,6 +96,7 @@
 		border: var(--border-width) solid var(--border-color);
 		flex: 1 1;
 		display: flex;
+		column-gap: var(--button-padding);
 		position: relative;
 		justify-content: space-between;
 		align-items: center;
@@ -153,7 +154,7 @@
 		}
 
 		.close-icon {
-			margin-right: calc(var(--button-padding) + var(--margin) - var(--padding-right));
+			margin-inline: 0 calc(var(--button-padding) + var(--margin) - var(--padding-right));
 		}
 	}
 

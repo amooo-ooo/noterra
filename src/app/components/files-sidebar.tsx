@@ -1,6 +1,11 @@
 import React from "react";
 import { File, LocalFile, TabData } from "./editor-files";
-import { SquareArrowOutUpRight, Trash2Icon, X } from "lucide-react";
+import {
+	FolderOpenIcon,
+	SquareArrowOutUpRight,
+	Trash2Icon,
+	X,
+} from "lucide-react";
 import { unreachable } from "./util";
 import { TabsContext } from "./tab-manager";
 
@@ -61,7 +66,10 @@ export function FilesSidebar({
 	return (
 		<div className={`${styles.sidebar}`}>
 			<div className={styles.header}>
-				<span className={styles.title}>Files</span>
+				<span className={styles.title}>
+					<FolderOpenIcon size="1.2em" />
+					Files
+				</span>
 				<button
 					type="button"
 					onClick={onClose}
