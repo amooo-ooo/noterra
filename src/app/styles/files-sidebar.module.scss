@@ -2,15 +2,16 @@
 	padding: 10px;
 	display: flex;
 	flex-flow: column;
-	row-gap: 10px;
+	row-gap: 3px;
 	overflow: hidden;
 
 	.file {
 		display: flex;
 		align-items: center;
 		column-gap: 1ch;
-		padding: 5px;
-		border-radius: 10px;
+		padding: 3px;
+		padding-left: 5px;
+		border-radius: 8px;
 
 		&:hover {
 			background-color: #80808020;
