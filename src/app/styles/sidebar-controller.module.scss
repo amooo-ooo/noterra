@@ -33,6 +33,8 @@
 	}
 	
 	>.sidebar-page {
+		overflow: auto;
+
 		&:first-child {
 			animation: flex-shrink 250ms ease forwards;
 		}
