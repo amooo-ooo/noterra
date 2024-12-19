@@ -29,7 +29,7 @@
 	overflow: auto;
 	position: relative;
 
-	&:has(.)::before {
+	&:has(.toolbar)::before {
 		content: '';
 		position: sticky;
 		width: 100%;
