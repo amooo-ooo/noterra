@@ -48,6 +48,7 @@ export const FormatItalic = createIcon("FormatItalic", "\ue23f");
 export const FormatUnderline = createIcon("FormatUnderline", "\ue249");
 export const FormatStrikethrough = createIcon("FormatStrikethrough", "\ue246");
 export const FormatQuote = createIcon("FormatQuote", "\ue244");
+export const FormatLineSpacing = createIcon("FormatLineSpacing", "\ue240");
 // export const FormatIndentIncrease = createIcon("FormatIndentIncrease", "\ue23e");
 // export const FormatIndentDecrease = createIcon("FormatIndentDecrease", "\ue23d");
 

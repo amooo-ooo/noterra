@@ -3,6 +3,7 @@
 import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import { unreachable } from "./util";
+import type { ChainedCommands } from "@tiptap/react";
 import { FontFamilySelect, TiptapButton, TiptapSelect } from "./tiptap-fields";
 import styles from "@/app/styles/editor-toolbar.module.scss";
 
@@ -12,6 +13,7 @@ import {
 	FormatUnderline,
 	FormatStrikethrough,
 	FormatQuote,
+	FormatLineSpacing,
 } from "./icons";
 
 import {
@@ -103,6 +105,45 @@ function TextColorSelect() {
 				/>
 			))}
 		</TiptapSelect>
+	);
+}
+
+function Spacing() {
+	const { editor } = React.useContext(EditorContext);
+
+	return (
+		<Select
+			label={<FormatLineSpacing />}
+			title="Insert Spacing"
+			onChange={(value) => {
+				const action = (ctx: ChainedCommands) => {
+					return value.startsWith("lineHeight")
+						? ctx.setLineHeight(value.split("-")[1] ?? 0)
+						: ctx.setMargins({ [value.split("-")[0]]: value.split("-")[1] });
+				};
+
+				if (editor) action(editor.chain().focus()).run();
+			}}
+			className={`${styles["toolbar-select"]} ${styles.button}`}
+		>
+			{[
+				...[1, 1.15, 1.5, 2, 2.5, 3].map((value) => (
+					<Option label={value} value={`lineHeight-${value}em`} key={value} />
+				)),
+				// TODO: Actually implement margins properly
+				// ...Object.entries({
+				// 	Before: "Top",
+				// 	After: "Bottom",
+				// }).map(([label, value]) => (
+				// 	<Option
+				// 		label={`${editor?.getAttributes("heading").textAlign ? "Remove" : "Add"} Space ${label} Paragraph`}
+				// 		// label={`Space ${label} Paragraph`}
+				// 		value={`margin${value}-calc(8 / 11 * 1em)`}
+				// 		key={`${label}-${value}`}
+				// 	/>
+				// )),
+			]}
+		</Select>
 	);
 }
 
@@ -450,6 +491,7 @@ const TOOLS = {
 			))}
 		</TiptapSelect>
 	),
+	textSpacing: <Spacing />,
 	textColor: <TextColorSelect />,
 	highlight: (
 		<TiptapSelect
@@ -609,7 +651,15 @@ export function ToolbarConfigProvider(props: React.PropsWithChildren<object>) {
 			"blockquote",
 			"horizontalRule",
 		],
-		["textAlign", "bulletList", "orderedList", "taskList", "outdent", "indent"],
+		[
+			"textAlign",
+			"bulletList",
+			"orderedList",
+			"taskList",
+			"outdent",
+			"indent",
+			"textSpacing",
+		],
 	] satisfies (keyof typeof TOOLS)[][];
 	const [arrangement, updateArrangement] = React.useReducer(toolbarDispatch, {
 		nextGroupId: initGroups.length,

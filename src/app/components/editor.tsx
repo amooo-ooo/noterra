@@ -46,6 +46,7 @@ import { PageNode } from "@/app/editor-extensions/page-node";
 // import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
 import { BlobImages } from "@/app/editor-extensions/blob-imgs";
+import { Spacing } from "@/app/editor-extensions/spacing-extension";
 
 import type { TabData } from "./editor-files";
 
@@ -138,6 +139,9 @@ export function Editor({
 			PageNode,
 			CharacterCount.extend(),
 			MathExtension,
+			Spacing.configure({
+				types: ["heading", "paragraph"],
+			}),
 			// DesmosGraphExtension,
 		],
 		content: data.file.content,
