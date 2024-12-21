@@ -8,7 +8,12 @@ import { type TabData, LocalFile } from "./editor-files";
 import { unreachable } from "./util";
 import { FilesSidebar } from "./files-sidebar";
 import { Option, Select } from "./select";
-import { EllipsisVerticalIcon, FilesIcon } from "lucide-react";
+import {
+	CheckSquareIcon,
+	EllipsisVerticalIcon,
+	FilesIcon,
+	SquareIcon,
+} from "lucide-react";
 import { SidebarController, usePages } from "./sidebar-controller";
 
 type TabReducerAction<T> =
@@ -127,6 +132,8 @@ export function TabManager({
 	const [leftSidebar, setLeftSidebar] = usePages();
 	const [rightSidebar /* setRightSidebar */] = usePages();
 
+	const [showWordCount, setShowWordCount] = React.useState(true);
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	React.useEffect(() => {
 		(async () => {
@@ -207,6 +214,9 @@ export function TabManager({
 											/>,
 										);
 										break;
+									case "wordCount":
+										setShowWordCount(!showWordCount);
+										break;
 								}
 							}}
 						>
@@ -214,13 +224,26 @@ export function TabManager({
 								value="files"
 								label={
 									<>
-										<FilesIcon />
+										<FilesIcon size="1.5em" />
 										View all files
 									</>
 								}
 								disabled={
 									(leftSidebar.children[1] as React.ReactElement)?.type ===
 									FilesSidebar
+								}
+							/>
+							<Option
+								value="wordCount"
+								label={
+									<>
+										{showWordCount ? (
+											<CheckSquareIcon size="1.5em" />
+										) : (
+											<SquareIcon size="1.5em" />
+										)}
+										Show word count
+									</>
 								}
 							/>
 						</Select>
@@ -239,6 +262,7 @@ export function TabManager({
 							toolbarClass={toolbarClass}
 							statsWidgetClass={statsWidgetClass}
 							editorClass={editorClass}
+							wordCount={showWordCount}
 						/>
 					);
 				})}

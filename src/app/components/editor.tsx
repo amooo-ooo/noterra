@@ -65,6 +65,7 @@ export function Editor({
 	toolbarClass,
 	statsWidgetClass,
 	editorClass = "",
+	wordCount = false,
 }: {
 	data: TabData;
 	skipRender?: boolean;
@@ -72,6 +73,7 @@ export function Editor({
 	toolbarClass?: string;
 	statsWidgetClass?: string;
 	editorClass?: string;
+	wordCount?: boolean;
 }) {
 	const editor = useEditor({
 		extensions: [
@@ -247,7 +249,9 @@ export function Editor({
 						data.lastKeyPress = e.key;
 					}}
 				/>
-				<EditorStatsWidget className={statsWidgetClass} />
+				{wordCount ? (
+					<EditorStatsWidget className={statsWidgetClass} />
+				) : undefined}
 			</div>
 		</EditorContext.Provider>
 	);
