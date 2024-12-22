@@ -14,7 +14,6 @@ export function BlobImageWrapper({
 }: NodeViewProps) {
 	const state = React.useContext(EditorContext);
 	const [blobUrl, setBlobUrl] = React.useState<string | null>(null);
-
 	React.useEffect(() => {
 		if (!node.attrs.isBlob) return;
 		const file = state.file.attachments[node.attrs.src as string];
@@ -26,6 +25,7 @@ export function BlobImageWrapper({
 
 	return (
 		<NodeViewWrapper>
+			{/* eslint-disable-next-line @next/next/no-img-element */}
 			<img
 				src={node.attrs.isBlob ? blobUrl : node.attrs.src}
 				alt={node.attrs.alt}

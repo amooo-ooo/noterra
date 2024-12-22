@@ -106,11 +106,12 @@ export function FilesSidebar({
 							<button
 								type="button"
 								onClick={async () => {
-									await file.delete();
 									modifyTabs({
 										type: "remove",
 										predicate: (tab) => tab.file.id === file.id,
 									});
+									// Make sure this runs after the tab close's save is run
+									setTimeout(() => file.delete(), 0);
 								}}
 							>
 								<Trash2Icon size="1.5em" />

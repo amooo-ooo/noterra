@@ -205,8 +205,16 @@
 		border: 1px solid var(--border-color);
 		box-shadow: 2px 4px 10px var(--shadow-color);
 
-		&:has(>img:only-child, >.node-blob-image:only-child) {
+		&:has(>p>:is(img, .node-blob-image):is(:only-child, :first-child)) {
 			padding: 0;
+
+			p {
+				margin: 0;
+			}
+
+			[class*="ProseMirror"] {
+				display: none !important;
+			}
 
 			img {
 				width: 100%;
@@ -215,7 +223,7 @@
 		}
 	}
 
-	.monaco-container section {
+	.monaco-container section, section section {
 		all: revert;
 	}
 }

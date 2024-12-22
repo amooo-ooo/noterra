@@ -136,6 +136,7 @@ export function Editor({
 			TableCell,
 			HardBreak,
 			BlobImages.configure({
+				inline: true,
 				allowBase64: true,
 			}),
 			PageNode,

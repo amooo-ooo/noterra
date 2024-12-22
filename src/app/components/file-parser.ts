@@ -17,6 +17,18 @@ function dir(path: string) {
 	return path.replace(/^(.*)[/\\][^/\\]*$/, "$1");
 }
 
+function safeTraversal(path: string) {
+	return path
+		.replace(/([^\\/]*[\\/])?\.\.[\\/]/g, "")
+		.replace(/[\\/]\.([\\/])/g, "$1");
+}
+
+function joinPath(left: string, right: string) {
+	if (right.startsWith("/") || right.startsWith("\\"))
+		return safeTraversal(right);
+	return safeTraversal(`${left.replace(/[\\/]$/, "")}/${right}`);
+}
+
 async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 	const result = new LocalFile(id, name);
 	const parser = new DOMParser();
@@ -28,8 +40,9 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 	);
 	const rootfiles = await Promise.all(
 		[...metaInf.querySelectorAll("rootfile")].map(async (el) => {
-			const path =
-				el.getAttribute("full-path") ?? raise("Rootfile without path");
+			const path = decodeURIComponent(
+				el.getAttribute("full-path") ?? raise("Rootfile without path"),
+			);
 			const content = await (
 				zip.file(path) ?? raise(`Rootfile '${path}' not found`)
 			).async("string");
@@ -40,6 +53,9 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 			};
 		}),
 	);
+	const titles = rootfiles
+		.flatMap((file) => [...file.dom.getElementsByTagName("dc:title")])
+		.map((el) => el.textContent);
 	const items = Object.fromEntries(
 		rootfiles.flatMap((file) =>
 			[...file.dom.querySelectorAll("item")].map(
@@ -48,38 +64,71 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 						item.getAttribute("id") as string,
 						{
 							id: item.getAttribute("id") as string,
-							href: `${dir(file.path)}/${item.getAttribute("href") as string}`,
+							href: joinPath(
+								dir(file.path),
+								decodeURIComponent(item.getAttribute("href") ?? ""),
+							),
 							type: item.getAttribute("media-type") as string,
 							el: item,
+							rootPath: file.path,
 						},
 					] as const,
 			),
 		),
 	);
+	function resolvePath(base: string, path?: string | null) {
+		const relPath = decodeURIComponent(path ?? "");
+		// TODO: standard way to do this????
+		for (const title of titles) {
+			if (relPath.startsWith(`${title}_files`)) {
+				return items[relPath.replace(/.*[\\/]([^\\/]*)$/, "$1")].href;
+			}
+		}
+		return joinPath(base, path ?? "");
+	}
 	const spine = await Promise.all(
 		rootfiles.flatMap((file) =>
 			[...file.dom.querySelectorAll("spine > itemref")].map(async (item) => {
 				const id = item.getAttribute("idref") as string;
 				const file =
-					zip.file(items[id].href) ?? raise(`Item '${id}' not found`);
+					zip.file(items[id].href) ??
+					raise(`Item '${id}' at '${items[id].href}' not found`);
 				const dom = parser.parseFromString(
 					await file.async("string"),
 					"application/xhtml+xml",
 				);
 				for (const img of dom.querySelectorAll("img")) {
-					const path = `${dir(items[id].href)}/${img.getAttribute("src")}`;
+					const path = resolvePath(
+						dir(items[id].href),
+						decodeURIComponent(img.getAttribute("src") ?? ""),
+					);
 					const file = zip.file(path) ?? raise(`Image at '${path}' not found`);
 					result.attachments[path] = await file.async("blob");
 					img.removeAttribute("src");
 					img.setAttribute("data-blob-src", path);
 					img.alt ||= path;
 				}
+				for (const unsupported of dom.querySelectorAll("ruby, rp, rt")) {
+					if (unsupported.hasAttribute("style")) {
+						const nw = dom.createElement("span");
+						nw.setAttribute("style", unsupported.getAttribute("style") ?? "");
+						nw.append(...unsupported.childNodes);
+						unsupported.replaceWith(nw);
+						continue;
+					}
+					unsupported.replaceWith(...unsupported.childNodes);
+				}
 				return dom;
 			}),
 		),
 	);
+	// for (const doc of spine) {
+	// 	if (doc.body.textContent?.trim() === "") {
+	// 		doc.body.replaceChildren(...doc.body.querySelectorAll("img"));
+	// 	}
+	// }
 	result.content = spine
-		.map((doc) => doc.querySelector("section")?.outerHTML ?? "")
+		.map((doc) => `<section>${doc.body.innerHTML}</section>`)
 		.join("");
 	return result;
 }
