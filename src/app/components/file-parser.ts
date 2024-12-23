@@ -167,11 +167,11 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 			}),
 		),
 	);
-	// for (const doc of spine) {
-	// 	if (doc.body.textContent?.trim() === "") {
-	// 		doc.body.replaceChildren(...doc.body.querySelectorAll("img"));
-	// 	}
-	// }
+	for (const doc of spine) {
+		if (doc.body.textContent?.trim() === "" && doc.body.querySelector("img")) {
+			doc.body.replaceChildren(...doc.body.querySelectorAll("img"));
+		}
+	}
 	result.content = spine
 		.map((doc) => `<section>${doc.body.innerHTML}</section>`)
 		.join("");

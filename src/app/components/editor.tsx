@@ -43,7 +43,7 @@ import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
 import { PageNode } from "@/app/editor-extensions/page-node";
-// import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
+import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
 import { BlobImages } from "@/app/editor-extensions/blob-imgs";
 import { Spacing } from "@/app/editor-extensions/spacing-extension";
@@ -52,6 +52,7 @@ import type { TabData } from "./editor-files";
 
 import "@/app/styles/tiptap.scss";
 import "katex/dist/katex.min.css";
+import { RubyAnnotation, RubyRoot } from "../editor-extensions/ruby-nodes";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 export const EditorContext = React.createContext<TabData>(null!);
@@ -145,7 +146,9 @@ export function Editor({
 			Spacing.configure({
 				types: ["heading", "paragraph"],
 			}),
-			// DesmosGraphExtension,
+			RubyRoot,
+			RubyAnnotation,
+			DesmosGraphExtension,
 		],
 		content: data.file.content,
 		immediatelyRender: false,

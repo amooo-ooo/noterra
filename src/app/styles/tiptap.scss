@@ -205,14 +205,14 @@
 		border: 1px solid var(--border-color);
 		box-shadow: 2px 4px 10px var(--shadow-color);
 
-		&:has(>p>:is(img, .node-blob-image):is(:only-child, :first-child)) {
+		&:has(>p:only-child>:is(img, .node-blob-image):first-child+img+br) {
 			padding: 0;
 
 			p {
 				margin: 0;
 			}
 
-			[class*="ProseMirror"] {
+			[class^="ProseMirror"] {
 				display: none !important;
 			}
 
