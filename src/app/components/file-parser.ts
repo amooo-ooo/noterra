@@ -108,6 +108,7 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 					await file.async("string"),
 					"application/xhtml+xml",
 				);
+				// Local image files
 				for (const img of dom.querySelectorAll("img")) {
 					const path = resolvePath(
 						dir(items[id].href),
@@ -119,16 +120,17 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 					img.setAttribute("data-blob-src", path);
 					img.alt ||= path;
 				}
-				for (const unsupported of dom.querySelectorAll("ruby, rp, rt")) {
-					if (unsupported.hasAttribute("style")) {
-						const nw = dom.createElement("span");
-						nw.setAttribute("style", unsupported.getAttribute("style") ?? "");
-						nw.append(...unsupported.childNodes);
-						unsupported.replaceWith(nw);
-						continue;
-					}
-					unsupported.replaceWith(...unsupported.childNodes);
-				}
+				// for (const unsupported of dom.querySelectorAll("ruby, rp, rt")) {
+				// 	if (unsupported.hasAttribute("style")) {
+				// 		const nw = dom.createElement("span");
+				// 		nw.setAttribute("style", unsupported.getAttribute("style") ?? "");
+				// 		nw.append(...unsupported.childNodes);
+				// 		unsupported.replaceWith(nw);
+				// 		continue;
+				// 	}
+				// 	unsupported.replaceWith(...unsupported.childNodes);
+				// }
+				// Custom EPUB CSS
 				for (const css of dom.querySelectorAll<
 					HTMLLinkElement | HTMLStyleElement
 				>('link[rel="stylesheet" i], style')) {
@@ -163,15 +165,17 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 							}
 						}
 				}
+				// Cover images
+				if (
+					dom.body.textContent?.trim() === "" &&
+					dom.body.querySelector("img")
+				) {
+					dom.body.replaceChildren(...dom.body.querySelectorAll("img"));
+				}
 				return dom;
 			}),
 		),
 	);
-	for (const doc of spine) {
-		if (doc.body.textContent?.trim() === "" && doc.body.querySelector("img")) {
-			doc.body.replaceChildren(...doc.body.querySelectorAll("img"));
-		}
-	}
 	result.content = spine
 		.map((doc) => `<section>${doc.body.innerHTML}</section>`)
 		.join("");
