@@ -226,4 +226,12 @@
 	.monaco-container section, section section {
 		all: revert;
 	}
+
+	ruby {
+		white-space: nowrap;
+		
+		rt {
+			border-bottom: 1px dashed var(--border-color);
+		}
+	}
 }

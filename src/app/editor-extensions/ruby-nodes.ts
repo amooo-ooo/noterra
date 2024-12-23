@@ -38,7 +38,9 @@ export const RubyRoot = Mark.create<RubyOptions>({
 
 	addOptions() {
 		return {
-			HTMLAttributes: {},
+			HTMLAttributes: {
+				spellcheck: false,
+			},
 		};
 	},
 
