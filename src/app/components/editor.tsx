@@ -35,7 +35,6 @@ import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
 import HardBreak from "@tiptap/extension-hard-break";
 import ListKeymap from "@tiptap/extension-list-keymap";
-import CharacterCount from "@tiptap/extension-character-count";
 import MathExtension from "@aarkue/tiptap-math-extension";
 
 import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-extension";
@@ -52,6 +51,7 @@ import {
 	RubyAnnotation,
 	RubyRoot,
 } from "@/app/editor-extensions/ruby-nodes";
+import { SelCharCount } from "@/app/editor-extensions/char-count";
 
 import type { TabData } from "./editor-files";
 
@@ -145,7 +145,7 @@ export function Editor({
 				allowBase64: true,
 			}),
 			PageNode,
-			CharacterCount.extend(),
+			SelCharCount.extend(),
 			MathExtension,
 			Spacing.configure({
 				types: ["heading", "paragraph"],
