@@ -29,6 +29,16 @@ function joinPath(left: string, right: string) {
 	return safeTraversal(`${left.replace(/[\\/]$/, "")}/${right}`);
 }
 
+function parseCSS(css: string) {
+	const node = document.createElement("style");
+	document.head.append(node);
+	node.disabled = true;
+	node.textContent = css;
+	const styles = [...document.styleSheets].find((x) => x.ownerNode === node);
+	node.remove();
+	return styles;
+}
+
 async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 	const result = new LocalFile(id, name);
 	const parser = new DOMParser();
@@ -86,6 +96,7 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 		}
 		return joinPath(base, path ?? "");
 	}
+	const cssCache: Record<string, CSSStyleSheet | undefined> = {};
 	const spine = await Promise.all(
 		rootfiles.flatMap((file) =>
 			[...file.dom.querySelectorAll("spine > itemref")].map(async (item) => {
@@ -117,6 +128,40 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 						continue;
 					}
 					unsupported.replaceWith(...unsupported.childNodes);
+				}
+				for (const css of dom.querySelectorAll<
+					HTMLLinkElement | HTMLStyleElement
+				>('link[rel="stylesheet" i], style')) {
+					let ruleset: CSSStyleSheet | undefined;
+					if (css.tagName.toUpperCase() === "LINK") {
+						const path = resolvePath(
+							dir(items[id].href),
+							decodeURIComponent(css.getAttribute("href") ?? ""),
+						);
+						ruleset = cssCache[path] ??= await (async () => {
+							const file = zip.file(path);
+							if (!file) {
+								console.warn(`CSS at '${path}' not found`);
+								return;
+							}
+							return parseCSS(await file.async("text"));
+						})();
+					} else {
+						const cssStr = css.textContent;
+						if (!cssStr) continue;
+						ruleset = parseCSS(cssStr);
+					}
+					if (!ruleset) continue;
+					for (const rule of ruleset?.cssRules ?? [])
+						if (rule instanceof CSSStyleRule) {
+							const styles = rule.style.cssText;
+							const els = dom.querySelectorAll(rule.selectorText);
+							for (const el of els) {
+								const oldStyle =
+									el.getAttribute("styles")?.replace(/;\s*$/, "") ?? "";
+								el.setAttribute("style", `${oldStyle};${styles}`);
+							}
+						}
 				}
 				return dom;
 			}),
