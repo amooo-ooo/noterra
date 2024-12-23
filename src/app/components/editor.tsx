@@ -47,12 +47,16 @@ import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extens
 import { BetterLinks } from "@/app/editor-extensions/better-links";
 import { BlobImages } from "@/app/editor-extensions/blob-imgs";
 import { Spacing } from "@/app/editor-extensions/spacing-extension";
+import {
+	RubyA11y,
+	RubyAnnotation,
+	RubyRoot,
+} from "@/app/editor-extensions/ruby-nodes";
 
 import type { TabData } from "./editor-files";
 
 import "@/app/styles/tiptap.scss";
 import "katex/dist/katex.min.css";
-import { RubyAnnotation, RubyRoot } from "../editor-extensions/ruby-nodes";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 export const EditorContext = React.createContext<TabData>(null!);
@@ -148,6 +152,7 @@ export function Editor({
 			}),
 			RubyRoot,
 			RubyAnnotation,
+			RubyA11y,
 			DesmosGraphExtension,
 		],
 		content: data.file.content,

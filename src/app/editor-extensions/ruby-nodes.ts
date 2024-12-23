@@ -71,15 +71,22 @@ export const RubyAnnotation = Mark.create({
 	},
 
 	renderHTML({ HTMLAttributes }) {
+		return ["rt", HTMLAttributes, 0];
+	},
+});
+
+export const RubyA11y = Mark.create({
+	name: "ruby-a11y",
+
+	parseHTML() {
 		return [
-			"span",
 			{
-				...HTMLAttributes,
-				style: `${HTMLAttributes.style ?? ""};display: contents;`,
+				tag: "rp",
 			},
-			["rp", " ("],
-			["rt", 0],
-			["rp", ")"],
 		];
+	},
+
+	renderHTML({ HTMLAttributes }) {
+		return ["rp", HTMLAttributes, 0];
 	},
 });
