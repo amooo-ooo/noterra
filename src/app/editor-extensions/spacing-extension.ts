@@ -153,7 +153,10 @@ export const Spacing = Extension.create<SpacingOptions>({
 												`${str}margin-${key}: ${`${value}`.replace(/(?<=[\d.])$/, "px")};`,
 											"",
 										)
-									: `${attributes.margin}`.replace(/([\d.])(\s|$)/, "$1px$2");
+									: `margin: ${attributes.margin};`.replace(
+											/([\d.])(\s|;)/,
+											"$1px$2",
+										);
 
 							return {
 								style: margins,
