@@ -80,9 +80,9 @@ const COLORS = [
 	...BASE_COLORS,
 
 	// transparency-based colours
-	...Array.from({ length: 6 }, (_, i) =>
+	...Array.from({ length: 5 }, (_, i) =>
 		BASE_COLORS.map((color) =>
-			color.replace(/rgb\((.+)\)/, `rgba($1, ${(i + 1) / 7})`)
+			color.replace(/rgb\((.+)\)/, `rgba($1, ${Math.round(((i + 1) / 6) * 100) / 100})`)
 		)
 	).flat(),
 ] as const;
