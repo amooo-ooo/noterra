@@ -42,7 +42,7 @@ export const SelCharCount = CharacterCount.extend<
 					this.editor.state.selection;
 				if (options?.mode === "nodeSize") return sel.content().size;
 				return this.options.textCounter(
-					this.editor.state.doc.textBetween(sel.from, sel.to),
+					this.editor.state.doc.textBetween(sel.from, sel.to, "\n"),
 				);
 			}
 			return characters(options);
@@ -56,7 +56,7 @@ export const SelCharCount = CharacterCount.extend<
 					(options?.node as Selection | undefined) ??
 					this.editor.state.selection;
 				return this.options.wordCounter(
-					this.editor.state.doc.textBetween(sel.from, sel.to),
+					this.editor.state.doc.textBetween(sel.from, sel.to, "\n"),
 				);
 			}
 			return words(options);

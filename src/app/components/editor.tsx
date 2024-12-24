@@ -145,7 +145,10 @@ export function Editor({
 				allowBase64: true,
 			}),
 			PageNode,
-			SelCharCount.extend(),
+			SelCharCount.extend().configure({
+				wordCounter: (text) =>
+					text.split(/\b\W*\b/g).filter((word) => word !== "").length,
+			}),
 			MathExtension,
 			Spacing.configure({
 				types: ["heading", "paragraph"],
