@@ -147,7 +147,7 @@ export function Editor({
 			PageNode,
 			SelCharCount.extend().configure({
 				wordCounter: (text) =>
-					text.split(/[^\w'-]+|[^\w]{2,}/g).filter((word) => word !== "")
+					text.split(/[^\w'-\u2019]+|[^\w]{2,}/g).filter((word) => word !== "")
 						.length,
 			}),
 			MathExtension,
