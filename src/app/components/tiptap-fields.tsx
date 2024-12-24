@@ -231,6 +231,16 @@ async function loadFont(faces: FontData[]) {
 	);
 }
 
+// https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Text_styling/Fundamentals#web_safe_fonts
+const WEB_SAFE_FONTS = new Set([
+	"Arial",
+	"Courier New",
+	"Georgia",	
+	"Times New Roman",
+	"Trebuchet MS",
+	"Verdana",
+]);
+
 export function FontFamilySelect() {
 	const [localFonts, setLocalFonts] = React.useState<FontMap>();
 	return (
@@ -254,7 +264,7 @@ export function FontFamilySelect() {
 					const fonts = await window.queryLocalFonts();
 					const fontMap: FontMap = {};
 					for (const font of fonts) {
-						if (font.family === "Inter") continue;
+						if (WEB_SAFE_FONTS.has(font.family) || font.family === "Inter") continue;
 						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 						(fontMap[font.family] ??= { loaded: false, faces: [] }).faces.push(
 							font,
@@ -271,6 +281,14 @@ export function FontFamilySelect() {
 					key="Inter"
 					style={{ fontFamily: "var(--font-inter-sans), inherit" }}
 				/>,
+				...[...WEB_SAFE_FONTS].map((font) => (
+					<Option
+						label={font}
+						value={font}
+						key={font}
+						style={{ fontFamily: font }}
+					/>
+				)),
 				// ...[
 				// 	["Inter", "var(--font-inter-sans), sans-serif"],
 				// 	["Comic Sans", "'Comic Sans MS', cursive, sans-serif"],
