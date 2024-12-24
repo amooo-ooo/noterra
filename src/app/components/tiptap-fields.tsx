@@ -3,7 +3,7 @@ import { EditorContext } from "./editor";
 import React from "react";
 import { Option, Select, type SelectProps } from "./select";
 import styles from "@/app/styles/editor-toolbar.module.scss";
-import { anyPass } from "./util";
+import { anyPass } from "@/app/util";
 
 export function TiptapButton({
 	label,

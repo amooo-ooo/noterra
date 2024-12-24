@@ -5,7 +5,7 @@ import { Editor } from "./editor";
 import { TabStrip } from "./tab-strip";
 import { ThemeButton } from "./theme-button";
 import { type TabData, LocalFile } from "./editor-files";
-import { unreachable } from "./util";
+import { unreachable } from "@/app/util";
 import { FilesSidebar } from "./files-sidebar";
 import { Option, Select } from "./select";
 import {

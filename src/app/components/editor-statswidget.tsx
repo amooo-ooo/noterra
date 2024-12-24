@@ -1,4 +1,4 @@
-import type { SelCharCountStorage } from "../editor-extensions/char-count";
+import type { SelCharCountStorage } from "@/app/editor-extensions/char-count";
 import { EditorContext } from "./editor";
 import React from "react";
 

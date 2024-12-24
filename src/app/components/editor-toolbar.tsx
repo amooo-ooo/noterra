@@ -2,7 +2,7 @@
 
 import React from "react";
 import { ReactSortable } from "react-sortablejs";
-import { unreachable } from "./util";
+import { unreachable } from "@/app/util";
 import type { ChainedCommands } from "@tiptap/react";
 import { FontFamilySelect, TiptapButton, TiptapSelect } from "./tiptap-fields";
 import styles from "@/app/styles/editor-toolbar.module.scss";
@@ -116,11 +116,15 @@ function Spacing() {
 			label={<FormatLineSpacing />}
 			title="Insert Spacing"
 			onChange={(value) => {
-				const action = (ctx: ChainedCommands) => {
-					return value.startsWith("lineHeight")
-						? ctx.setLineHeight(value.split("-")[1] ?? 0)
-						: ctx.setMargins({ [value.split("-")[0]]: value.split("-")[1] });
-				};
+				const action = value.startsWith("lineHeight")
+					? (ctx: ChainedCommands) => {
+							return value.startsWith("lineHeight")
+								? ctx.setLineHeight((value.split("-")[1] as `${number}em`) ?? 0)
+								: ctx.setMargins({
+										[value.split("-")[0]]: value.split("-")[1],
+									});
+						}
+					: (ctx: ChainedCommands) => ctx.setMargins({ [value]: "1em" });
 
 				if (editor) action(editor.chain().focus()).run();
 			}}
@@ -131,17 +135,17 @@ function Spacing() {
 					<Option label={value} value={`lineHeight-${value}em`} key={value} />
 				)),
 				// TODO: Actually implement margins properly
-				// ...Object.entries({
-				// 	Before: "Top",
-				// 	After: "Bottom",
-				// }).map(([label, value]) => (
-				// 	<Option
-				// 		label={`${editor?.getAttributes("heading").textAlign ? "Remove" : "Add"} Space ${label} Paragraph`}
-				// 		// label={`Space ${label} Paragraph`}
-				// 		value={`margin${value}-calc(8 / 11 * 1em)`}
-				// 		key={`${label}-${value}`}
-				// 	/>
-				// )),
+				...Object.entries({
+					Before: "top",
+					After: "bottom",
+				}).map(([label, value]) => (
+					<Option
+						label={`${editor?.getAttributes("heading").textAlign ? "Remove" : "Add"} Space ${label} Paragraph`}
+						// label={`Space ${label} Paragraph`}
+						value={value}
+						key={`${label}-${value}`}
+					/>
+				)),
 			]}
 		</Select>
 	);

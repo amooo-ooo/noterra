@@ -1,5 +1,31 @@
 import { Extension } from "@tiptap/core";
 
+type Sides = "top" | "left" | "bottom" | "right";
+type SidewiseProps<T> = Record<Sides, T>;
+type Size = number | `${number}${"" | "em" | "px" | "pt" | "rem" | "%"}`;
+type MarginProps =
+	| Partial<SidewiseProps<Size>>
+	| Size
+	| `${Size} ${Size}`
+	| `${Size} ${Size} ${Size}`
+	| `${Size} ${Size} ${Size} ${Size}`;
+
+function parseMargin(margin: MarginProps): SidewiseProps<Size> {
+	if (typeof margin === "object")
+		return { top: 0, left: 0, bottom: 0, right: 0, ...margin };
+	const sides = `${margin}`.split(" ") as Size[];
+	return Object.fromEntries<Size>(
+		(["top", "right", "bottom", "left"] as const).map((side, idx) => [
+			side,
+			sides[idx % sides.length],
+		]),
+	) as SidewiseProps<Size>;
+}
+
+// 0 satisfies Margin;
+// "1em .3px" satisfies Margin;
+// ({ left: "3em" }) satisfies Margin;
+
 export interface SpacingOptions {
 	/**
 	 * The types where the text spacing attribute can be applied.
@@ -13,7 +39,7 @@ export interface SpacingOptions {
 	 * @default "1.15em"
 	 * @example "1.5em"
 	 */
-	defaultSpacing: string;
+	defaultLineHeight: Size;
 
 	/**
 	 * The default margins spacing.
@@ -21,38 +47,17 @@ export interface SpacingOptions {
 	 * @example { marginTop: ".5em", marginBottom: ".5em" }
 	 */
 	defaultMargins: MarginProps;
-
-	/**
-	 * The default padding spacing.
-	 * @default {}
-	 * @example { paddingTop: ".5em", paddingBottom: ".5em" }
-	 */
-	defaultPadding: PaddingProps;
 }
-
-type MarginProps = {
-	marginTop?: string;
-	marginRight?: string;
-	marginBottom?: string;
-	marginLeft?: string;
-};
-
-type PaddingProps = {
-	paddingTop?: string;
-	paddingRight?: string;
-	paddingBottom?: string;
-	paddingLeft?: string;
-};
 
 declare module "@tiptap/core" {
 	interface Commands<ReturnType> {
-		Spacing: {
+		spacing: {
 			/**
 			 * Set the text spacing attribute
 			 * @param spacing The spacing
 			 * @example editor.commands.setLineHeight('1.5em')
 			 */
-			setLineHeight: (spacing: string) => ReturnType;
+			setLineHeight: (spacing: Size) => ReturnType;
 			/**
 			 * Unset the text spacing attribute
 			 * @example editor.commands.unsetLineHeight()
@@ -61,7 +66,7 @@ declare module "@tiptap/core" {
 			/**
 			 * Set the margin spacing attribute
 			 * @param margin The margins
-			 * @example editor.commands.setMargins({ marginTop: ".5em", marginBottom: ".5em" })
+			 * @example editor.commands.setMargins({ top: ".5em", bottom: ".5em" })
 			 */
 			setMargins: (margins: MarginProps) => ReturnType;
 			/**
@@ -69,17 +74,17 @@ declare module "@tiptap/core" {
 			 * @example editor.commands.unsetMargins()
 			 */
 			unsetMargins: () => ReturnType;
-			/**
-			 * Set the padding spacing attribute
-			 * @param padding The padding
-			 * @example editor.commands.setPadding({ paddingTop: ".5em", paddingBottom: ".5em" })
-			 */
-			setPadding: (padding: PaddingProps) => ReturnType;
-			/**
-			 * Unset the padding spacing attribute
-			 * @example editor.commands.unsetPadding()
-			 */
-			unsetPadding: () => ReturnType;
+			// /**
+			//  * Set the padding spacing attribute
+			//  * @param padding The padding
+			//  * @example editor.commands.setPadding({ paddingTop: ".5em", paddingBottom: ".5em" })
+			//  */
+			// setPadding: (padding: PaddingProps) => ReturnType;
+			// /**
+			//  * Unset the padding spacing attribute
+			//  * @example editor.commands.unsetPadding()
+			//  */
+			// unsetPadding: () => ReturnType;
 		};
 	}
 }
@@ -88,15 +93,14 @@ declare module "@tiptap/core" {
  * This extension allows you to add spacing between text.
  */
 export const Spacing = Extension.create<SpacingOptions>({
-	name: "Spacing",
+	name: "spacing",
 
 	addOptions() {
 		return {
 			types: [],
-			defaultSpacing: "1.15em",
-			defaultMargins: {},
-			defaultPadding: {},
-		};
+			defaultLineHeight: "1.15em",
+			defaultMargins: 0,
+		} satisfies SpacingOptions;
 	},
 
 	addGlobalAttributes() {
@@ -105,62 +109,79 @@ export const Spacing = Extension.create<SpacingOptions>({
 				types: this.options.types,
 				attributes: {
 					lineHeight: {
-						default: this.options.defaultSpacing,
+						default: this.options.defaultLineHeight,
 						parseHTML: (element) => {
-							return element.style.lineHeight || this.options.defaultSpacing;
+							return element.style.lineHeight || this.options.defaultLineHeight;
 						},
 						renderHTML: (attributes) => {
-							if (attributes.lineHeight === this.options.defaultSpacing) {
+							if (attributes.lineHeight === this.options.defaultLineHeight) {
 								return {};
 							}
 
-							return { style: `line-height: ${attributes.lineHeight}` };
+							return {
+								style: `line-height: ${attributes.lineHeight};`,
+							};
 						},
 					},
 					margin: {
 						default: this.options.defaultMargins,
 						parseHTML: (element) => {
-							return element.style.margin || this.options.defaultMargins;
+							const margins = parseMargin(this.options.defaultMargins);
+							return (
+								element.style.margin ||
+								Object.fromEntries(
+									(["top", "left", "bottom", "right"] as const).map((side) => [
+										side,
+										element.style.getPropertyValue(`margin-${side}`) ||
+											margins[side],
+									]),
+								)
+							);
 						},
-						renderHTML: (attributes) => {
-							if (attributes.margin === this.options.defaultMargins) {
+						renderHTML: (attributes: { margin?: MarginProps }) => {
+							if (
+								attributes.margin === this.options.defaultMargins ||
+								attributes.margin === undefined
+							) {
 								return {};
 							}
 
-							const margins = Object.entries(attributes.margin)
-								.map(
-									([key, value]) =>
-										`margin-${key.slice(6).toLowerCase()}: ${value};`,
-								)
-								.join(" ");
+							const margins =
+								typeof attributes.margin === "object"
+									? Object.entries(attributes.margin).reduce(
+											(str, [key, value]) =>
+												`${str}margin-${key}: ${`${value}`.replace(/(?<=[\d.])$/, "px")};`,
+											"",
+										)
+									: `${attributes.margin}`.replace(/([\d.])(\s|$)/, "$1px$2");
 
 							return {
 								style: margins,
 							};
 						},
 					},
-					padding: {
-						default: this.options.defaultPadding,
-						parseHTML: (element) => {
-							return element.style.padding || this.options.defaultPadding;
-						},
-						renderHTML: (attributes) => {
-							if (attributes.padding === this.options.defaultPadding) {
-								return {};
-							}
+					// padding: {
+					// 	default: this.options.defaultPadding,
+					// 	parseHTML: (element) => {
+					// 		return element.style.padding || this.options.defaultPadding;
+					// 	},
+					// 	renderHTML: (attributes) => {
+					// 		if (attributes.padding === this.options.defaultPadding) {
+					// 			return {};
+					// 		}
 
-							const paddings = Object.entries(attributes.padding)
-								.map(
-									([key, value]) =>
-										`padding-${key.slice(7).toLowerCase()}: ${value};`,
-								)
-								.join(" ");
+					// 		const paddings = Object.entries(attributes.padding)
+					// 			.map(
+					// 				([key, value]) =>
+					// 					`padding-${key.slice(7).toLowerCase()}: ${value};`,
+					// 			)
+					// 			.join(" ");
 
-							return {
-								style: paddings,
-							};
-						},
-					},
+					// 		return {
+					// 			style: paddings,
+					// 		};
+					// 	},
+					// },
 				},
 			},
 		];
@@ -169,7 +190,7 @@ export const Spacing = Extension.create<SpacingOptions>({
 	addCommands() {
 		return {
 			setLineHeight:
-				(spacing: string) =>
+				(spacing: Size) =>
 				({ commands }) => {
 					return this.options.types
 						.map((type) =>
@@ -198,22 +219,22 @@ export const Spacing = Extension.create<SpacingOptions>({
 						.map((type) => commands.resetAttributes(type, "margin"))
 						.every((response) => response);
 				},
-			setPadding:
-				(padding: PaddingProps) =>
-				({ commands }) => {
-					return this.options.types
-						.map((type) =>
-							commands.updateAttributes(type, { padding: padding }),
-						)
-						.every((response) => response);
-				},
-			unsetPadding:
-				() =>
-				({ commands }) => {
-					return this.options.types
-						.map((type) => commands.resetAttributes(type, "padding"))
-						.every((response) => response);
-				},
+			// setPadding:
+			// 	(padding: PaddingProps) =>
+			// 	({ commands }) => {
+			// 		return this.options.types
+			// 			.map((type) =>
+			// 				commands.updateAttributes(type, { padding: padding }),
+			// 			)
+			// 			.every((response) => response);
+			// 	},
+			// unsetPadding:
+			// 	() =>
+			// 	({ commands }) => {
+			// 		return this.options.types
+			// 			.map((type) => commands.resetAttributes(type, "padding"))
+			// 			.every((response) => response);
+			// 	},
 		};
 	},
 });

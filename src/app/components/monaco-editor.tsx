@@ -6,7 +6,7 @@ import {
 	type NodeViewProps,
 	NodeViewWrapper,
 } from "@tiptap/react";
-import "../editor-extensions/monaco-node-extension";
+import "@/app/editor-extensions/monaco-node-extension";
 import type { editor as MonacoEditorNS } from "monaco-editor";
 import React from "react";
 import { EditorContext } from "./editor";

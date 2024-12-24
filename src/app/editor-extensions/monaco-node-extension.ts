@@ -4,7 +4,7 @@ import {
 	ReactNodeViewRenderer,
 	type SingleCommands,
 } from "@tiptap/react";
-import { MonacoEditor } from "../components/monaco-editor";
+import { MonacoEditor } from "@/app/components/monaco-editor";
 import type { EditorProps } from "@monaco-editor/react";
 
 declare module "@tiptap/extension-code-block" {

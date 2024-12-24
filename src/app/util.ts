@@ -9,3 +9,5 @@ export function anyPass<T>(arr: T[], predicate: (value: T) => boolean) {
 	}
 	return false;
 }
+
+export type ItemOf<T> = T extends (infer I)[] ? I : never;

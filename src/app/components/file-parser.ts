@@ -158,6 +158,7 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 						if (rule instanceof CSSStyleRule) {
 							const styles = rule.style.cssText;
 							const els = dom.querySelectorAll(rule.selectorText);
+							// if (els.length) console.log([...els], styles);
 							for (const el of els) {
 								const oldStyle =
 									el.getAttribute("styles")?.replace(/;\s*$/, "") ?? "";

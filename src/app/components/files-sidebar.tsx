@@ -6,7 +6,7 @@ import {
 	Trash2Icon,
 	X,
 } from "lucide-react";
-import { unreachable } from "./util";
+import { unreachable } from "@/app/util";
 import { TabsContext } from "./tab-manager";
 
 import styles from "@/app/styles/files-sidebar.module.scss";
