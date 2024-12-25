@@ -54,37 +54,39 @@ import { ThemeContext } from "./global-listeners";
 import { EditorContext } from "./editor";
 
 const BASE_COLORS = [
-	"rgb(152, 0, 0)",
-	"rgb(255, 0, 0)",
-	"rgb(255, 153, 0)",
-	"rgb(255, 255, 0)",
-	"rgb(0, 255, 0)",
-	"rgb(0, 255, 255)",
-	"rgb(74, 134, 232)",
-	"rgb(0, 0, 255)",
-	"rgb(153, 0, 255)",
-	"rgb(255, 0, 255)",
+	"#980000",
+	"#ff0000",
+	"#ff9900",
+	"#ffff00",
+	"#00ff00",
+	"#00ffff",
+	"#4a86e8",
+	"#0000ff",
+	"#9900ff",
+	"#ff00ff",
 ];
 
 const COLORS = [
-	"rgb(0, 0, 0)",
-	"rgb(67, 67, 67)",
-	"rgb(102, 102, 102)",
-	"rgb(153, 153, 153)",
-	"rgb(183, 183, 183)",
-	"rgb(204, 204, 204)",
-	"rgb(217, 217, 217)",
-	"rgb(239, 239, 239)",
-	"rgb(243, 243, 243)",
-	"rgb(255, 255, 255)",
+	"#000000",
+	"#434343",
+	"#666666",
+	"#999999",
+	"#b7b7b7",
+	"#cccccc",
+	"#d9d9d9",
+	"#efefef",
+	"#f3f3f3",
+	"#ffffff",
 	...BASE_COLORS,
 
-	// transparency-based colours
-	...Array.from({ length: 5 }, (_, i) =>
-		BASE_COLORS.map((color) =>
-			color.replace(/rgb\((.+)\)/, `rgba($1, ${Math.round(((i + 1) / 6) * 100) / 100})`)
-		)
-	).flat(),
+	// translucency-based colours
+	...new Array(5)
+		.fill(null)
+		.flatMap((_, i) =>
+			BASE_COLORS.map(
+				(color) => `${color}${(Math.floor(((i + 1) / 6) * 0xff)).toString(16)}`,
+			),
+		),
 ] as const;
 
 function TextColorSelect() {
@@ -93,7 +95,7 @@ function TextColorSelect() {
 		<TiptapSelect
 			label="Text Color"
 			detect={(ed) =>
-				ed.getAttributes("textStyle").color ?? (dark ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)")
+				ed.getAttributes("textStyle").color ?? (dark ? "#ffffff" : "#000000")
 			}
 			action={(value, ctx) => ctx.setColor(value)}
 			className={`${styles["text-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
