@@ -379,7 +379,7 @@ export const SelectPopover = React.forwardRef<HTMLDivElement, PopoverProps>(
 					className={styles["popout-scroll-container"]}
 					style={
 						typeof display === "object" && display.type === "grid"
-							? { gridTemplateColumns: `repeat(${display.width * 2}, auto)`, padding: "2px" }
+							? { gridTemplateColumns: `repeat(${display.width * 2}, auto)` }
 							: {}
 					}
 					ref={ref}
