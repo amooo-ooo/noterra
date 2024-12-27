@@ -57,6 +57,7 @@ import type { TabData } from "./editor-files";
 
 import "@/app/styles/tiptap.scss";
 import "katex/dist/katex.min.css";
+import { ScrollProvider } from "./global-listeners";
 
 // biome-ignore lint/style/noNonNullAssertion: <explanation>
 export const EditorContext = React.createContext<TabData>(null!);
@@ -222,18 +223,15 @@ export function Editor({
 			);
 	}, [editor, data.initialSelection]);
 
-	const [scrollingElement, setScrollingElement] =
-		React.useState<HTMLElement | null>(null);
-	React.useEffect(() => {
-		data.scrollingElement = scrollingElement ?? undefined;
-		if (!scrollingElement) return;
-		const callback = () => {
-			data.scrollPos = scrollingElement.scrollTop;
-			data.dirtyState();
-		};
-		scrollingElement.addEventListener("scroll", callback, { passive: true });
-		return () => scrollingElement.removeEventListener("scroll", callback);
-	}, [scrollingElement, data]);
+	// const [scrollingElement, setScrollingElement] =
+	// 	React.useState<HTMLElement | null>(null);
+	// React.useEffect(() => {
+	// 	data.scrollingElement = scrollingElement ?? undefined;
+	// 	if (!scrollingElement) return;
+	// 	const callback = ;
+	// 	scrollingElement.addEventListener("scroll", callback, { passive: true });
+	// 	return () => scrollingElement.removeEventListener("scroll", callback);
+	// }, [scrollingElement, data]);
 
 	React.useEffect(() => {
 		editor?.on("selectionUpdate", () => {
@@ -247,11 +245,15 @@ export function Editor({
 	if (skipRender) return <></>;
 	return (
 		<EditorContext.Provider value={data}>
-			<div
+			<ScrollProvider
 				className={className}
 				ref={(el) => {
 					if (el && data.scrollPos) el.scrollTop = data.scrollPos;
-					setScrollingElement(el);
+					// setScrollingElement(el);
+				}}
+				onScroll={(e) => {
+					data.scrollPos = e.currentTarget.scrollTop;
+					data.dirtyState();
 				}}
 			>
 				{data.locked ? undefined : <EditorToolbar className={toolbarClass} />}
@@ -265,7 +267,7 @@ export function Editor({
 				{wordCount ? (
 					<EditorStatsWidget className={statsWidgetClass} />
 				) : undefined}
-			</div>
+			</ScrollProvider>
 		</EditorContext.Provider>
 	);
 }

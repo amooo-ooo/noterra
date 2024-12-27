@@ -12,6 +12,7 @@ import React from "react";
 import { EditorContext } from "./editor";
 import styles from "@/app/styles/monaco-editor.module.scss";
 import { Option, Select } from "./select";
+import { ScrollContext } from "./global-listeners";
 
 type RangeListener = [Node, (selection: Selection) => void];
 const SelectionHandler = React.createContext<RangeListener[]>([]);
@@ -188,6 +189,11 @@ export function MonacoEditor({
 		return "(auto)";
 	}, [monaco, node.attrs.language]);
 
+	const [updatePosition, setUpdateCb] = React.useState(() => () => {});
+	const scrollState = React.useContext(ScrollContext);
+	React.useEffect(() => {
+		if (scrollState) updatePosition();
+	}, [scrollState, updatePosition]);
 	const languageOptions = React.useMemo(
 		() => [
 			<Option key="(auto)" value="(auto)" />,
@@ -209,22 +215,13 @@ export function MonacoEditor({
 					if (!update) return;
 					const cb = () => update();
 					requestAnimationFrame(cb);
-					tiptapState.scrollingElement?.addEventListener("scroll", cb, {
-						passive: true,
-					});
-					return () =>
-						tiptapState.scrollingElement?.removeEventListener("scroll", cb);
+					setUpdateCb(cb);
 				}}
 			>
 				{languageOptions}
 			</Select>
 		),
-		[
-			currentLanguage,
-			updateAttributes,
-			languageOptions,
-			tiptapState.scrollingElement,
-		],
+		[currentLanguage, updateAttributes, languageOptions],
 	);
 
 	return (

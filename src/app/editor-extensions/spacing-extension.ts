@@ -1,30 +1,5 @@
 import { Extension } from "@tiptap/core";
-
-type Sides = "top" | "left" | "bottom" | "right";
-type SidewiseProps<T> = Record<Sides, T>;
-type Size = number | `${number}${"" | "em" | "px" | "pt" | "rem" | "%"}`;
-type MarginProps =
-	| Partial<SidewiseProps<Size>>
-	| Size
-	| `${Size} ${Size}`
-	| `${Size} ${Size} ${Size}`
-	| `${Size} ${Size} ${Size} ${Size}`;
-
-function parseMargin(margin: MarginProps): SidewiseProps<Size> {
-	if (typeof margin === "object")
-		return { top: 0, left: 0, bottom: 0, right: 0, ...margin };
-	const sides = `${margin}`.split(" ") as Size[];
-	return Object.fromEntries<Size>(
-		(["top", "right", "bottom", "left"] as const).map((side, idx) => [
-			side,
-			sides[idx % sides.length],
-		]),
-	) as SidewiseProps<Size>;
-}
-
-// 0 satisfies Margin;
-// "1em .3px" satisfies Margin;
-// ({ left: "3em" }) satisfies Margin;
+import { type Size, type SidedProps, parseMargin } from "@/app/css-util";
 
 export interface SpacingOptions {
 	/**
@@ -46,7 +21,7 @@ export interface SpacingOptions {
 	 * @default {}
 	 * @example { marginTop: ".5em", marginBottom: ".5em" }
 	 */
-	defaultMargins: MarginProps;
+	defaultMargins: SidedProps;
 }
 
 declare module "@tiptap/core" {
@@ -68,7 +43,7 @@ declare module "@tiptap/core" {
 			 * @param margin The margins
 			 * @example editor.commands.setMargins({ top: ".5em", bottom: ".5em" })
 			 */
-			setMargins: (margins: MarginProps) => ReturnType;
+			setMargins: (margins: SidedProps) => ReturnType;
 			/**
 			 * Unset the margin spacing attribute
 			 * @example editor.commands.unsetMargins()
@@ -138,7 +113,7 @@ export const Spacing = Extension.create<SpacingOptions>({
 								)
 							);
 						},
-						renderHTML: (attributes: { margin?: MarginProps }) => {
+						renderHTML: (attributes: { margin?: SidedProps }) => {
 							if (
 								attributes.margin === this.options.defaultMargins ||
 								attributes.margin === undefined
@@ -209,7 +184,7 @@ export const Spacing = Extension.create<SpacingOptions>({
 						.every((response) => response);
 				},
 			setMargins:
-				(margins: MarginProps) =>
+				(margins: SidedProps) =>
 				({ commands }) => {
 					return this.options.types
 						.map((type) => commands.updateAttributes(type, { margin: margins }))

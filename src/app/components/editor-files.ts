@@ -62,7 +62,6 @@ export class TabData {
 	readonly file: File;
 	editor?: TipTapEditor;
 	lastKeyPress?: KeyboardEvent["key"];
-	scrollingElement?: HTMLElement;
 	scrollPos = 0;
 	locked = false;
 	index?: number;
@@ -92,7 +91,6 @@ export class TabData {
 		const newObj = new TabData(this.file);
 		newObj.editor = this.editor;
 		newObj.lastKeyPress = this.lastKeyPress;
-		newObj.scrollingElement = this.scrollingElement;
 		newObj.scrollPos = this.scrollPos;
 		newObj.locked = this.locked;
 		newObj.tryIndex = this.tryIndex;
