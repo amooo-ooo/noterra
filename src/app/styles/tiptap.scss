@@ -204,6 +204,7 @@
 		background-color: var(--bg-1);
 		border: 1px solid var(--border-color);
 		box-shadow: 2px 4px 10px var(--shadow-color);
+		position: relative;
 
 		&:has(>p:only-child>:is(img, .node-blob-image):first-child+img+br) {
 			padding: 0;

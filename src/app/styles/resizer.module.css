@@ -1,0 +1,76 @@
+.container {
+	display: inline-flex;
+}
+
+.layout-select {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+}
+
+.popover {
+	--highlight: Highlight;
+
+	background: transparent;
+	border: 2px solid var(--highlight);
+	border-radius: 5px;
+	overflow: visible;
+
+	>.action-container {
+		position: absolute;
+		inset: -7px;
+		display: grid;
+		grid: "nw n ne""w c e""sw s se";
+		grid-template-columns: 12px auto 12px;
+		grid-template-rows: 12px auto 12px;
+
+		>.nw {
+			cursor: nw-resize;
+		}
+
+		>.n {
+			cursor: n-resize;
+		}
+
+		>.ne {
+			cursor: ne-resize;
+		}
+
+		>.w {
+			cursor: w-resize;
+		}
+
+		>.c {
+			cursor: move;
+		}
+
+		>.e {
+			cursor: e-resize;
+		}
+
+		>.sw {
+			cursor: sw-resize;
+		}
+
+		>.s {
+			cursor: s-resize;
+		}
+
+		>.se {
+			cursor: se-resize;
+		}
+	}
+
+	:has(>.handle-sq) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.handle-sq {
+		background-color: var(--highlight);
+		width: 8px;
+		aspect-ratio: 1;
+		border-radius: 2px;
+	}
+}

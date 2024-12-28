@@ -1,6 +1,7 @@
 import React from "react";
 import { EditorContext } from "@/app/components/editor";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
+import { Resizer, type Layout } from "@/app/components/resizer";
 
 export function BlobImageWrapper({
 	// editor,
@@ -9,7 +10,7 @@ export function BlobImageWrapper({
 	// selected,
 	// extension,
 	// getPos,
-	// updateAttributes,
+	updateAttributes,
 	// deleteNode,
 }: NodeViewProps) {
 	const state = React.useContext(EditorContext);
@@ -25,12 +26,19 @@ export function BlobImageWrapper({
 
 	return (
 		<NodeViewWrapper>
-			{/* eslint-disable-next-line @next/next/no-img-element */}
-			<img
-				src={node.attrs.isBlob ? blobUrl : node.attrs.src}
-				alt={node.attrs.alt}
-				title={node.attrs.title}
-			/>
+			<Resizer
+				layout={node.attrs.layout as Layout}
+				setLayout={(l) => updateAttributes({ layout: l })}
+				maintainAspectRatio
+			>
+				{/* eslint-disable-next-line @next/next/no-img-element */}
+				<img
+					src={node.attrs.isBlob ? blobUrl : node.attrs.src}
+					alt={node.attrs.alt}
+					title={node.attrs.title}
+					style={{ width: "100%", height: "100%" }}
+				/>
+			</Resizer>
 		</NodeViewWrapper>
 	);
 }

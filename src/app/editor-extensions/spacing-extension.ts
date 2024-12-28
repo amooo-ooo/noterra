@@ -1,5 +1,9 @@
 import { Extension } from "@tiptap/core";
-import { type Size, type SidedProps, parseMargin } from "@/app/css-util";
+import {
+	type Size,
+	type SidedSizeProps,
+	parseSidedSizes,
+} from "@/app/css-util";
 
 export interface SpacingOptions {
 	/**
@@ -21,7 +25,7 @@ export interface SpacingOptions {
 	 * @default {}
 	 * @example { marginTop: ".5em", marginBottom: ".5em" }
 	 */
-	defaultMargins: SidedProps;
+	defaultMargins: SidedSizeProps;
 }
 
 declare module "@tiptap/core" {
@@ -43,7 +47,7 @@ declare module "@tiptap/core" {
 			 * @param margin The margins
 			 * @example editor.commands.setMargins({ top: ".5em", bottom: ".5em" })
 			 */
-			setMargins: (margins: SidedProps) => ReturnType;
+			setMargins: (margins: SidedSizeProps) => ReturnType;
 			/**
 			 * Unset the margin spacing attribute
 			 * @example editor.commands.unsetMargins()
@@ -101,7 +105,7 @@ export const Spacing = Extension.create<SpacingOptions>({
 					margin: {
 						default: this.options.defaultMargins,
 						parseHTML: (element) => {
-							const margins = parseMargin(this.options.defaultMargins);
+							const margins = parseSidedSizes(this.options.defaultMargins);
 							return (
 								element.style.margin ||
 								Object.fromEntries(
@@ -113,7 +117,7 @@ export const Spacing = Extension.create<SpacingOptions>({
 								)
 							);
 						},
-						renderHTML: (attributes: { margin?: SidedProps }) => {
+						renderHTML: (attributes: { margin?: SidedSizeProps }) => {
 							if (
 								attributes.margin === this.options.defaultMargins ||
 								attributes.margin === undefined
@@ -184,7 +188,7 @@ export const Spacing = Extension.create<SpacingOptions>({
 						.every((response) => response);
 				},
 			setMargins:
-				(margins: SidedProps) =>
+				(margins: SidedSizeProps) =>
 				({ commands }) => {
 					return this.options.types
 						.map((type) => commands.updateAttributes(type, { margin: margins }))

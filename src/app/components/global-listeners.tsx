@@ -95,12 +95,15 @@ export function ScrollProvider(props: React.HTMLProps<HTMLDivElement>) {
 	return (
 		<ScrollContext.Provider value={scrollPos}>
 			<div
-				onScroll={(e) => {
-					setScrollPos(e.currentTarget);
-					props.onScroll?.(e);
-				}}
 				style={{ overflow: "auto" }}
 				{...props}
+				onScroll={(e) => {
+					setScrollPos({
+						scrollTop: e.currentTarget.scrollTop,
+						scrollLeft: e.currentTarget.scrollLeft,
+					});
+					props.onScroll?.(e);
+				}}
 			/>
 		</ScrollContext.Provider>
 	);

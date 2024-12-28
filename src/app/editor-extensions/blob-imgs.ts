@@ -1,6 +1,11 @@
 import Image from "@tiptap/extension-image";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { BlobImageWrapper } from "./blob-image-wrapper";
+import {
+	type Layout,
+	layoutCss,
+	layoutFromCss,
+} from "@/app/components/resizer";
 
 export const BlobImages = Image.extend({
 	addAttributes() {
@@ -21,6 +26,30 @@ export const BlobImages = Image.extend({
 				},
 				renderHTML: (attrs) =>
 					attrs.isBlob ? { "data-blob-src": attrs.src } : { src: attrs.src },
+			},
+			layout: {
+				default: {
+					type: "inline",
+					width: "auto",
+					height: "auto",
+					margin: 0,
+				} satisfies Layout,
+				parseHTML(el) {
+					return layoutFromCss(el.style);
+				},
+				renderHTML(attributes) {
+					return {
+						style: Object.entries(layoutCss(attributes.layout))
+							.map(
+								([attr, val]) =>
+									`${attr.replaceAll(
+										/[A-Z]/g,
+										(match) => `-${match.toLowerCase()}`,
+									)}: ${val};`,
+							)
+							.join(""),
+					};
+				},
 			},
 		};
 	},
