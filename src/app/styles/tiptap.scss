@@ -217,9 +217,10 @@
 				display: none !important;
 			}
 
-			img {
+			img, .node-blob-image {
 				width: 100%;
 				display: block;
+				line-height: 0;
 			}
 		}
 	}

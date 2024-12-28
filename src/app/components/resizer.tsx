@@ -101,12 +101,190 @@ export function layoutCss(layout: Layout): React.CSSProperties {
 	}
 }
 
-function clearDragImage(e: React.DragEvent) {
+function dragHandle(e: React.DragEvent) {
+	e.stopPropagation();
 	const img = new Image();
 	img.src =
 		"data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
 	e.dataTransfer.setDragImage(img, 0, 0);
 	e.dataTransfer.effectAllowed = "none";
+}
+
+function ResizeWidget({
+	maintainAspectRatio,
+	rect,
+	updateRect,
+	commitLayout,
+	layout,
+	setLayout,
+	setOpen,
+}: {
+	maintainAspectRatio?: boolean;
+	rect: DOMRect | undefined;
+	updateRect: () => void;
+	commitLayout: () => void;
+	layout: Layout;
+	setLayout: (value: Layout) => void;
+	setOpen: (open: boolean) => void;
+}) {
+	const scrollState = React.useContext(ScrollContext);
+
+	React.useEffect(() => {
+		if (scrollState) updateRect();
+	}, [scrollState, updateRect]);
+
+	return (
+		<div
+			popover="auto"
+			onToggle={(el) => {
+				if (!el.currentTarget.matches(":popover-open")) setOpen(false);
+			}}
+			ref={(el) => el?.showPopover()}
+			style={{
+				width: rect?.width ?? 0,
+				height: rect?.height ?? 0,
+				top: rect?.top ?? 0,
+				left: rect?.left ?? 0,
+			}}
+			className={styles.popover}
+		>
+			<div className={styles["action-container"]}>
+				{/* TODO: other handles should resize/move accordingly */}
+				{/* for 'inline' this may not be sensible for the logical-start-side handles */}
+				{/* float and absolute can modify their inset/margins to counter the growth */}
+				{/* in order to keep the mouse on the handle. 'inline' may also be able to */}
+				{/* handle this for the north handle when a scrollbar is present */}
+				{/* also, figure a suitable alternative display/action in those places where */}
+				{/* dragging is impossible - e.g. hide the .handle-sq's on those sides */}
+				<div className={styles.nw}>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<div className={styles.n}>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<div className={styles.ne}>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<div className={styles.w}>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<div className={styles.c} draggable />
+				<div
+					className={styles.e}
+					onDragStart={dragHandle}
+					onDrag={(e) => {
+						if (!e.pageX && !e.pageY) return;
+						setLayout({
+							...layout,
+							width: e.pageX - (rect?.left ?? 0),
+						});
+					}}
+					onDragEnd={commitLayout}
+				>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<div className={styles.sw}>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<div
+					className={styles.s}
+					onDragStart={dragHandle}
+					onDrag={(e) => {
+						if (!e.pageX && !e.pageY) return;
+						setLayout({
+							...layout,
+							height: e.pageY - (rect?.top ?? 0),
+						});
+					}}
+					onDragEnd={commitLayout}
+				>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<div
+					className={styles.se}
+					draggable
+					onDragStart={dragHandle}
+					onDrag={(e) => {
+						if (!e.pageX && !e.pageY) return;
+						if (maintainAspectRatio && !e.shiftKey) {
+							const ratio = rect ? rect.width / rect.height : 1;
+							const minDim = Math.min(
+								e.pageX - (rect?.left ?? 0),
+								(e.pageY - (rect?.top ?? 0)) * ratio,
+							);
+							setLayout({
+								...layout,
+								width: minDim,
+								height: minDim / ratio,
+							});
+						} else {
+							setLayout({
+								...layout,
+								width: e.pageX - (rect?.left ?? 0),
+								height: e.pageY - (rect?.top ?? 0),
+							});
+						}
+					}}
+					onDragEnd={commitLayout}
+				>
+					<div className={styles["handle-sq"]} />
+				</div>
+				<Select
+					display="horizontal"
+					value={layout.type}
+					className={styles["layout-select"]}
+					onChange={(type) => {
+						switch (type) {
+							case "inline":
+								setLayout({
+									type: "inline",
+									width: layout.width,
+									height: layout.height,
+									margin: layout.margin,
+								});
+								break;
+							case "wrap":
+								setLayout({
+									type: "wrap",
+									width: layout.width,
+									height: layout.height,
+									margin: layout.margin,
+									setting:
+										"setting" in layout
+											? "left" in layout.setting
+												? {
+														left: Number.parseFloat(`${layout.setting.left}`),
+													}
+												: "right" in layout.setting
+													? {
+															right: Number.parseFloat(
+																`${layout.setting.right}`,
+															),
+														}
+													: { left: 0 }
+											: { left: 0 },
+								});
+								break;
+							case "absolute":
+								setLayout({
+									type: "absolute",
+									width: layout.width,
+									height: layout.height,
+									margin: layout.margin,
+									zIndex: 1,
+									setting: "setting" in layout ? layout.setting : {},
+								});
+						}
+						commitLayout();
+					}}
+				>
+					<Option value="inline" label={<LetterTextIcon size="1.5em" />} />
+					<Option value="wrap" label={<WrapTextIcon size="1.5em" />} />
+					<Option value="absolute" label={<BringToFrontIcon size="1.5em" />} />
+				</Select>
+			</div>
+		</div>
+	);
 }
 
 export function Resizer({
@@ -121,17 +299,20 @@ export function Resizer({
 }>) {
 	const editor = React.useContext(EditorContext);
 	const containerEl = React.useRef<HTMLSpanElement | null>(null);
-	const popoverEl = React.useRef<HTMLDivElement | null>(null);
 
 	const [_layout, _setLayout] = React.useState(layout);
-	React.useEffect(() => {
-		_setLayout(layout);
-	}, [layout]);
-
+	React.useEffect(() => _setLayout(layout), [layout]);
+	const commitLayout = React.useCallback(
+		() => setLayout(_layout),
+		[setLayout, _layout],
+	);
 	const style = React.useMemo(() => layoutCss(_layout), [_layout]);
 
-	React.useContext(ScrollContext);
-	const rect = containerEl.current?.getBoundingClientRect();
+	const [rect, setRect] = React.useState<DOMRect>();
+	const updateRect = React.useCallback(
+		() => setRect(containerEl.current?.getBoundingClientRect()),
+		[],
+	);
 	React.useEffect(() => {
 		if (
 			!containerEl.current ||
@@ -139,19 +320,23 @@ export function Resizer({
 			layout.height !== "auto"
 		)
 			return;
-		const observer = new ResizeObserver(() => _setLayout(layout)); // Just force rerender
+		const observer = new ResizeObserver(() => updateRect());
 		observer.observe(containerEl.current);
 		return () => observer.disconnect();
-	}, [layout]);
+	}, [layout, updateRect]);
 
+	const [open, setOpen] = React.useState(false);
+
+	// TODO: own tab handling (tiptap acts as if its inline text, jank)
 	return (
 		<span
 			style={style}
 			ref={containerEl}
-			onClick={() => editor.locked || popoverEl.current?.showPopover()}
+			onClick={() => editor.locked || setOpen(true) || updateRect()}
 			onKeyUp={(e) => {
 				if (e.key === "Enter" && !editor.locked) {
-					popoverEl.current?.showPopover();
+					setOpen(true);
+					updateRect();
 				}
 			}}
 			// biome-ignore lint/a11y/noNoninteractiveTabindex: <explanation>
@@ -159,164 +344,22 @@ export function Resizer({
 			className={styles.container}
 		>
 			{children}
-			<div
-				popover="auto"
-				ref={popoverEl}
-				style={{
-					width: rect?.width ?? 0,
-					height: rect?.height ?? 0,
-					top: rect?.top ?? 0,
-					left: rect?.left ?? 0,
-				}}
-				className={styles.popover}
-			>
-				<div className={styles["action-container"]}>
-					{/* TODO: other handles should resize/move accordingly */}
-					{/* for 'inline' this may not be sensible for the logical-start-side handles */}
-					{/* float and absolute can modify their inset/margins to counter the growth */}
-					{/* in order to keep the mouse on the handle. 'inline' may also be able to */}
-					{/* handle this for the north handle when a scrollbar is present */}
-					{/* also, figure a suitable alternative display/action in those places where */}
-					{/* dragging is impossible - e.g. hide the .handle-sq's on those sides */}
-					<div className={styles.nw}>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<div className={styles.n}>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<div className={styles.ne}>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<div className={styles.w}>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<div className={styles.c} draggable />
-					<div
-						className={styles.e}
-						onDragStart={(e) => {
-							e.stopPropagation();
-							clearDragImage(e);
-						}}
-						onDrag={(e) => {
-							if (!e.pageX && !e.pageY) return;
-							_setLayout({
-								...layout,
-								width: e.pageX - (rect?.left ?? 0),
-							});
-						}}
-						onDragEnd={() => setLayout(_layout)}
-					>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<div className={styles.sw}>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<div
-						className={styles.s}
-						onDragStart={(e) => {
-							e.stopPropagation();
-							clearDragImage(e);
-						}}
-						onDrag={(e) => {
-							if (!e.pageX && !e.pageY) return;
-							_setLayout({
-								...layout,
-								height: e.pageY - (rect?.top ?? 0),
-							});
-						}}
-						onDragEnd={() => setLayout(_layout)}
-					>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<div
-						className={styles.se}
-						draggable
-						onDragStart={(e) => {
-							e.stopPropagation();
-							clearDragImage(e);
-						}}
-						onDrag={(e) => {
-							if (!e.pageX && !e.pageY) return;
-							if (maintainAspectRatio && !e.shiftKey) {
-								const ratio = rect ? rect.width / rect.height : 1;
-								const minDim = Math.min(
-									e.pageX - (rect?.left ?? 0),
-									(e.pageY - (rect?.top ?? 0)) * ratio,
-								);
-								_setLayout({
-									...layout,
-									width: minDim,
-									height: minDim / ratio,
-								});
-							} else {
-								_setLayout({
-									...layout,
-									width: e.pageX - (rect?.left ?? 0),
-									height: e.pageY - (rect?.top ?? 0),
-								});
-							}
-						}}
-						onDragEnd={() => setLayout(_layout)}
-					>
-						<div className={styles["handle-sq"]} />
-					</div>
-					<Select
-						display="horizontal"
-						value={layout.type}
-						className={styles["layout-select"]}
-						onChange={(type) => {
-							switch (type) {
-								case "inline":
-									setLayout({
-										type: "inline",
-										width: layout.width,
-										height: layout.height,
-										margin: layout.margin,
-									});
-									break;
-								case "wrap":
-									setLayout({
-										type: "wrap",
-										width: layout.width,
-										height: layout.height,
-										margin: layout.margin,
-										setting:
-											"setting" in layout
-												? "left" in layout.setting
-													? {
-															left: Number.parseFloat(`${layout.setting.left}`),
-														}
-													: "right" in layout.setting
-														? {
-																right: Number.parseFloat(
-																	`${layout.setting.right}`,
-																),
-															}
-														: { left: 0 }
-												: { left: 0 },
-									});
-									break;
-								case "absolute":
-									setLayout({
-										type: "absolute",
-										width: layout.width,
-										height: layout.height,
-										margin: layout.margin,
-										zIndex: 1,
-										setting: "setting" in layout ? layout.setting : {},
-									});
-							}
-						}}
-					>
-						<Option value="inline" label={<LetterTextIcon size="1.5em" />} />
-						<Option value="wrap" label={<WrapTextIcon size="1.5em" />} />
-						<Option
-							value="absolute"
-							label={<BringToFrontIcon size="1.5em" />}
-						/>
-					</Select>
-				</div>
-			</div>
+			{open ? (
+				<ResizeWidget
+					{...{
+						maintainAspectRatio,
+						rect,
+						updateRect,
+						commitLayout,
+						setOpen,
+					}}
+					layout={_layout}
+					setLayout={(layout) => {
+						_setLayout(layout);
+						updateRect();
+					}}
+				/>
+			) : undefined}
 		</span>
 	);
 }
