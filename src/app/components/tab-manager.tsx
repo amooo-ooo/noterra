@@ -137,23 +137,27 @@ export function TabManager({
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	React.useEffect(() => {
 		(async () => {
-			const tempTabs = tabs;
+			const tempTabs = [...tabs];
 			let cTab = currentTab;
 			for await (const tab of LocalFile.editors()) {
 				if (tempTabs.find((t) => t.id === tab.id)) continue; // TODO: O(n^2) D:
-				let index = Math.floor(tempTabs.length / 2);
-				let shift = index;
-				while (shift) {
-					shift = Math.floor(shift / 2);
-					const rIndex = tempTabs[index].tryIndex;
-					index += shift * (rIndex && tab.tryIndex > rIndex ? 1 : -1);
+				let a = 0;
+				let b = tempTabs.length;
+				let idx = 0;
+				while (a < b) {
+					idx = Math.floor((a + b) / 2);
+					const rIndex = tempTabs[idx].tryIndex ?? 9999;
+					if (tab.tryIndex > rIndex) {
+						a = idx + 1;
+					} else b = idx;
 				}
+				idx = a;
 				modifyTabs({
 					type: "insert",
-					index,
+					index: idx,
 					initialValue: tab as TabData,
 				});
-				tempTabs.splice(index, 0, tab as TabData);
+				tempTabs.splice(idx, 0, tab as TabData);
 				if (!cTab) {
 					cTab = tab.id;
 					setCurrentTab(cTab);
