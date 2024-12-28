@@ -176,9 +176,8 @@ export function TabManager({
 			const unsavedTab = tabs.find((tab) => tab.isDirty());
 			if (unsavedTab) {
 				e.preventDefault();
-				setCurrentTab(unsavedTab.id);
 				unsavedTab.save();
-				unsavedTab.clearDirty();
+				setCurrentTab(unsavedTab.id);
 			}
 		};
 		window.addEventListener("beforeunload", cb);

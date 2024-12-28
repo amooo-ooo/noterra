@@ -70,6 +70,8 @@ export class TabData {
 	boundURLs: Record<keyof File["attachments"], string> = {};
 	#stateTimer: ReturnType<typeof setTimeout> | null = null;
 	#fileTimer: ReturnType<typeof setTimeout> | null = null;
+	#stateDirty = false;
+	#fileDirty = false;
 
 	constructor(file: File) {
 		this.file = file;
@@ -105,18 +107,20 @@ export class TabData {
 		return newObj;
 	}
 
-	dirtyState() {
+	async dirtyState() {
+		this.#stateDirty = true;
 		if (!this.#stateTimer) {
-			this.saveState();
+			await this.saveState();
 			this.#stateTimer = setTimeout(() => {
 				this.#stateTimer = null;
 			}, 30e3);
 		}
 	}
 
-	dirtyFile() {
+	async dirtyFile() {
+		this.#fileDirty = true;
 		if (!this.#fileTimer) {
-			this.saveFile();
+			await this.saveFile();
 			this.#fileTimer = setTimeout(() => {
 				this.#fileTimer = null;
 			}, 10e3);
@@ -124,23 +128,19 @@ export class TabData {
 	}
 
 	isDirty() {
-		return !!(this.#fileTimer || this.#stateTimer);
-	}
-
-	clearDirty() {
-		clearTimeout(this.#fileTimer ?? undefined);
-		clearTimeout(this.#stateTimer ?? undefined);
-		this.#fileTimer = this.#stateTimer = null;
+		return this.#fileDirty || this.#stateDirty;
 	}
 
 	async saveState() {
 		const editors = await LocalFile.db.openStore("editors", "readwrite");
 		editors.put(this.serialize());
+		this.#stateDirty = false;
 	}
 
 	async saveFile() {
 		this.file.content = this.editor?.getHTML() ?? this.file.content;
 		await this.file.save();
+		this.#fileDirty = false;
 	}
 
 	async save() {
