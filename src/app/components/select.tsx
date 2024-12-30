@@ -79,6 +79,7 @@ export function Option({ label, value, disabled, style }: OptionProps) {
 		<>
 			<input
 				type="radio"
+				enterKeyHint="done"
 				checked={state.value === value}
 				disabled={disabled}
 				id={`${state.id}_${safe_id(value)}`}
@@ -511,6 +512,7 @@ export function Select({
 					beforeContent={
 						<input
 							type="search"
+							enterKeyHint="search"
 							ref={searchField}
 							value={searchingValue}
 							onChange={(e) => setSearchingValue(e.currentTarget.value)}
@@ -605,6 +607,7 @@ export function Datalist({
 			<span ref={anchor} style={props.style} className={className}>
 				{preNodes}
 				<input
+					enterKeyHint="done"
 					ref={searchField}
 					value={open ? tempValue : value}
 					onChange={(e) => {

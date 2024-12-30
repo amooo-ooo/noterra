@@ -110,6 +110,7 @@ export function TabStrip({
 						<div className={styles["tab-border"]}>
 							{tab.id === renamingTab ? (
 								<input
+									enterKeyHint="done"
 									className={styles["tab-rename-field"]}
 									defaultValue={tab.file.name}
 									onBlur={() => setRenamingTab(undefined)}

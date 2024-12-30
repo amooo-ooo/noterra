@@ -88,6 +88,7 @@ export function ContextMenuArea<T extends HTMLElement>({
 							beforeContent={
 								<input
 									type="search"
+									enterKeyHint="search"
 									ref={searchField}
 									value={searchingValue}
 									onChange={(e) => setSearchingValue(e.currentTarget.value)}
