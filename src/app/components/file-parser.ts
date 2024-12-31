@@ -14,13 +14,14 @@ function raise(message: string): never {
 }
 
 function dir(path: string) {
-	return path.replace(/^(.*)[/\\][^/\\]*$/, "$1");
+	return path.replace(/^(.*)([/\\]|^)[^/\\]*$/, "$1");
 }
 
 function safeTraversal(path: string) {
 	return path
 		.replace(/([^\\/]*[\\/])?\.\.[\\/]/g, "")
-		.replace(/[\\/]\.([\\/])/g, "$1");
+		.replace(/[\\/]\.([\\/])/g, "$1")
+		.replace(/^[\\/]/, '');
 }
 
 function joinPath(left: string, right: string) {
@@ -120,16 +121,6 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 					img.setAttribute("data-blob-src", path);
 					img.alt ||= path;
 				}
-				// for (const unsupported of dom.querySelectorAll("ruby, rp, rt")) {
-				// 	if (unsupported.hasAttribute("style")) {
-				// 		const nw = dom.createElement("span");
-				// 		nw.setAttribute("style", unsupported.getAttribute("style") ?? "");
-				// 		nw.append(...unsupported.childNodes);
-				// 		unsupported.replaceWith(nw);
-				// 		continue;
-				// 	}
-				// 	unsupported.replaceWith(...unsupported.childNodes);
-				// }
 				// Custom EPUB CSS
 				for (const css of dom.querySelectorAll<
 					HTMLLinkElement | HTMLStyleElement
@@ -165,6 +156,16 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 								el.setAttribute("style", `${oldStyle};${styles}`);
 							}
 						}
+				}
+				for (const unsupported of dom.querySelectorAll("section")) {
+					if (unsupported.hasAttribute("style")) {
+						const nw = dom.createElement("div");
+						nw.setAttribute("style", unsupported.getAttribute("style") ?? "");
+						nw.append(...unsupported.childNodes);
+						unsupported.replaceWith(nw);
+						continue;
+					}
+					unsupported.replaceWith(...unsupported.childNodes);
 				}
 				// Cover images
 				if (

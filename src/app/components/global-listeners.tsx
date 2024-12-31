@@ -83,6 +83,7 @@ export function ThemeProvider({ children }: React.PropsWithChildren<object>) {
 type ScrollState = {
 	scrollTop: number;
 	scrollLeft: number;
+	scrollEl?: HTMLElement;
 };
 
 export const ScrollContext = React.createContext<ScrollState | null>(null);
@@ -95,12 +96,14 @@ export function ScrollProvider(props: React.HTMLProps<HTMLDivElement>) {
 	return (
 		<ScrollContext.Provider value={scrollPos}>
 			<div
+				ref={(el) => setScrollPos({ ...scrollPos, scrollEl: el ?? undefined })}
 				style={{ overflow: "auto" }}
 				{...props}
 				onScroll={(e) => {
 					setScrollPos({
 						scrollTop: e.currentTarget.scrollTop,
 						scrollLeft: e.currentTarget.scrollLeft,
+						scrollEl: e.currentTarget,
 					});
 					props.onScroll?.(e);
 				}}

@@ -203,7 +203,6 @@
 
 	section {
 		padding: 50px;
-		max-width: 800px;
 		margin-inline: auto;
 		margin-block: 10px;
 		background-color: var(--bg-1);
@@ -211,7 +210,7 @@
 		box-shadow: 2px 4px 10px var(--shadow-color);
 		position: relative;
 
-		&:has(>p:only-child>:is(img, .node-blob-image):first-child+img+br) {
+		&:has(>div>div>p:only-child>:is(img, .node-blob-image):first-child+img+br) {
 			padding: 0;
 
 			p {

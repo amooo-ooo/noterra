@@ -15,6 +15,10 @@ export type SidedSizeProps =
 	| [Size, Size]
 	| [Size, Size, Size, Size];
 
+export function pxIfy(size: number | string) {
+	return typeof size === 'number' || /^\d+\.?$|^\d*\.\d+$/.test(size) ? `${size}px` : size;
+}
+
 // type Seperator = "," | ", ";
 // type AngleUnits = "deg" | "rad" | "turn";
 // type Angle = `${number}${AngleUnits}`;

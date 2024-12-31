@@ -1,4 +1,7 @@
 import { mergeAttributes, Node } from "@tiptap/core";
+import { ReactNodeViewRenderer } from "@tiptap/react";
+import { PageRenderer } from "./page-renderer";
+import { pxIfy } from "@/app/css-util";
 
 export interface PageOptions {
 	/**
@@ -29,6 +32,35 @@ export const PageNode = Node.create<PageOptions>({
 	group: "block",
 	defining: true,
 
+	addAttributes() {
+		return {
+			width: {
+				default: 800,
+				keepOnSplit: true,
+				parseHTML(element) {
+					return element.style.width || 800;
+				},
+				renderHTML(attributes) {
+					return {
+						style: `width: ${pxIfy(attributes.width)};`
+					};
+				},
+			},
+			height: {
+				default: 'auto',
+				keepOnSplit: true,
+				parseHTML(element) {
+					return element.style.width || 'auto';
+				},
+				renderHTML(attributes) {
+					return {
+						style: `height: ${pxIfy(attributes.height)};`
+					};
+				},
+			}
+		};
+	},
+
 	parseHTML() {
 		return [{ tag: "section" }];
 	},
@@ -39,5 +71,9 @@ export const PageNode = Node.create<PageOptions>({
 			mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
 			0,
 		];
+	},
+
+	addNodeView() {
+		return ReactNodeViewRenderer(PageRenderer, {});
 	},
 });
