@@ -21,14 +21,13 @@ export function PageRenderer({
 
 	const wrapper = React.useRef<HTMLElement | null>(null);
 
-	console.log("render", wrapper.current, inView);
 	React.useEffect(() => {
 		if (!wrapper.current) return;
 		const viewObserver = new IntersectionObserver(
 			(xions) => {
 				for (const xion of xions) {
 					if (xion.isIntersecting !== _inView.current) {
-						console.log("intersectUpdate on", xion.isIntersecting, xion.target);
+						// console.log("intersectUpdate on", xion.isIntersecting, xion.target);
 						setInView(xion.isIntersecting);
 					}
 				}
@@ -41,7 +40,7 @@ export function PageRenderer({
 		const sizeObserver = new ResizeObserver((updates) => {
 			if (!_inView.current) return;
 			for (const update of updates) {
-				console.log("resize on", update.target, update.contentRect);
+				// console.log("resize on", update.target, update.contentRect);
 				updateAttributes({
 					width:
 						update.borderBoxSize?.[0]?.inlineSize ?? update.contentRect.width,

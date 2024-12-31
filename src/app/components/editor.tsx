@@ -53,6 +53,7 @@ import {
 import { SelCharCount } from "@/app/editor-extensions/char-count";
 import { BetterColor } from "@/app/editor-extensions/better-colors";
 import { SVGExtension } from "@/app/editor-extensions/svg-image";
+import { DebugFallbackRenderer } from "@/app/editor-extensions/debug-fallback-renderer";
 
 import type { TabData } from "./editor-files";
 
@@ -146,9 +147,9 @@ export function Editor({
 				inline: true,
 				allowBase64: true,
 			}),
-			SVGExtension.configure({
-				inline: true,
-			}),
+			// SVGExtension.configure({
+			// 	inline: true,
+			// }),
 			PageNode,
 			SelCharCount.extend().configure({
 				wordCounter: (text) =>
@@ -163,6 +164,7 @@ export function Editor({
 			RubyAnnotation,
 			RubyA11y,
 			DesmosGraphExtension,
+			DebugFallbackRenderer,
 		],
 		content: data.file.content,
 		immediatelyRender: false,
