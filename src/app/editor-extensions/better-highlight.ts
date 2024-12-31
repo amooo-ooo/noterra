@@ -7,7 +7,7 @@ export const BetterHighlight = Highlight.extend({
 			...val,
 			color: {
 				...(val && "color" in val ? val.color : {}),
-				renderHTML: (attributes: { color?: string }) => {
+				renderHTML: (attributes: { color?: string; }) => {
 					const attrs =
 						val && "color" in val
 							? (val.color.renderHTML?.(attributes) ?? {})

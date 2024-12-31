@@ -15,6 +15,20 @@ export type SidedSizeProps =
 	| [Size, Size]
 	| [Size, Size, Size, Size];
 
+// type Seperator = "," | ", ";
+// type AngleUnits = "deg" | "rad" | "turn";
+// type Angle = `${number}${AngleUnits}`;
+// type NumOrPercent = `${number}${"" | "%"}`;
+// export type Color =
+// 	| `#${string}`
+// 	| `rgb(${number}${Seperator}${number}${Seperator}${number})`
+// 	| `rgb(${number}%${Seperator}${number}%${Seperator}${number}%)`
+// 	| `rgb(${NumOrPercent} ${NumOrPercent} ${NumOrPercent})`
+// 	| `${"rgb" | "rgba"}(${number}${Seperator}${number}${Seperator}${number}${Seperator}${NumOrPercent})`
+// 	| `${"rgb" | "rgba"}(${number}%${Seperator}${number}%${Seperator}${number}%${Seperator}${NumOrPercent})`
+// 	| `${"rgb" | "rgba"}(${NumOrPercent} ${NumOrPercent} ${NumOrPercent} / ${NumOrPercent | "none"})`
+// 	| `hsl(${Angle}${Seperator}${number}${Seperator}${number})`;
+
 export function add(a: Size, b: Size): CalcSize {
 	const aNumber = typeof a === "number";
 	const bNumber = typeof b === "number";
@@ -32,9 +46,8 @@ export function add(a: Size, b: Size): CalcSize {
 	const aM = aClean.match(/^(.*?)([a-zA-Z%]*)$/);
 	const bM = bClean.match(/^(.*?)([a-zA-Z%]*)$/);
 	if (aM && bM && aM.at(-1) === bM.at(-1))
-		return `${
-			Number.parseFloat(aM.at(1) ?? "0") + Number.parseFloat(bM.at(1) ?? "0")
-		}${aM?.at(-1) as SizeUnits}`;
+		return `${Number.parseFloat(aM.at(1) ?? "0") + Number.parseFloat(bM.at(1) ?? "0")
+			}${aM?.at(-1) as SizeUnits}`;
 	return `calc(${aClean as RawSize} + ${bClean as RawSize})`;
 }
 

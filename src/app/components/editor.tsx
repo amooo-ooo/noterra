@@ -31,7 +31,6 @@ import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
-import Color from "@tiptap/extension-color";
 import Gapcursor from "@tiptap/extension-gapcursor";
 import HardBreak from "@tiptap/extension-hard-break";
 import ListKeymap from "@tiptap/extension-list-keymap";
@@ -52,6 +51,7 @@ import {
 	RubyRoot,
 } from "@/app/editor-extensions/ruby-nodes";
 import { SelCharCount } from "@/app/editor-extensions/char-count";
+import { BetterColor } from "@/app/editor-extensions/better-colors";
 
 import type { TabData } from "./editor-files";
 
@@ -127,7 +127,7 @@ export function Editor({
 				nested: true,
 			}),
 			TaskList,
-			Color,
+			BetterColor,
 			BetterHighlight.configure({
 				multicolor: true,
 			}),
@@ -222,16 +222,6 @@ export function Editor({
 				),
 			);
 	}, [editor, data.initialSelection]);
-
-	// const [scrollingElement, setScrollingElement] =
-	// 	React.useState<HTMLElement | null>(null);
-	// React.useEffect(() => {
-	// 	data.scrollingElement = scrollingElement ?? undefined;
-	// 	if (!scrollingElement) return;
-	// 	const callback = ;
-	// 	scrollingElement.addEventListener("scroll", callback, { passive: true });
-	// 	return () => scrollingElement.removeEventListener("scroll", callback);
-	// }, [scrollingElement, data]);
 
 	React.useEffect(() => {
 		editor?.on("selectionUpdate", () => {

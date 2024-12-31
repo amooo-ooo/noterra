@@ -428,7 +428,7 @@ export type SelectProps = GlobalPopoverProps & {
 	style?: React.CSSProperties;
 	className?: string;
 	title?: string;
-	label?: React.ReactNode;
+	label?: React.ReactNode | ((value: string) => React.ReactNode);
 	disabled?: boolean;
 };
 
@@ -460,11 +460,8 @@ export function Select({
 	);
 
 	const { label, style } = React.useMemo<Partial<OptionProps>>(
-		() =>
-			buttonLabel
-				? {}
-				: (childs.find((child) => child.props.value === value)?.props ?? {}),
-		[childs, value, buttonLabel],
+		() => childs.find((child) => child.props.value === value)?.props ?? {},
+		[childs, value],
 	);
 
 	const anchor = React.useRef<HTMLButtonElement | null>(null);
@@ -497,7 +494,14 @@ export function Select({
 				{...props}
 			>
 				<span style={style} className={styles["select-value-container"]}>
-					{buttonLabel ?? label ?? value ?? "unset"}
+					{(typeof buttonLabel === "function"
+						? value
+							? buttonLabel(value)
+							: undefined
+						: buttonLabel) ??
+						label ??
+						value ??
+						"unset"}
 				</span>
 				<SelectPopover
 					id={id}

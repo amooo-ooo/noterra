@@ -126,12 +126,17 @@
 		border-radius: 0.2ch;
 		box-shadow: 0 0 0.1ch 0.1ch var(--tiptap-highlight-color);
 	}
-
-	/* body[class*=dark-mode] & {
-		span[style^=color] {
-			filter: invert(1) hue-rotate(180deg);
+	
+	body[class*=dark-mode] & {
+		[style*="--tiptap-foreground-color"] {
+			color: hsl(from var(--tiptap-foreground-color) h s calc(100 - l)) !important;
 		}
-	} */
+		
+		mark[data-color] {
+			background-color: hsl(from var(--tiptap-highlight-color) h s calc(100 - l)) !important;
+			box-shadow: 0 0 0.1ch 0.1ch hsl(from var(--tiptap-highlight-color) h s calc(100 - l));
+		}
+	}
 
 	/* Table-specific styling */
 	// pulled from https://tiptap.dev/docs/editor/extensions/nodes/table

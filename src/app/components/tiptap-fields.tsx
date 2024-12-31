@@ -47,7 +47,6 @@ export function TiptapButton({
 }
 
 export function TiptapSelect({
-	label,
 	action,
 	detect,
 	onChange,
@@ -55,7 +54,6 @@ export function TiptapSelect({
 	children,
 	...props
 }: {
-	label: string;
 	action?:
 		| ((value: string, ctx: ChainedCommands) => ChainedCommands)
 		| {
@@ -103,7 +101,6 @@ export function TiptapSelect({
 
 	return (
 		<Select
-			title={label}
 			value={editor ? detect(editor) : ""}
 			{...props}
 			disabled={disabled || !hasUsable}
@@ -235,7 +232,7 @@ async function loadFont(faces: FontData[]) {
 const WEB_SAFE_FONTS = new Set([
 	"Arial",
 	"Courier New",
-	"Georgia",	
+	"Georgia",
 	"Times New Roman",
 	"Trebuchet MS",
 	"Verdana",
@@ -245,8 +242,10 @@ export function FontFamilySelect() {
 	const [localFonts, setLocalFonts] = React.useState<FontMap>();
 	return (
 		<TiptapSelect
-			label="Font"
-			detect={(ed) => ed.getAttributes("textStyle").fontFamily ?? "Inter"}
+			title="Font"
+			detect={(ed) =>
+				ed.getAttributes("textStyle").fontFamily || "var(--font-inter-sans)"
+			}
 			action={{
 				async perform(value, ctx) {
 					if (localFonts?.[value] && !localFonts[value].loaded) {
@@ -264,7 +263,8 @@ export function FontFamilySelect() {
 					const fonts = await window.queryLocalFonts();
 					const fontMap: FontMap = {};
 					for (const font of fonts) {
-						if (WEB_SAFE_FONTS.has(font.family) || font.family === "Inter") continue;
+						if (WEB_SAFE_FONTS.has(font.family) || font.family === "Inter")
+							continue;
 						// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 						(fontMap[font.family] ??= { loaded: false, faces: [] }).faces.push(
 							font,

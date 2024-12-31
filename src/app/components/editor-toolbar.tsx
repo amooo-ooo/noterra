@@ -84,7 +84,7 @@ const COLORS = [
 		.fill(null)
 		.flatMap((_, i) =>
 			BASE_COLORS.map(
-				(color) => `${color}${(Math.floor(((i + 1) / 6) * 0xff)).toString(16)}`,
+				(color) => `${color}${(Math.floor(((5 - i) / 6) * 0xff)).toString(16)}`,
 			),
 		),
 ] as const;
@@ -93,26 +93,101 @@ function TextColorSelect() {
 	const { dark } = React.useContext(ThemeContext);
 	return (
 		<TiptapSelect
-			label="Text Color"
-			detect={(ed) =>
-				ed.getAttributes("textStyle").color ?? (dark ? "#ffffff" : "#000000")
-			}
+			title="Text Color"
+			detect={(ed) => ed.getAttributes("textStyle").color || "#000000"}
 			action={(value, ctx) => ctx.setColor(value)}
 			className={`${styles["text-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
 			display={{ type: "grid", width: 10 }}
+			label={(color) => (
+				<span
+					className={styles["color-swatch"]}
+					style={{
+						backgroundColor: dark
+							? `hsl(from ${color} h s calc(100 - l))`
+							: color,
+					}}
+				/>
+			)}
 		>
 			{COLORS.map((color) => (
 				<Option
 					label={
 						<span
 							className={styles["color-swatch"]}
-							style={{ backgroundColor: color }}
+							style={{
+								backgroundColor: dark
+									? `hsl(from ${color} h s calc(100 - l))`
+									: color,
+							}}
 						/>
 					}
 					value={color}
 					key={`${color}-default`}
 				/>
 			))}
+		</TiptapSelect>
+	);
+}
+
+function HighlightSelect() {
+	const { dark } = React.useContext(ThemeContext);
+	return (
+		<TiptapSelect
+			title="Highlight Color"
+			detect={(ed) => ed.getAttributes("highlight").color || "transparent"}
+			action={(value, ctx) =>
+				value === "transparent"
+					? ctx.unsetHighlight()
+					: ctx.setHighlight({ color: value })
+			}
+			className={`${styles["highlight-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
+			display={{ type: "grid", width: 10 }}
+			label={(color) =>
+				color === "transparent" ? null : (
+					<span
+						className={styles["color-swatch"]}
+						style={{
+							backgroundColor: dark
+								? `hsl(from ${color} h s calc(100 - l))`
+								: color,
+						}}
+					/>
+				)
+			}
+		>
+			{[
+				...COLORS.map((color) => (
+					<Option
+						label={
+							<span
+								className={styles["color-swatch"]}
+								style={{
+									backgroundColor: dark
+										? `hsl(from ${color} h s calc(100 - l))`
+										: color,
+								}}
+							/>
+						}
+						value={color}
+						key={`${color}-default`}
+					/>
+				)),
+				<Option
+					label={
+						<span
+							className={styles["color-swatch"]}
+							style={{
+								background:
+									"repeating-conic-gradient(from 0deg, var(--bg-2) 0% 25%, var(--bg--1) 25% 50%)",
+								backgroundSize: "8px 8px",
+								backgroundPosition: "center",
+							}}
+						/>
+					}
+					value="transparent"
+					key="transparent-default"
+				/>,
+			]}
 		</TiptapSelect>
 	);
 }
@@ -200,7 +275,7 @@ function FontSizeSelect() {
 	const { editor } = React.useContext(EditorContext);
 
 	const currentSize =
-		(editor?.getAttributes("textStyle").fontSize as number | undefined) ??
+		(editor?.getAttributes("textStyle").fontSize as "" | number | undefined) ||
 		Number.parseFloat(
 			getComputedStyle(
 				getElement(editor?.$pos(editor.state.selection.head)?.element) ??
@@ -427,7 +502,7 @@ const TOOLS = {
 	fontFamily: <FontFamilySelect />,
 	heading: (
 		<TiptapSelect
-			label="Text Style"
+			title="Text Style"
 			detect={(ed) =>
 				ed.getAttributes("heading").level
 					? `heading.${ed.getAttributes("heading").level}`
@@ -484,10 +559,10 @@ const TOOLS = {
 	),
 	textAlign: (
 		<TiptapSelect
-			label="Text Align"
+			title="Text Align"
 			detect={(ed) =>
-				ed.getAttributes("paragraph").textAlign ??
-				ed.getAttributes("heading").textAlign ??
+				ed.getAttributes("paragraph").textAlign ||
+				ed.getAttributes("heading").textAlign ||
 				"left"
 			}
 			action={(value, ctx) => ctx.setTextAlign(value)}
@@ -506,49 +581,7 @@ const TOOLS = {
 	),
 	textSpacing: <Spacing />,
 	textColor: <TextColorSelect />,
-	highlight: (
-		<TiptapSelect
-			label="Highlight Color"
-			detect={(ed) => ed.getAttributes("highlight").color ?? "transparent"}
-			action={(value, ctx) =>
-				value === "transparent"
-					? ctx.unsetHighlight()
-					: ctx.setHighlight({ color: value })
-			}
-			className={`${styles["highlight-color"]} ${styles["toolbar-select"]} ${styles.button} ${styles["color-swatch-grid"]}`}
-			display={{ type: "grid", width: 10 }}
-		>
-			{[
-				...COLORS.map((color) => (
-					<Option
-						label={
-							<span
-								className={styles["color-swatch"]}
-								style={{ backgroundColor: color }}
-							/>
-						}
-						value={color}
-						key={`${color}-default`}
-					/>
-				)),
-				<Option
-					label={
-						<span
-							className={styles["color-swatch"]}
-							style={{
-								background:
-									"repeating-conic-gradient(from 0deg, var(--bg-2) 0% 25%, var(--bg--1) 25% 50%)",
-								backgroundSize: "8px 8px",
-								backgroundPosition: "center",
-							}}
-						/>
-					}
-					value="transparent"
-					key="transparent-default"
-				/>,
-			]}
-		</TiptapSelect>
-	),
+	highlight: <HighlightSelect />,
 	/// ...
 };
 
