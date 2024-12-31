@@ -4,7 +4,6 @@ import {
 	NodeViewWrapper,
 } from "@tiptap/react";
 import React from "react";
-import { ScrollContext } from "@/app/components/global-listeners";
 
 export function PageRenderer({
 	// editor,
@@ -16,8 +15,6 @@ export function PageRenderer({
 	updateAttributes,
 	// deleteNode,
 }: NodeViewProps) {
-	// biome-ignore lint/style/noNonNullAssertion: should always be inside editor's scroll container
-	// const { scrollEl } = React.useContext(ScrollContext)!;
 	const [inView, setInView] = React.useState(true);
 	const _inView = React.useRef(inView);
 	React.useImperativeHandle(_inView, () => inView, [inView]);
@@ -37,7 +34,6 @@ export function PageRenderer({
 				}
 			},
 			{
-				// root: scrollEl,
 				threshold: 0,
 			},
 		);
@@ -59,7 +55,7 @@ export function PageRenderer({
 			viewObserver.disconnect();
 			sizeObserver.disconnect();
 		};
-	}, [/*scrollEl, */ updateAttributes]);
+	}, [updateAttributes]);
 
 	return (
 		<NodeViewWrapper>

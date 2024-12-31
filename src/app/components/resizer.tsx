@@ -42,7 +42,9 @@ export function layoutFromCss(css: CSSStyleDeclaration): Layout {
 					: Number.parseFloat(css.width)
 				: "auto",
 		height:
-			css.width && css.width !== "auto" ? Number.parseFloat(css.width) : "auto",
+			css.height && /^(\d+\.?|\d*\.\d+)(px|)$/.test(css.height)
+				? Number.parseFloat(css.height)
+				: "auto",
 		margin: (css.margin as Size) || 0,
 	} satisfies Partial<Layout>;
 	// wrap

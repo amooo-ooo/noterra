@@ -109,6 +109,15 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 					await file.async("string"),
 					"application/xhtml+xml",
 				);
+				// TODO: dont like special casing
+				for (const img of dom.querySelectorAll<ChildNode & SVGImageElement>("svg > image:only-child")) {
+					const newImg = dom.createElement("img");
+					newImg.setAttribute("src", img.getAttribute("xlink:href")
+						?? raise(`image '${img.outerHTML}' no src`));
+					const styles = img.parentElement?.getAttribute("style");
+					if (styles) newImg.setAttribute("style", styles);
+					img.parentElement?.replaceWith(newImg);
+				}
 				// Local image files
 				for (const img of dom.querySelectorAll("img")) {
 					const path = resolvePath(
@@ -168,6 +177,7 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 					unsupported.replaceWith(...unsupported.childNodes);
 				}
 				// Cover images
+				// TODO: dont like special casing
 				if (
 					dom.body.textContent?.trim() === "" &&
 					dom.body.querySelector("img")

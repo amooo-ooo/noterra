@@ -52,6 +52,7 @@ import {
 } from "@/app/editor-extensions/ruby-nodes";
 import { SelCharCount } from "@/app/editor-extensions/char-count";
 import { BetterColor } from "@/app/editor-extensions/better-colors";
+import { SVGExtension } from "@/app/editor-extensions/svg-image";
 
 import type { TabData } from "./editor-files";
 
@@ -144,6 +145,9 @@ export function Editor({
 			BlobImages.configure({
 				inline: true,
 				allowBase64: true,
+			}),
+			SVGExtension.configure({
+				inline: true,
 			}),
 			PageNode,
 			SelCharCount.extend().configure({
