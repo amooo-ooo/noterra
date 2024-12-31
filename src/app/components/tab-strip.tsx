@@ -4,7 +4,15 @@ import React from "react";
 import { ReactSortable } from "react-sortablejs";
 import { TabsContext } from "./tab-manager";
 import styles from "@/app/styles/tab-strip.module.scss";
-import { Upload, Plus, X, LockIcon } from "lucide-react";
+import {
+	Upload,
+	Plus,
+	X,
+	LockIcon,
+	EditIcon,
+	LockOpenIcon,
+	XIcon,
+} from "lucide-react";
 import { handleFile } from "./file-parser";
 import { ContextMenuArea } from "./context-menu-area";
 import { LocalFile, TabData } from "./editor-files";
@@ -59,9 +67,29 @@ export function TabStrip({
 					<ContextMenuArea
 						key={tab.id}
 						menu={[
-							{ name: "Rename", action: () => setRenamingTab(tab.id) },
 							{
-								name: tab.locked ? "Unlock Editor" : "Lock Editor",
+								name: "rename",
+								label: (
+									<>
+										<EditIcon size="1em" />
+										Rename
+									</>
+								),
+								action: () => setRenamingTab(tab.id),
+							},
+							{
+								name: tab.locked ? "unlock-editor" : "lock-editor",
+								label: tab.locked ? (
+									<>
+										<LockOpenIcon size="1em" />
+										Unlock Editor
+									</>
+								) : (
+									<>
+										<LockIcon size="1em" />
+										Lock Editor
+									</>
+								),
 								action: () =>
 									modifyTabs({
 										type: "mutate",
@@ -69,7 +97,16 @@ export function TabStrip({
 										modify: (tab) => tab.withToggleLock(),
 									}),
 							},
-							{ name: "Close", action: () => close(tab) },
+							{
+								name: "Close",
+								label: (
+									<>
+										<XIcon size="1em" />
+										Close
+									</>
+								),
+								action: () => close(tab),
+							},
 						]}
 						wrapperNode={
 							<div
