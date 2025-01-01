@@ -5,6 +5,7 @@ import {
 	type CalcSize,
 	type SidewiseProps,
 	type Size,
+	type VerticalAlign,
 } from "@/app/css-util";
 import React from "react";
 import { ScrollContext } from "./global-listeners";
@@ -21,6 +22,7 @@ export type Layout = {
 } & (
 	| {
 			type: "inline";
+			verticalAlign: VerticalAlign;
 	  }
 	| {
 			type: "wrap";
@@ -69,7 +71,11 @@ export function layoutFromCss(css: CSSStyleDeclaration): Layout {
 			zIndex: Number.parseInt(css.zIndex || "0"),
 			setting: parseSidedSizes(css.inset as SidedSizeProps),
 		};
-	return { ...base, type: "inline" };
+	return {
+		...base,
+		type: "inline",
+		verticalAlign: (css.verticalAlign as VerticalAlign) || "middle",
+	};
 }
 
 export function layoutCss(layout: Layout): React.CSSProperties {
@@ -80,7 +86,10 @@ export function layoutCss(layout: Layout): React.CSSProperties {
 	} satisfies React.CSSProperties;
 	switch (layout.type) {
 		case "inline":
-			return base;
+			return {
+				...base,
+				verticalAlign: layout.verticalAlign,
+			} satisfies React.CSSProperties;
 		case "wrap":
 			return {
 				...base,
@@ -243,6 +252,7 @@ function ResizeWidget({
 									width: layout.width,
 									height: layout.height,
 									margin: layout.margin,
+									verticalAlign: "middle",
 								});
 								break;
 							case "wrap":

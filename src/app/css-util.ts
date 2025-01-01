@@ -15,6 +15,8 @@ export type SidedSizeProps =
 	| [Size, Size]
 	| [Size, Size, Size, Size];
 
+export type VerticalAlign = 'baseline' | 'sub' | 'super' | 'text-top' | 'text-bottom' | 'middle' | 'top' | 'bottom' | Size;
+
 export function pxIfy(size: number | string) {
 	return typeof size === 'number' || /^\d+\.?$|^\d*\.\d+$/.test(size) ? `${size}px` : size;
 }
