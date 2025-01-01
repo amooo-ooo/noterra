@@ -33,6 +33,7 @@ export const BlobImages = Image.extend({
 					width: "auto",
 					height: "auto",
 					margin: 0,
+					verticalAlign: 'middle',
 				} satisfies Layout,
 				parseHTML(el) {
 					return layoutFromCss(el.style);
