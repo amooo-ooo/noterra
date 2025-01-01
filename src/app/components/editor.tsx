@@ -5,7 +5,6 @@ import { EditorStatsWidget } from "./editor-statswidget";
 import { Selection } from "@tiptap/pm/state";
 
 import Text from "@tiptap/extension-text";
-import Document from "@tiptap/extension-document";
 import ListItem from "@tiptap/extension-list-item";
 import Paragraph from "@tiptap/extension-paragraph";
 import Bold from "@tiptap/extension-bold";
@@ -40,7 +39,10 @@ import { MonacoCodeBlockExtention } from "@/app/editor-extensions/monaco-node-ex
 import { Indent } from "@/app/editor-extensions/indent";
 import { BetterHighlight } from "@/app/editor-extensions/better-highlight";
 import { FontSize } from "@/app/editor-extensions/font-size";
-import { PageNode } from "@/app/editor-extensions/page-node";
+import {
+	MaybePagedDocument,
+	PageNode,
+} from "@/app/editor-extensions/page-node";
 import { DesmosGraphExtension } from "@/app/editor-extensions/desmos-node-extension";
 import { BetterLinks } from "@/app/editor-extensions/better-links";
 import { BlobImages } from "@/app/editor-extensions/blob-imgs";
@@ -85,8 +87,9 @@ export function Editor({
 }) {
 	const editor = useEditor({
 		extensions: [
+			MaybePagedDocument,
+			PageNode,
 			Gapcursor,
-			Document,
 			Text,
 			ListItem,
 			Paragraph,
@@ -147,10 +150,9 @@ export function Editor({
 				inline: true,
 				allowBase64: true,
 			}),
-			// SVGExtension.configure({
-			// 	inline: true,
-			// }),
-			PageNode,
+			SVGExtension.configure({
+				inline: true,
+			}),
 			SelCharCount.extend().configure({
 				wordCounter: (text) =>
 					text.split(/[^\w~'\u2019-]+|[^\w]{2,}/g).filter((word) => word !== "")

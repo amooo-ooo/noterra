@@ -15,8 +15,8 @@ import { Option, Select } from "./select";
 import { BringToFrontIcon, LetterTextIcon, WrapTextIcon } from "lucide-react";
 
 export type Layout = {
-	width: number | "100%" | "auto";
-	height: number | "auto";
+	width: Size | "auto";
+	height: Size | "auto";
 	margin: Size;
 } & (
 	| {
@@ -35,16 +35,16 @@ export type Layout = {
 
 export function layoutFromCss(css: CSSStyleDeclaration): Layout {
 	const base = {
-		width:
-			css.width && css.width !== "auto"
-				? css.width === "100%"
-					? css.width
-					: Number.parseFloat(css.width)
-				: "auto",
-		height:
-			css.height && /^(\d+\.?|\d*\.\d+)(px|)$/.test(css.height)
-				? Number.parseFloat(css.height)
-				: "auto",
+		width: (css.width as Size) || "auto",
+		// css.width && css.width !== "auto"
+		// 	? css.width === "100%"
+		// 		? css.width
+		// 		: Number.parseFloat(css.width)
+		// 	: "auto",
+		height: (css.height as Size) || "auto",
+		// css.height && /^(\d+\.?|\d*\.\d+)(px|)$/.test(css.height)
+		// 	? Number.parseFloat(css.height)
+		// 	: "auto",
 		margin: (css.margin as Size) || 0,
 	} satisfies Partial<Layout>;
 	// wrap

@@ -1,5 +1,6 @@
 import { mergeAttributes, Node } from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
+import Document from "@tiptap/extension-document";
 import { PageRenderer } from "./page-renderer";
 import { pxIfy } from "@/app/css-util";
 
@@ -19,6 +20,13 @@ export interface PageOptions {
 // 	}
 // }
 
+export const PagedDocument = Document.extend({
+	content: "page+",
+});
+export const MaybePagedDocument = Document.extend({
+	content: "block+|page+",
+});
+
 export const PageNode = Node.create<PageOptions>({
 	name: "page",
 
@@ -29,7 +37,7 @@ export const PageNode = Node.create<PageOptions>({
 	},
 
 	content: "block+",
-	group: "block",
+	group: "page",
 	defining: true,
 
 	addAttributes() {

@@ -25,7 +25,13 @@ export function BlobImageWrapper({
 	}, [node.attrs.src, node.attrs.isBlob, state.file.attachments]);
 
 	return (
-		<NodeViewWrapper>
+		<NodeViewWrapper
+			style={
+				{
+					display: "inline-block",
+				} satisfies React.CSSProperties
+			}
+		>
 			<Resizer
 				layout={node.attrs.layout as Layout}
 				setLayout={(l) => updateAttributes({ layout: l })}
