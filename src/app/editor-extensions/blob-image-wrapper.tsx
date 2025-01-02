@@ -8,7 +8,7 @@ export function BlobImageWrapper({
 	// editor,
 	node,
 	// decorations,
-	// selected,
+	selected,
 	// extension,
 	// getPos,
 	updateAttributes,
@@ -27,10 +27,13 @@ export function BlobImageWrapper({
 
 	return (
 		<NodeViewWrapper
+			as="span"
 			style={
-				{
-					display: "inline-block",
-				} satisfies React.CSSProperties
+				selected
+					? {
+							backgroundColor: "Highlight",
+						}
+					: {}
 			}
 		>
 			<Resizer
@@ -46,6 +49,17 @@ export function BlobImageWrapper({
 					className={node.attrs.isThematic ? IMAGE_THEMATIC_CLASS : undefined}
 					style={{ width: "100%", height: "100%" }}
 				/>
+				{selected ? (
+					<div
+						style={{
+							position: "absolute",
+							inset: 0,
+							backgroundColor:
+								"color-mix(in srgb, Highlight 40%, transparent 60%)",
+							pointerEvents: "none",
+						}}
+					/>
+				) : undefined}
 			</Resizer>
 		</NodeViewWrapper>
 	);
