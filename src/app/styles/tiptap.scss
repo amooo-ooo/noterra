@@ -136,6 +136,10 @@
 			background-color: hsl(from var(--tiptap-highlight-color) h s calc(100 - l)) !important;
 			box-shadow: 0 0 0.1ch 0.1ch hsl(from var(--tiptap-highlight-color) h s calc(100 - l));
 		}
+
+		.noterra-image-thematic {
+			filter: invert(1) hue-rotate(180deg);
+		}
 	}
 
 	/* Table-specific styling */

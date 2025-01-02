@@ -1,5 +1,7 @@
 import JSZip from "jszip";
 import { type File as FileData, LocalFile } from "./editor-files";
+import { themable } from "./img-themable";
+import { IMAGE_THEMATIC_CLASS } from "@/app/editor-extensions/blob-imgs";
 
 async function readText(file: File) {
 	const reader = new FileReader();
@@ -98,6 +100,7 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 		return joinPath(base, path ?? "");
 	}
 	const cssCache: Record<string, CSSStyleSheet | undefined> = {};
+	const imgThematic: Record<string, boolean> = {};
 	const spine = await Promise.all(
 		rootfiles.flatMap((file) =>
 			[...file.dom.querySelectorAll("spine > itemref")].map(async (item) => {
@@ -124,8 +127,19 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 						dir(items[id].href),
 						decodeURIComponent(img.getAttribute("src") ?? ""),
 					);
-					const file = zip.file(path) ?? raise(`Image at '${path}' not found`);
-					result.attachments[path] = await file.async("blob");
+					if (!result.attachments[path]) {
+						const file =
+							zip.file(path) ?? raise(`Image at '${path}' not found`);
+						const imgData = await file.async("blob");
+						const themedImg = await themable(imgData);
+						if (themedImg) {
+							result.attachments[path] = themedImg;
+							imgThematic[path] = true;
+						} else {
+							result.attachments[path] = imgData;
+						}
+					}
+					if (imgThematic[path]) img.classList.add(IMAGE_THEMATIC_CLASS);
 					img.removeAttribute("src");
 					img.setAttribute("data-blob-src", path);
 					img.alt ||= path;
@@ -191,6 +205,7 @@ async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
 	result.content = spine
 		.map((doc) => `<section>${doc.body.innerHTML}</section>`)
 		.join("");
+	console.log(result.content);
 	return result;
 }
 

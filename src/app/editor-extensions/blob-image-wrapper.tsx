@@ -2,6 +2,7 @@ import React from "react";
 import { EditorContext } from "@/app/components/editor";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import { Resizer, type Layout } from "@/app/components/resizer";
+import { IMAGE_THEMATIC_CLASS } from "./blob-imgs";
 
 export function BlobImageWrapper({
 	// editor,
@@ -42,6 +43,7 @@ export function BlobImageWrapper({
 					src={node.attrs.isBlob ? blobUrl : node.attrs.src}
 					alt={node.attrs.alt}
 					title={node.attrs.title}
+					className={node.attrs.isThematic ? IMAGE_THEMATIC_CLASS : undefined}
 					style={{ width: "100%", height: "100%" }}
 				/>
 			</Resizer>

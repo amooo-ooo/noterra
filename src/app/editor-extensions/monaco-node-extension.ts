@@ -1,4 +1,4 @@
-import CodeBlock from "@tiptap/extension-code-block";
+import CodeBlock, { type CodeBlockOptions } from "@tiptap/extension-code-block";
 import {
 	mergeAttributes,
 	ReactNodeViewRenderer,
@@ -6,11 +6,6 @@ import {
 } from "@tiptap/react";
 import { MonacoEditor } from "@/app/components/monaco-editor";
 import type { EditorProps } from "@monaco-editor/react";
-
-declare module "@tiptap/extension-code-block" {
-	// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-	export interface CodeBlockOptions extends EditorProps {}
-}
 
 // TODO: tiptap doesnt support multi-line matching
 // const pasteRule =
@@ -29,7 +24,7 @@ declare module "@tiptap/core" {
 	}
 }
 
-export const MonacoCodeBlockExtention = CodeBlock.extend({
+export const MonacoCodeBlockExtention = CodeBlock.extend<CodeBlockOptions & EditorProps>({
 	name: "monacoCodeBlock",
 
 	addNodeView() {
@@ -63,9 +58,9 @@ export const MonacoCodeBlockExtention = CodeBlock.extend({
 			// TODO: preserve newlines
 			unsetCodeBlock:
 				() =>
-				({ commands }: { commands: SingleCommands }) => {
-					return commands.setNode("paragraph");
-				},
+					({ commands }: { commands: SingleCommands; }) => {
+						return commands.setNode("paragraph");
+					},
 		};
 	},
 

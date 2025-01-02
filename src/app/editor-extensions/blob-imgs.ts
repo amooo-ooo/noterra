@@ -7,6 +7,7 @@ import {
 	layoutFromCss,
 } from "@/app/components/resizer";
 
+export const IMAGE_THEMATIC_CLASS = 'noterra-image-thematic';
 export const BlobImages = Image.extend({
 	addAttributes() {
 		const attrs = this.parent?.() ?? {};
@@ -18,6 +19,11 @@ export const BlobImages = Image.extend({
 				rendered: false,
 				// renderHTML: (attrs) =>
 				// 	attrs.isBlob ? { "data-blob-src": attrs.src } : { src: attrs.src },
+			},
+			isThematic: {
+				default: false,
+				parseHTML: (el) => el.classList.contains(IMAGE_THEMATIC_CLASS),
+				renderHTML: ({ isThematic }) => isThematic ? { class: IMAGE_THEMATIC_CLASS } : {},
 			},
 			src: {
 				...("src" in attrs ? (attrs.src as object) : {}),
