@@ -6,12 +6,12 @@ import {
 import React from "react";
 
 export function PageRenderer({
-	// editor,
+	editor,
 	node,
 	// decorations,
 	// selected,
 	// extension,
-	// getPos,
+	getPos,
 	updateAttributes,
 	// deleteNode,
 }: NodeViewProps) {
@@ -56,6 +56,17 @@ export function PageRenderer({
 		};
 	}, [updateAttributes]);
 
+	const inSelection = React.useMemo(() => {
+		const start = getPos();
+		const end = start + node.nodeSize;
+		for (const range of editor.state.selection.ranges) {
+			if (start > range.$to.pos) continue;
+			if (end < range.$from.pos) continue;
+			return true;
+		}
+		return false;
+	}, [editor.state.selection, getPos, node]);
+
 	return (
 		<NodeViewWrapper>
 			<section
@@ -65,7 +76,7 @@ export function PageRenderer({
 					height: inView ? "auto" : node.attrs.height,
 				}}
 			>
-				{inView || !node.attrs.height ? (
+				{inView || !node.attrs.height || inSelection ? (
 					<NodeViewContent />
 				) : (
 					<button
