@@ -244,4 +244,15 @@
 			border-bottom: 1px dashed var(--border-color);
 		}
 	}
+
+	@media print {
+		section {
+			margin: 0;
+			background-color: transparent;
+			box-shadow: none;
+			border: none;
+			break-after: page;
+			width: 100% !important;
+		}
+	}
 }

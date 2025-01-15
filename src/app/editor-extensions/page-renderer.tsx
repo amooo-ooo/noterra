@@ -4,6 +4,7 @@ import {
 	NodeViewWrapper,
 } from "@tiptap/react";
 import React from "react";
+import { TabsContext } from "@/app/components/tab-manager";
 
 export function PageRenderer({
 	editor,
@@ -15,6 +16,7 @@ export function PageRenderer({
 	updateAttributes,
 	// deleteNode,
 }: NodeViewProps) {
+	const { forceRender } = React.useContext(TabsContext);
 	const [inView, setInView] = React.useState(true);
 	const _inView = React.useRef(inView);
 	React.useImperativeHandle(_inView, () => inView, [inView]);
@@ -76,7 +78,7 @@ export function PageRenderer({
 					height: inView ? "auto" : node.attrs.height,
 				}}
 			>
-				{inView || !node.attrs.height || inSelection ? (
+				{forceRender || inView || !node.attrs.height || inSelection ? (
 					<NodeViewContent />
 				) : (
 					<button
