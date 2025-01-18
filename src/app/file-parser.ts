@@ -1,7 +1,12 @@
-import JSZip from "jszip";
-// import { type File as FileData, LocalFile } from "./editor-files";
-import { themable } from "./img-themable";
-// import { IMAGE_THEMATIC_CLASS } from "@/app/editor-extensions/blob-imgs";
+import { type File as FileData, LocalFile } from "./components/editor-files";
+import "via.js/receiver";
+import type EPubWorkerGlobal from "./workers/epub-parser";
+
+declare const ViaReceiver: Omit<typeof window.ViaReceiver, keyof Window | keyof typeof globalThis>
+	& { postMessage: typeof postMessage; }
+	& EPubWorkerGlobal;
+
+import { IMAGE_THEMATIC_CLASS } from "./editor-extensions/blob-imgs";
 
 async function readText(file: File) {
 	const reader = new FileReader();
@@ -21,9 +26,37 @@ function parseCSS(css: string) {
 	return styles;
 }
 
-async function handleEPub(id: FileData["id"], name: string, zip: JSZip) {
-	const result = new LocalFile(id, name);
+declare global {
+	interface Window {
+		_noterra_parseCSS: typeof parseCSS;
+	}
+	const _noterra_parseCSS: typeof parseCSS;
 }
+window._noterra_parseCSS = parseCSS;
+
+export type RecieverGlobal = typeof window;
+
+let WORKER: Worker | null;
+const TRANSFER: Transferable[] = [];
+
+function worker() {
+	if (typeof window === "undefined") return null;
+	WORKER ??= new window.Worker("/js/worker.js");
+	WORKER.onmessage = (e => e.data.type === "NOTERRA-handle-epub"
+		? AWAITING[e.data.id](e.data.contents)
+		: ViaReceiver.OnMessage(e.data));
+	ViaReceiver.postMessage = data => {
+		WORKER?.postMessage(data, {
+			transfer: TRANSFER,
+		});
+		TRANSFER.length = 0;
+	};
+	return WORKER;
+}
+
+type EPubResponse = { content: string, attachments: Record<string, Blob>; };
+const AWAITING: Record<number, (result: EPubResponse) => void> = {};
+let awaitingIds = 0;
 
 export async function handleFile(
 	id: FileData["id"],
@@ -31,8 +64,22 @@ export async function handleFile(
 ): Promise<LocalFile> {
 	switch (file.type) {
 		case "application/epub+zip": {
-			const zip = await JSZip.loadAsync(file);
-			return handleEPub(id, file.name, zip);
+			const w = worker();
+			const { content, attachments } = await new Promise<EPubResponse>(res => {
+				const id = awaitingIds++;
+				w?.postMessage(
+					{
+						type: "NOTERRA-handle-epub",
+						file,
+						IMAGE_THEMATIC_CLASS,
+						id,
+					},
+				);
+				AWAITING[id] = res;
+			});
+			return new LocalFile(id, file.name, content, attachments);
+			// const zip = await JSZip.loadAsync(file);
+			// return handleEPub(id, file.name, zip);
 		}
 		case "text/html":
 			return new LocalFile(id, file.name, await readText(file));

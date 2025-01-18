@@ -1,6 +1,14 @@
-import JSZip from 'jszip';
-import { raise, unreachable } from './util';
-import { themable } from './img-themable';
+import "via.js/controller";
+import JSZip from "jszip";
+import { themable } from "./img-themable";
+import type { RecieverGlobal } from "@/app/file-parser";
+
+declare const via: RecieverGlobal;
+declare const self: WorkerGlobalScope & typeof globalThis;
+
+function raise(message: string): never {
+	throw new Error(message);
+}
 
 function dir(path: string) {
 	return path.replace(/^(.*)([/\\]|^)[^/\\]*$/, "$1");
@@ -19,162 +27,149 @@ function joinPath(left: string, right: string) {
 	return safeTraversal(`${left.replace(/[\\/]$/, "")}/${right}`);
 }
 
-export type W2MMessage =
-	| { type: 'parse-meta-inf', zipId: number, content: ArrayBuffer; }
-	| { type: 'parse-rootfile', zipId: number, path: string, content: ArrayBuffer; }
-	| { type: 'parse-page', zipId: number, pageId: number, path: string, content: ArrayBuffer; };
-
-export type M2WMessage =
-	| { type: 'parse-epub', file: Blob; }
-	| { type: 'rootfiles', zipId: number, rootfiles: (string | undefined)[]; }
-	| { type: 'rootfile', zipId: number, path: string, title: string, items: Record<string, string>, pages: string[]; }
-	| { type: 'handle-images', zipId: number, path: string, paths: string[]; };
-
-let zipId = 0;
-const handles: Record<number, {
-	zip: JSZip;
-	waiting: number;
-	items: Record<string, string>;
-	pages: string[];
-	pageId: number;
-	titles: string[];
-	attachments: Record<string, [data: ArrayBuffer, type: string, themable: boolean]>;
-}> = {};
-
-function resolvePath(handle: typeof handles[keyof typeof handles], base: string, path?: string | null) {
-	const relPath = decodeURIComponent(path ?? "");
-	// TODO: standard way to do this????
-	for (const title of handle.titles) {
-		if (relPath.startsWith(`${title}_files`)) {
-			return handle.items[relPath.replace(/.*[\\/]([^\\/]*)$/, "$1")];
-		}
+async function map<T, R>(gen: Iterator<T>, f: (val: T) => R) {
+	let next = gen.next();
+	const result = [];
+	while (!await get(next.done)) {
+		result.push(f(next.value));
+		next = gen.next();
 	}
-	return joinPath(base, path ?? "");
+	return result;
 }
 
-self.addEventListener('message', async (e) => {
-	const msg = e.data as M2WMessage;
-	switch (msg.type) {
-		case 'parse-epub': {
-			const zip = await JSZip.loadAsync(msg.file);
-			const id = ++zipId;
-			handles[id] = { zip, waiting: 0, items: {}, titles: [], pages: [], pageId: 0, attachments: {} };
-			const metaInfF =
-				zip.file("META-INF/container.xml") ?? raise("Could not find META-INF");
-			const metaInfData = await metaInfF?.async("arraybuffer");
-			self.postMessage({
-				type: 'parse-meta-inf',
-				zipId: id,
-				content: metaInfData,
-			} satisfies W2MMessage, {
-				transfer: [metaInfData]
-			});
-			break;
-		}
-		case 'rootfiles': {
-			for (const rootfile of msg.rootfiles) {
-				const handle = handles[msg.zipId];
-				const path = decodeURIComponent(rootfile ?? raise("Rootfile without path"));
-				const content = await (
-					handle.zip.file(path) ?? raise(`Rootfile '${path}' not found`)
-				).async('arraybuffer');
-				handle.waiting++;
-				self.postMessage({
-					type: 'parse-rootfile',
-					zipId: msg.zipId,
-					path,
-					content,
-				} satisfies W2MMessage, {
-					transfer: [content]
-				});
-			}
-			break;
-		}
-		case 'rootfile': {
-			const handle = handles[msg.zipId];
-			handle.waiting--;
-			handle.items = {
-				...handle.items, ...Object.fromEntries(Object.entries(msg.items).map(([ref, path]) => [
-					ref, joinPath(dir(msg.path), decodeURIComponent(path))
-				]))
-			};
-			handle.titles.push(msg.title);
-			handle.pages.length += msg.pages.length;
-			for (const page of msg.pages) {
-				const path = handle.items[page];
-				const file =
-					handle.zip.file(path) ??
-					raise(`Item '${page}' at '${path}' not found`);
-				handle.waiting++;
-				const content = await file.async("arraybuffer");
-				self.postMessage({
-					type: 'parse-page',
-					zipId: msg.zipId,
-					pageId: handle.pageId++,
-					path,
-					content,
-				} satisfies W2MMessage, {
-					transfer: [content]
-				});
-			}
-			break;
-		}
-		case 'handle-images': {
-			const handle = handles[msg.zipId];
-			for (const imageSrc of msg.paths) {
-				const path = resolvePath(
-					handle,
-					dir(msg.path),
-					decodeURIComponent(imageSrc),
-				);
-				if (!handle.attachments[path]) {
-					const file = handle.zip.file(path)
-						?? raise(`Image at '${path}' not found`);
-					const imgData = await file.async("blob");
-					const themedImg = await themable(imgData);
-					const blob = themedImg ?? imgData;
-					handle.attachments[path] = [await blob.arrayBuffer(), blob.type, !!themedImg];
-				}
-			}
-			break;
-		}
-		default: unreachable(msg);
+// async function unwrapNodes<T extends Node>(iter: NodeListOf<T>) {
+// 	const gen = iter.values();
+// 	let next = gen.next();
+// 	cons
+// 	while (!await get(next.done)) {
+// 		result.push(next.value);
+// 		next = gen.next();
+// 	}
+// }
+
+function* iterArrayLike<T>(arr: ArrayLike<T>, length: number = arr.length) {
+	for (let i = 0; i < length; i++) {
+		yield arr[i];
 	}
-});
-const cssCache: Record<string, CSSStyleSheet | undefined> = {};
-const imgThematic: Record<string, boolean> = {};
-const spine = await Promise.all(
-	rootfiles.flatMap((file) =>
-		[...file.dom.querySelectorAll("spine > itemref")].map(async (item) => {
+}
+
+async function iterRemoteArr<T>(arr: ArrayLike<T>) {
+	return iterArrayLike(arr, await get(arr.length));
+}
+
+async function handleEPub(data: Blob, IMAGE_THEMATIC_CLASS: string) {
+	const zip = await JSZip.loadAsync(data);
+	const attachments: Record<string, Blob> = {};
+	const parser = new via.DOMParser();
+	const metaInfF =
+		zip.file("META-INF/container.xml") ?? raise("Could not find META-INF");
+	const metaInf = parser.parseFromString(
+		await metaInfF.async("string"),
+		"application/xml",
+	);
+	const rootfiles = await Promise.all([
+		...await map(metaInf.querySelectorAll("rootfile").values(), async (el) => {
+			const path = decodeURIComponent(
+				await get(el.getAttribute("full-path")) ?? raise("Rootfile without path"),
+			);
+			const content = await (
+				zip.file(path) ?? raise(`Rootfile '${path}' not found`)
+			).async("string");
+			return {
+				path,
+				// type: el.getAttribute("media-type"),
+				dom: parser.parseFromString(content, "application/xml"),
+			};
+		}),
+	]);
+	const titles = (await Promise.all(
+		rootfiles.map(
+			async (file) =>
+				await Promise.all(
+					await map(
+						await iterRemoteArr(file.dom.getElementsByTagName("dc:title")),
+						async (x) => await get(x.textContent) as string,
+					),
+				)
+		),
+	)).flat(1);
+	const items = Object.fromEntries(
+		(await Promise.all(
+			rootfiles.map(async (file) => await Promise.all(
+				await map(file.dom.querySelectorAll("item").values(), async (item) => {
+					const id = await get(item.getAttribute("id") as string);
+					return [
+						id,
+						{
+							id,
+							href: joinPath(
+								dir(file.path),
+								decodeURIComponent(
+									(await get(item.getAttribute("href"))) ?? "",
+								),
+							),
+							// type: item.getAttribute("media-type") as string,
+							// el: item,
+							rootPath: file.path,
+						},
+					] as const;
+				}),
+			)),
+		)).flat(1),
+	);
+	function resolvePath(base: string, path?: string | null) {
+		const relPath = decodeURIComponent(path ?? "");
+		// TODO: standard way to do this????
+		for (const title of titles) {
+			if (relPath.startsWith(`${title}_files`)) {
+				return items[relPath.replace(/.*[\\/]([^\\/]*)$/, "$1")].href;
+			}
+		}
+		return joinPath(base, path ?? "");
+	}
+	const cssCache: Record<string, CSSStyleSheet | undefined> = {};
+	const imgThematic: Record<string, boolean> = {};
+	const spine = (await Promise.all(
+		rootfiles.map(async (file) =>
+		(await Promise.all(await map(file.dom.querySelectorAll("spine > itemref").values(), async (item) => {
+			const id = await get(item.getAttribute("idref")) as string;
+			const file =
+				zip.file(items[id].href) ??
+				raise(`Item '${id}' at '${items[id].href}' not found`);
 			const dom = parser.parseFromString(
 				await file.async("string"),
 				"application/xhtml+xml",
 			);
 			// TODO: dont like special casing
-			for (const img of dom.querySelectorAll<ChildNode & SVGImageElement>("svg > image:only-child")) {
+			for (const img of await iterRemoteArr(dom.querySelectorAll<ChildNode & SVGImageElement>(
+				"svg > image:only-child",
+			))) {
 				const newImg = dom.createElement("img");
-				newImg.setAttribute("src", img.getAttribute("xlink:href")
-					?? raise(`image '${img.outerHTML}' no src`));
-				const styles = img.parentElement?.getAttribute("style");
+				newImg.setAttribute(
+					"src",
+					await get(img.getAttribute("xlink:href")) ??
+					raise(`image '${img.outerHTML}' no src`),
+				);
+				const styles = await get(img.parentElement?.getAttribute("style")) as string | null;
 				if (styles) newImg.setAttribute("style", styles);
 				img.parentElement?.replaceWith(newImg);
 			}
 			// Local image files
-			for (const img of dom.querySelectorAll("img")) {
+			for (const img of await iterRemoteArr(dom.querySelectorAll("img"))) {
 				const path = resolvePath(
 					dir(items[id].href),
-					decodeURIComponent(img.getAttribute("src") ?? ""),
+					decodeURIComponent(await get(img.getAttribute("src")) ?? ""),
 				);
-				if (!result.attachments[path]) {
+				if (!attachments[path]) {
 					const file =
 						zip.file(path) ?? raise(`Image at '${path}' not found`);
 					const imgData = await file.async("blob");
 					const themedImg = await themable(imgData);
 					if (themedImg) {
-						result.attachments[path] = themedImg;
+						attachments[path] = themedImg;
 						imgThematic[path] = true;
 					} else {
-						result.attachments[path] = imgData;
+						attachments[path] = imgData;
 					}
 				}
 				if (imgThematic[path]) img.classList.add(IMAGE_THEMATIC_CLASS);
@@ -183,50 +178,54 @@ const spine = await Promise.all(
 				img.alt ||= path;
 			}
 			// Custom EPUB CSS
-			for (const css of dom.querySelectorAll<
-				HTMLLinkElement | HTMLStyleElement
-			>('link[rel="stylesheet" i], style')) {
+			for (const css of await iterRemoteArr(
+				dom.querySelectorAll<HTMLLinkElement | HTMLStyleElement>(
+					'link[rel="stylesheet" i], style',
+				),
+			)) {
 				let ruleset: CSSStyleSheet | undefined;
-				if (css.tagName.toUpperCase() === "LINK") {
+				if ((await get(css.tagName) as string).toUpperCase() === "LINK") {
 					const path = resolvePath(
 						dir(items[id].href),
-						decodeURIComponent(css.getAttribute("href") ?? ""),
+						decodeURIComponent(await get(css.getAttribute("href")) ?? ""),
 					);
-					ruleset = cssCache[path] ??= await (async () => {
+					ruleset = cssCache[path] ??= (await (async () => {
 						const file = zip.file(path);
 						if (!file) {
 							console.warn(`CSS at '${path}' not found`);
-							return;
+							return [undefined] as const;
 						}
-						return parseCSS(await file.async("text"));
-					})();
+						return [via._noterra_parseCSS(await file.async("text"))] as const;
+					})())[0];
 				} else {
 					const cssStr = css.textContent;
 					if (!cssStr) continue;
-					ruleset = parseCSS(cssStr);
+					ruleset = via._noterra_parseCSS(cssStr);
 				}
 				if (!ruleset) continue;
-				for (const rule of ruleset?.cssRules ?? [])
-					if (rule instanceof CSSStyleRule) {
-						const styles = rule.style.cssText;
-						const els = dom.querySelectorAll(rule.selectorText);
+				for (const rule of await iterRemoteArr(ruleset.cssRules))
+					if (rule.type === rule.STYLE_RULE /* .type needed here due to via.js not work with instanceof */) {
+						const rl = rule as CSSStyleRule;
+						const styles = await get(rl.style.cssText);
+						const els = dom.querySelectorAll(await get(rl.selectorText) as string);
 						// if (els.length) console.log([...els], styles);
-						for (const el of els) {
+						for (const el of await iterRemoteArr(els)) {
 							const oldStyle =
-								el.getAttribute("styles")?.replace(/;\s*$/, "") ?? "";
+								(await get(el.getAttribute("styles")) as string | null)
+									?.replace(/;\s*$/, "") ?? "";
 							el.setAttribute("style", `${oldStyle};${styles}`);
 						}
 					}
 			}
-			for (const unsupported of dom.querySelectorAll("section")) {
-				if (unsupported.hasAttribute("style")) {
+			for (const unsupported of await iterRemoteArr(dom.querySelectorAll("section"))) {
+				if (await get(unsupported.hasAttribute("style"))) {
 					const nw = dom.createElement("div");
 					nw.setAttribute("style", unsupported.getAttribute("style") ?? "");
-					nw.append(...unsupported.childNodes);
+					nw.append(...await iterRemoteArr(unsupported.childNodes));
 					unsupported.replaceWith(nw);
 					continue;
 				}
-				unsupported.replaceWith(...unsupported.childNodes);
+				unsupported.replaceWith(...await iterRemoteArr(unsupported.childNodes));
 			}
 			// Cover images
 			// TODO: dont like special casing
@@ -236,15 +235,46 @@ const spine = await Promise.all(
 			) {
 				dom.body.replaceChildren(...dom.body.querySelectorAll("img"));
 			}
-			return dom;
-		}),
-	),
-);
-result.content = spine
-	.map((doc) => `<section>${doc.body.innerHTML}</section>`)
-	.join("");
-console.log(result.content);
-return result;
+			return [dom];
+		})))),
+	)).flat(1).map(el => el[0]);
+	const content = (await Promise.all(
+		spine.map(
+			async (doc) => `<section>${await get(doc.body.innerHTML)}</section>`,
+		),
+	)).join("");
+	return {
+		attachments,
+		content,
+	};
 }
 
-window.addEventListener("message", listener);
+type handleEPubCallback = typeof handleEPub;
+declare global {
+	interface WorkerGlobalScope {
+		handleEPub: handleEPubCallback;
+	}
+	const handleEpub: handleEPubCallback;
+}
+self.handleEPub = handleEPub;
+
+const TRANSFERABLES: Transferable[] = [];
+
+Via.postMessage = data => {
+	self.postMessage(data, {
+		transfer: TRANSFERABLES,
+	});
+	TRANSFERABLES.length = 0;
+};
+self.addEventListener("message", async (e: MessageEvent) => {
+	if (e.data.type === "NOTERRA-handle-epub") {
+		const contents = await handleEPub(e.data.file, e.data.IMAGE_THEMATIC_CLASS);
+		self.postMessage({
+			type: "NOTERRA-handle-epub",
+			id: e.data.id,
+			contents,
+		});
+	} else Via.onMessage(e.data);
+});
+
+export default WorkerGlobalScope;
