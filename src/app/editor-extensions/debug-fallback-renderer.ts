@@ -20,7 +20,7 @@ export const DebugFallbackRenderer = Node.create({
 	},
 
 	parseHTML() {
-		return [{ tag: "*:not(div, thead, tbody)" }];
+		return [{ tag: "*:not(div, span, thead, tbody)" }];
 	},
 
 	renderHTML({ node, HTMLAttributes }) {

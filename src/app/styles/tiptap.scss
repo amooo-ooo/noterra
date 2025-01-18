@@ -201,10 +201,6 @@
 		cursor: col-resize;
 	}
 
-	img {
-		max-width: 100%;
-	}
-
 	section {
 		padding: 50px;
 		margin-inline: auto;
@@ -213,6 +209,7 @@
 		border: 1px solid var(--border-color);
 		box-shadow: 2px 4px 10px var(--shadow-color);
 		position: relative;
+		overflow: hidden;
 
 		&:has(>div>div>p:only-child>:is(img, .node-blob-image):first-child+img+br) {
 			padding: 0;
@@ -242,6 +239,17 @@
 		
 		rt {
 			border-bottom: 1px dashed var(--border-color);
+		}
+	}
+
+	@media print {
+		section {
+			margin: 0;
+			background-color: transparent;
+			box-shadow: none;
+			border: none;
+			break-after: page;
+			width: 100% !important;
 		}
 	}
 }

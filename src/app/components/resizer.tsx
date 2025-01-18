@@ -139,10 +139,19 @@ function ResizeWidget({
 	setOpen: (open: boolean) => void;
 }) {
 	const scrollState = React.useContext(ScrollContext);
+	const wrapperEl = React.useRef<HTMLDivElement | null>(null);
 
 	React.useEffect(() => {
 		if (scrollState) updateRect();
 	}, [scrollState, updateRect]);
+
+	React.useEffect(() => {
+		try {
+			wrapperEl.current?.showPopover();
+		} catch (e) {
+			console.warn(e);
+		}
+	}, []);
 
 	return (
 		<div
@@ -150,7 +159,7 @@ function ResizeWidget({
 			onToggle={(el) => {
 				if (!el.currentTarget.matches(":popover-open")) setOpen(false);
 			}}
-			ref={(el) => el?.showPopover()}
+			ref={wrapperEl}
 			style={{
 				width: rect?.width ?? 0,
 				height: rect?.height ?? 0,

@@ -107,6 +107,7 @@ export const TabsContext = React.createContext<{
 	modifyTabs: TabListDispatcher;
 	currentTab: TabData["id"] | undefined;
 	setCurrentTab: (tab: TabData["id"] | undefined) => void;
+	forceRender: boolean;
 	// biome-ignore lint/style/noNonNullAssertion: <explanation>
 }>(null!);
 
@@ -133,6 +134,7 @@ export function TabManager({
 	const [rightSidebar /* setRightSidebar */] = usePages();
 
 	const [showWordCount, setShowWordCount] = React.useState(true);
+	const [forceRender, setForceRender] = React.useState(false);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: intentional
 	React.useEffect(() => {
@@ -194,6 +196,7 @@ export function TabManager({
 					tabs.find((tab) => tab.id === currentTab)?.save();
 					setCurrentTab(id);
 				},
+				forceRender,
 			}}
 		>
 			<TabStrip
@@ -219,6 +222,9 @@ export function TabManager({
 										break;
 									case "wordCount":
 										setShowWordCount(!showWordCount);
+										break;
+									case "forceRender":
+										setForceRender(!forceRender);
 										break;
 								}
 							}}
@@ -246,6 +252,19 @@ export function TabManager({
 											<SquareIcon size="1.5em" />
 										)}
 										Show word count
+									</>
+								}
+							/>
+							<Option
+								value="forceRender"
+								label={
+									<>
+										{forceRender ? (
+											<CheckSquareIcon size="1.5em" />
+										) : (
+											<SquareIcon size="1.5em" />
+										)}
+										[Debug]: Force Rendering Pages
 									</>
 								}
 							/>

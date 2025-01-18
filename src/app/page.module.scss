@@ -99,3 +99,21 @@
 		}
 	}
 }
+
+@media print {
+	.tabstrip, .toolbar, .statsWidget, .content-row > :not(.editor-container) {
+		display: none !important;
+	}
+
+	.editor-container {
+		overflow: visible !important;
+	}
+
+	.page {
+		height: auto;
+	}
+
+	.editor>* {
+		padding: 0;
+	}
+}

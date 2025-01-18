@@ -16,7 +16,7 @@ export abstract class File {
 	content: string;
 	readonly attachments: Record<string, Blob>;
 
-	constructor(
+	constructor (
 		id: string,
 		name?: string,
 		content = "",
@@ -73,7 +73,7 @@ export class TabData {
 	#stateDirty = false;
 	#fileDirty = false;
 
-	constructor(file: File) {
+	constructor (file: File) {
 		this.file = file;
 		file.setOpenFlag(true);
 		this.id = file.id;

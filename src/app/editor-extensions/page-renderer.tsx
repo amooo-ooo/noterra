@@ -4,17 +4,19 @@ import {
 	NodeViewWrapper,
 } from "@tiptap/react";
 import React from "react";
+import { TabsContext } from "@/app/components/tab-manager";
 
 export function PageRenderer({
-	// editor,
+	editor,
 	node,
 	// decorations,
 	// selected,
 	// extension,
-	// getPos,
+	getPos,
 	updateAttributes,
 	// deleteNode,
 }: NodeViewProps) {
+	const { forceRender } = React.useContext(TabsContext);
 	const [inView, setInView] = React.useState(true);
 	const _inView = React.useRef(inView);
 	React.useImperativeHandle(_inView, () => inView, [inView]);
@@ -56,6 +58,17 @@ export function PageRenderer({
 		};
 	}, [updateAttributes]);
 
+	const inSelection = React.useMemo(() => {
+		const start = getPos();
+		const end = start + node.nodeSize;
+		for (const range of editor.state.selection.ranges) {
+			if (start > range.$to.pos) continue;
+			if (end < range.$from.pos) continue;
+			return true;
+		}
+		return false;
+	}, [editor.state.selection, getPos, node]);
+
 	return (
 		<NodeViewWrapper>
 			<section
@@ -65,7 +78,7 @@ export function PageRenderer({
 					height: inView ? "auto" : node.attrs.height,
 				}}
 			>
-				{inView || !node.attrs.height ? (
+				{forceRender || inView || !node.attrs.height || inSelection ? (
 					<NodeViewContent />
 				) : (
 					<button
