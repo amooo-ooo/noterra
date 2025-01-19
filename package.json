@@ -3,8 +3,11 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbopack",
-		"build": "next build",
+		"dev": "run-s build:worker dev:page",
+		"build": "run-s build:worker build:page",
+		"dev:with-worker": "run-p -r -l dev:worker dev:page",
+		"dev:page": "next dev --turbopack",
+		"build:page": "next build",
 		"dev:worker": "bun build src/app/workers/epub-parser.ts --outfile=public/js/worker.js --watch",
 		"build:worker": "bun build src/app/workers/epub-parser.ts --outfile=public/js/worker.js --minify",
 		"start": "next start",
