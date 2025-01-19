@@ -158,16 +158,12 @@ let _isThemeShader: Shader | null = null;
 let _translucentShader: Shader | null = null;
 
 export async function themable(imgSrc: Blob) {
-	const [img, discardImg] = await new Promise<[HTMLImageElement, () => void]>((res) => {
-		const img = new Image();
-		const url = URL.createObjectURL(imgSrc);
-		img.addEventListener('load', () => res([img, () => URL.revokeObjectURL(url)]));
-		img.src = url;
-	});
+	const img = await self.createImageBitmap(imgSrc, { imageOrientation: "flipY" });
+	const { width, height } = img;
 	// biome-ignore lint/suspicious/noAssignInExpressions: stfu
 	const canvas = _canvas ??= new OffscreenCanvas(1, 1);
-	canvas.width = img.naturalWidth;
-	canvas.height = img.naturalHeight;
+	canvas.width = width;
+	canvas.height = height;
 	// biome-ignore lint/suspicious/noAssignInExpressions: i mean it
 	const ctx = _ctx ??= (() => {
 		const ctx = canvas.getContext("webgl2", {
@@ -214,7 +210,7 @@ export async function themable(imgSrc: Blob) {
 	ctx.viewport(0, 0, canvas.width, canvas.height);
 
 	ctx.texImage2D(ctx.TEXTURE_2D, 0, ctx.RGBA, ctx.RGBA, ctx.UNSIGNED_BYTE, img);
-	discardImg();
+	img.close();
 	// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 	const themeShader: Shader = _isThemeShader ??= new Shader(ctx, `\
 #version 300 es
@@ -265,7 +261,7 @@ void main() {
 	// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
 	const canvas2 = _canvas2 ??= new OffscreenCanvas(1, 1);
 	// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-	const ctx2 = _ctx2 ??= canvas2.getContext('2d') ?? raise("no canvas ctx 2d");
+	const ctx2 = _ctx2 ??= canvas2.getContext('2d', { willReadFrequently: true }) ?? raise("no canvas ctx 2d");
 	let w: number;
 	let h: number;
 	w = canvas2.width = Math.ceil(canvas.width / 2);
@@ -279,7 +275,7 @@ void main() {
 		h = hNext;
 	}
 	const avgDLum = ctx2.getImageData(0, 0, 1, 1).data[0] / 255;
-	const threshold = Math.exp(-img.naturalWidth * img.naturalHeight / 1e4) + 0.02;
+	const threshold = Math.exp(-width * height / 1e4) + 0.02;
 	if (avgDLum < threshold) {
 		// very "flat" colored, diagramatic image
 		// biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
@@ -323,7 +319,7 @@ void main() {
 		// const cv3 = new OffscreenCanvas(canvas.width, canvas.height);
 		// const c3 = cv3.getContext('2d') ?? raise("no canvas ctx");
 		// c3.drawImage(canvas, 0, 0);
-		// ctx2.fillStyle = "#ff0000";
+		// ctx2.fillStyle = "#00ff00";
 		// ctx2.font = "12px system-ui";
 		// ctx2.fillText(`${avgDLum}`, 3, 15);
 		// return canvas2.convertToBlob();

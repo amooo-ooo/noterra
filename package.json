@@ -3,8 +3,13 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbopack",
-		"build": "next build",
+		"dev": "run-s build:worker dev:page",
+		"build": "run-s build:worker build:page",
+		"dev:with-worker": "run-p -r -l dev:worker dev:page",
+		"dev:page": "next dev --turbopack",
+		"build:page": "next build",
+		"dev:worker": "bun build src/app/workers/epub-parser.ts --outfile=public/js/worker.js --watch",
+		"build:worker": "bun build src/app/workers/epub-parser.ts --outfile=public/js/worker.js --minify",
 		"start": "next start",
 		"lint": "next lint"
 	},
@@ -52,7 +57,8 @@
 		"react-dom": "19.0.0",
 		"react-sortablejs": "^6.1.4",
 		"sass": "^1.82.0",
-		"sortablejs": "^1.15.6"
+		"sortablejs": "^1.15.6",
+		"via.js": "^1.0.4"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.2.0",
@@ -63,6 +69,7 @@
 		"@types/sortablejs": "^1.15.8",
 		"eslint": "^9.16.0",
 		"eslint-config-next": "15.1.0",
+		"npm-run-all": "^4.1.5",
 		"typescript": "^5.7.2"
 	}
 }

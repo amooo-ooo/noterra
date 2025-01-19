@@ -13,7 +13,7 @@ import {
 	LockOpenIcon,
 	XIcon,
 } from "lucide-react";
-import { handleFile } from "./file-parser";
+import { handleFile } from "@/app/file-parser";
 import { ContextMenuArea } from "./context-menu-area";
 import { LocalFile, TabData } from "./editor-files";
 
