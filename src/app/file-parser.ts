@@ -1,5 +1,5 @@
 import { type File as FileData, LocalFile } from "./components/editor-files";
-import "via.js/receiver";
+if (typeof self !== "undefined") import("via.js/receiver");
 import type EPubWorkerGlobal from "./workers/epub-parser";
 
 declare const ViaReceiver: Omit<typeof window.ViaReceiver, keyof Window | keyof typeof globalThis>
@@ -32,7 +32,7 @@ declare global {
 	}
 	const _noterra_parseCSS: typeof parseCSS;
 }
-window._noterra_parseCSS = parseCSS;
+if (typeof window !== "undefined") window._noterra_parseCSS = parseCSS;
 
 export type RecieverGlobal = typeof window;
 
