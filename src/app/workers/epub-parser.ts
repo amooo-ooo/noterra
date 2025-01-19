@@ -61,6 +61,7 @@ async function handleEPub(data: Blob, IMAGE_THEMATIC_CLASS: string) {
 	const zip = await JSZip.loadAsync(data);
 	const attachments: Record<string, Blob> = {};
 	const parser = new via.DOMParser();
+	const STYLE_RULE = await get(via.CSSRule.STYLE_RULE);
 	const metaInfF =
 		zip.file("META-INF/container.xml") ?? raise("Could not find META-INF");
 	const metaInf = parser.parseFromString(
@@ -202,9 +203,11 @@ async function handleEPub(data: Blob, IMAGE_THEMATIC_CLASS: string) {
 					if (!cssStr) continue;
 					ruleset = via._noterra_parseCSS(cssStr);
 				}
+				via.console.log(ruleset);
 				if (!ruleset) continue;
 				for (const rule of await iterRemoteArr(ruleset.cssRules))
-					if (rule.type === rule.STYLE_RULE /* .type needed here due to via.js not work with instanceof */) {
+					if (await get(rule.type) === STYLE_RULE /* .type needed here due to via.js not work with instanceof */) {
+						via.console.log(rule);
 						const rl = rule as CSSStyleRule;
 						const styles = await get(rl.style.cssText);
 						const els = dom.querySelectorAll(await get(rl.selectorText) as string);
