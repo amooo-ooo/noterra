@@ -203,11 +203,9 @@ async function handleEPub(data: Blob, IMAGE_THEMATIC_CLASS: string) {
 					if (!cssStr) continue;
 					ruleset = via._noterra_parseCSS(cssStr);
 				}
-				via.console.log(ruleset);
 				if (!ruleset) continue;
 				for (const rule of await iterRemoteArr(ruleset.cssRules))
 					if (await get(rule.type) === STYLE_RULE /* .type needed here due to via.js not work with instanceof */) {
-						via.console.log(rule);
 						const rl = rule as CSSStyleRule;
 						const styles = await get(rl.style.cssText);
 						const els = dom.querySelectorAll(await get(rl.selectorText) as string);
@@ -233,10 +231,10 @@ async function handleEPub(data: Blob, IMAGE_THEMATIC_CLASS: string) {
 			// Cover images
 			// TODO: dont like special casing
 			if (
-				dom.body.textContent?.trim() === "" &&
-				dom.body.querySelector("img")
+				(await get(dom.body.textContent) as string).trim() === "" &&
+				await get(via.Boolean(dom.body.querySelector("img")))
 			) {
-				dom.body.replaceChildren(...dom.body.querySelectorAll("img"));
+				dom.body.replaceChildren(...await iterRemoteArr(dom.body.querySelectorAll("img")));
 			}
 			return [dom];
 		})))),
