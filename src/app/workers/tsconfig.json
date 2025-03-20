@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "ES2017",
+		"esModuleInterop": true,
+		"strict": true,
+		"outDir": "../../../public/js/",
+		"module": "ES6",
+		"moduleResolution": "bundler",
+		"lib": [
+			"WebWorker",
+			"Webworker.Iterable",
+			"WebWorker.AsyncIterable",
+			"WebWorker.ImportScripts"
+		],
+		"noEmit": false,
+		"paths": {
+			"@/*": ["../../*"]
+		}
+	},
+	"exclude": ["node_modules"]
+}
